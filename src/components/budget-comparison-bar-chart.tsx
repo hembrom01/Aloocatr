@@ -9,14 +9,13 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { formatMinutesToFriendlyDuration } from '@/lib/utils';
 
 interface BudgetComparisonBarChartProps {
-  tasks: Task[];
+  tasks: Task[]; // Expects tasks already filtered for budgetedTime > 0
   getTimeSpent: (taskId: string, basis: 'daily' | 'weekly' | 'monthly') => number;
 }
 
 const BudgetComparisonBarChartComponent: FC<BudgetComparisonBarChartProps> = ({ tasks, getTimeSpent }) => {
   const chartData = useMemo(() => {
-    return tasks
-      .filter(task => task.budgetedTime > 0)
+    return tasks // tasks are already filtered
       .map(task => ({
         name: task.name.length > 15 ? `${task.name.substring(0, 12)}...` : task.name, // Truncate long names
         Budgeted: task.budgetedTime,
@@ -45,22 +44,11 @@ const BudgetComparisonBarChartComponent: FC<BudgetComparisonBarChartProps> = ({ 
     return null;
   };
 
-  if (chartData.length === 0) {
-    return (
-      <Card className="mb-6 shadow-md">
-        <CardHeader>
-          <CardTitle>Budget vs. Actual Time</CardTitle>
-          <CardDescription>Comparison of your budgeted tasks.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground text-center py-10">No tasks with budgets to display. Add budgets to your tasks in the Tasks section.</p>
-        </CardContent>
-      </Card>
-    );
-  }
+  // Note: The "No tasks with budgets to display" message is now handled in TrackerPage.tsx
+  // This component assumes it receives tasks with budgets. If tasks array is empty, Recharts handles it.
 
   return (
-    <Card className="mb-6 shadow-md">
+    <Card className="shadow-md">
       <CardHeader>
         <CardTitle>Budget vs. Actual Time</CardTitle>
         <CardDescription>Comparison of your budgeted tasks based on their individual budget cycles (daily, weekly, monthly).</CardDescription>
@@ -69,9 +57,9 @@ const BudgetComparisonBarChartComponent: FC<BudgetComparisonBarChartProps> = ({ 
         <ResponsiveContainer width="100%" height={350}>
           <BarChart 
             data={chartData} 
-            margin={{ top: 5, right: 0, left: -25, bottom: 5 }} // Adjusted left margin for Y-axis labels
-            barGap={4} // Gap between bars of the same group
-            barCategoryGap="20%" // Gap between groups of bars
+            margin={{ top: 5, right: 0, left: -25, bottom: 5 }}
+            barGap={4} 
+            barCategoryGap="20%" 
           >
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
             <XAxis 
@@ -80,7 +68,7 @@ const BudgetComparisonBarChartComponent: FC<BudgetComparisonBarChartProps> = ({ 
               fontSize={10} 
               tickLine={false} 
               axisLine={false}
-              interval={0} // Show all labels if possible
+              interval={0} 
             />
             <YAxis 
               stroke="hsl(var(--foreground))" 
@@ -88,7 +76,7 @@ const BudgetComparisonBarChartComponent: FC<BudgetComparisonBarChartProps> = ({ 
               tickLine={false} 
               axisLine={false}
               tickFormatter={(value) => formatMinutesToFriendlyDuration(value)}
-              width={80} // Provide enough space for longer Y-axis labels
+              width={80} 
             />
             <Tooltip content={<CustomTooltip />} cursor={{ fill: 'hsl(var(--muted))' }} />
             <Legend 
