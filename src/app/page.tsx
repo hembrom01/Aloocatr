@@ -127,7 +127,7 @@ export default function TrackerPage() {
         )}
 
         <TooltipProvider>
-          <div className="flex flex-wrap justify-center items-start gap-3 px-6"> {/* items-start for better text alignment if heights vary */}
+          <div className="flex flex-wrap justify-center items-start gap-3 px-6">
             {tasks.map((task) => {
               const IconComponent = taskIcons[task.icon] || taskIcons[defaultTaskIcon];
               const isActive = isTaskActive(task.id);
@@ -144,7 +144,7 @@ export default function TrackerPage() {
                       aria-label={isActive ? `Stop ${task.name}` : `Start ${task.name}`}
                     >
                       <IconComponent className={cn("h-8 w-8", isActive ? "text-primary" : "text-muted-foreground")} />
-                      <span className="mt-1 text-xs text-center w-full"> {/* Removed truncate */}
+                      <span className="mt-1 text-[11px] text-center w-full">
                         {task.name}
                       </span>
                     </Button>
@@ -164,7 +164,7 @@ export default function TrackerPage() {
                     aria-label="Add new task"
                   >
                     <PlusCircle className="h-8 w-8 text-muted-foreground" />
-                     <span className="mt-1 text-xs text-center w-full"> {/* Removed truncate */}
+                     <span className="mt-1 text-[11px] text-center w-full">
                         Add Task
                       </span>
                   </Button>
@@ -180,5 +180,3 @@ export default function TrackerPage() {
     </div>
   );
 }
-
-    
