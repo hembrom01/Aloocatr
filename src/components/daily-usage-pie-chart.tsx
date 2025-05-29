@@ -82,8 +82,8 @@ export const DailyUsagePieChart: FC<DailyUsagePieChartProps> = ({ tasks, taskLog
       const data = payload[0].payload;
       const rawPercent = payload[0].percent;
       const percentage = (typeof rawPercent === 'number' && !isNaN(rawPercent))
-                         ? (rawPercent * 100).toFixed(0)
-                         : '0';
+                         ? (rawPercent * 100).toFixed(1) // Changed to toFixed(1)
+                         : '0.0'; // Default to '0.0'
       return (
         <div className="p-2 bg-background border border-border rounded-md shadow-lg">
           <p className="font-semibold">{`${data.name}`}</p>
@@ -94,10 +94,6 @@ export const DailyUsagePieChart: FC<DailyUsagePieChartProps> = ({ tasks, taskLog
     return null;
   };
   
-  // If dataForChart is effectively empty (only untracked time with full day value, meaning no tasks logged)
-  // the check above for taskLogs.length === 0 handles this.
-  // If all task values are 0 and untracked time is also 0, the chart might be empty or show 100% untracked with 0 value.
-  // The CustomTooltip fix handles NaN% in such cases.
   if (dataForChart.every(d => d.value === 0) && dataForChart.length > 0) {
      return (
         <Card className="mt-6 shadow-md">
@@ -131,7 +127,7 @@ export const DailyUsagePieChart: FC<DailyUsagePieChartProps> = ({ tasks, taskLog
               innerRadius={50} 
               fill="#8884d8"
               dataKey="value"
-              paddingAngle={dataForChart.length > 1 ? 2 : 0} // No padding if only one segment
+              paddingAngle={dataForChart.length > 1 ? 2 : 0} 
             >
               {dataForChart.map((entry, index) => (
                 <Cell 
@@ -146,10 +142,9 @@ export const DailyUsagePieChart: FC<DailyUsagePieChartProps> = ({ tasks, taskLog
               verticalAlign="bottom" 
               height={36}
               formatter={(value, entry) => {
-                // The 'color' property on 'entry' from formatter is not standardly populated with the Cell's fill.
-                // We find the original item to get its properties if needed.
                 const itemData = dataForChart.find(d => d.name === value);
-                const color = itemData?.isTask ? COLORS[dataForChart.filter(d => d.isTask).findIndex(d => d.name === value) % COLORS.length] : UNTRACKED_COLOR;
+                const colorIndex = dataForChart.filter(d => d.isTask).findIndex(d => d.name === value);
+                const color = itemData?.isTask ? COLORS[colorIndex % COLORS.length] : UNTRACKED_COLOR;
                 return <span style={{ color }}>{value}</span>;
               }}
             />
