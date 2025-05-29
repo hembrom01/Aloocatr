@@ -1,12 +1,13 @@
 
 "use client";
 
-import { useState } from 'react'; // Removed useEffect
+import { useState } from 'react';
 import { DailyTaskTimeline } from '@/components/daily-task-timeline';
-import { DateNavigator } from '@/components/date-navigator'; // Added
+import { DateNavigator } from '@/components/date-navigator';
 import { useTaskManager } from '@/hooks/use-task-manager';
 import { Zap } from 'lucide-react';
-import { format } from 'date-fns'; // Added for title
+import { format } from 'date-fns';
+import { DailyUsagePieChart } from '@/components/daily-usage-pie-chart'; // Added
 
 export default function TimelinePage() {
   const { 
@@ -15,9 +16,7 @@ export default function TimelinePage() {
     isLoaded 
   } = useTaskManager();
   
-  const [selectedDate, setSelectedDate] = useState(new Date()); // Renamed from currentDate
-
-  // Removed useEffect for auto-updating to today, as date is now manually selected
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
   const dailyLogs = getLogsForDay(selectedDate);
 
@@ -31,8 +30,8 @@ export default function TimelinePage() {
   }
 
   return (
-    <div className="space-y-8">
-      <header className="mb-6"> {/* Adjusted margin */}
+    <div className="space-y-8 pb-16"> {/* Added padding-bottom for nav bar */}
+      <header className="mb-6">
         <h1 className="text-4xl font-bold tracking-tight text-foreground">
           Timeline for {format(selectedDate, 'MMMM d')}
         </h1>
@@ -47,6 +46,12 @@ export default function TimelinePage() {
         <h2 id="daily-task-timeline-title" className="sr-only">Daily Task Log for {format(selectedDate, 'PPP')}</h2>
         <DailyTaskTimeline tasks={tasks} taskLogs={dailyLogs} currentDate={selectedDate} />
       </section>
+
+      <section aria-labelledby="daily-usage-pie-chart-title">
+        <h2 id="daily-usage-pie-chart-title" className="sr-only">Daily Time Usage Pie Chart for {format(selectedDate, 'PPP')}</h2>
+        <DailyUsagePieChart tasks={tasks} taskLogs={dailyLogs} selectedDate={selectedDate} />
+      </section>
     </div>
   );
 }
+
