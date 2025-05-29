@@ -1,33 +1,36 @@
+
 "use client";
 
 import { useState, useEffect, useCallback } from 'react';
-import type { Task, TaskLog, ActiveTimer, TaskIconName } from '@/types';
-import { v4 as uuidv4 } from 'uuid'; // Needs npm install uuid @types/uuid
+import type { Task, TaskLog, ActiveTimer, Category } from '@/types';
+import { v4 as uuidv4 } from 'uuid';
 
 const TASKS_STORAGE_KEY = 'chronoFlowTasks';
 const TASK_LOGS_STORAGE_KEY = 'chronoFlowTaskLogs';
 const ACTIVE_TIMER_STORAGE_KEY = 'chronoFlowActiveTimer';
+const CATEGORIES_STORAGE_KEY = 'chronoFlowCategories';
 
 export function useTaskManager() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [taskLogs, setTaskLogs] = useState<TaskLog[]>([]);
   const [activeTimer, setActiveTimer] = useState<ActiveTimer | null>(null);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const storedTasks = localStorage.getItem(TASKS_STORAGE_KEY);
-      if (storedTasks) {
-        setTasks(JSON.parse(storedTasks));
-      }
+      if (storedTasks) setTasks(JSON.parse(storedTasks));
+      
       const storedTaskLogs = localStorage.getItem(TASK_LOGS_STORAGE_KEY);
-      if (storedTaskLogs) {
-        setTaskLogs(JSON.parse(storedTaskLogs));
-      }
+      if (storedTaskLogs) setTaskLogs(JSON.parse(storedTaskLogs));
+      
       const storedActiveTimer = localStorage.getItem(ACTIVE_TIMER_STORAGE_KEY);
-      if (storedActiveTimer) {
-        setActiveTimer(JSON.parse(storedActiveTimer));
-      }
+      if (storedActiveTimer) setActiveTimer(JSON.parse(storedActiveTimer));
+      
+      const storedCategories = localStorage.getItem(CATEGORIES_STORAGE_KEY);
+      if (storedCategories) setCategories(JSON.parse(storedCategories));
+      
       setIsLoaded(true);
     }
   }, []);
@@ -54,6 +57,39 @@ export function useTaskManager() {
     }
   }, [activeTimer, isLoaded]);
 
+  useEffect(() => {
+    if (typeof window !== 'undefined' && isLoaded) {
+      localStorage.setItem(CATEGORIES_STORAGE_KEY, JSON.stringify(categories));
+    }
+  }, [categories, isLoaded]);
+
+  const addCategory = useCallback((name: string) => {
+    const newCategory: Category = {
+      id: uuidv4(),
+      name,
+      createdAt: Date.now(),
+    };
+    setCategories(prev => [...prev, newCategory]);
+    return newCategory;
+  }, []);
+
+  const updateCategory = useCallback((updatedCategory: Category) => {
+    setCategories(prev =>
+      prev.map(cat => (cat.id === updatedCategory.id ? updatedCategory : cat))
+    );
+  }, []);
+
+  const deleteCategory = useCallback((categoryId: string) => {
+    setCategories(prev => prev.filter(cat => cat.id !== categoryId));
+    // Optionally, uncategorize tasks belonging to this category
+    setTasks(prevTasks => 
+      prevTasks.map(task => 
+        task.categoryId === categoryId ? { ...task, categoryId: null } : task
+      )
+    );
+  }, []);
+
+
   const addTask = useCallback((newTaskData: Omit<Task, 'id' | 'createdAt'>) => {
     const newTask: Task = {
       ...newTaskData,
@@ -79,9 +115,9 @@ export function useTaskManager() {
   }, [activeTimer]);
 
   const startTimer = useCallback((taskId: string) => {
-    if (activeTimer) { // Stop current timer if one is active
+    if (activeTimer) {
       const endTime = Date.now();
-      const duration = Math.round((endTime - activeTimer.startTime) / (1000 * 60)); // in minutes
+      const duration = Math.round((endTime - activeTimer.startTime) / (1000 * 60));
       const newLog: TaskLog = {
         id: uuidv4(),
         taskId: activeTimer.taskId,
@@ -92,9 +128,8 @@ export function useTaskManager() {
       setTaskLogs(prevLogs => [...prevLogs, newLog]);
     }
     
-    // Start new timer, or clear if it's the same task
     if (activeTimer?.taskId === taskId) {
-      setActiveTimer(null); // Stop if clicking the same active task
+      setActiveTimer(null);
     } else {
       setActiveTimer({ taskId, startTime: Date.now() });
     }
@@ -104,7 +139,7 @@ export function useTaskManager() {
     if (!activeTimer) return null;
 
     const endTime = Date.now();
-    const duration = Math.round((endTime - activeTimer.startTime) / (1000 * 60)); // in minutes
+    const duration = Math.round((endTime - activeTimer.startTime) / (1000 * 60));
     const newLog: TaskLog = {
       id: uuidv4(),
       taskId: activeTimer.taskId,
@@ -141,24 +176,28 @@ export function useTaskManager() {
 
     if (basis === 'weekly') {
       startDate = new Date(now);
-      startDate.setDate(now.getDate() - now.getDay()); // Start of current week (Sunday)
+      startDate.setDate(now.getDate() - now.getDay()); 
       startDate.setHours(0,0,0,0);
     } else if (basis === 'monthly') {
-      startDate = new Date(now.getFullYear(), now.getMonth(), 1); // Start of current month
+      startDate = new Date(now.getFullYear(), now.getMonth(), 1); 
       startDate.setHours(0,0,0,0);
-    } else { // total
-      startDate = new Date(0); // Epoch for total
+    } else { 
+      startDate = new Date(0); 
     }
 
     const relevantLogs = taskLogs.filter(log => log.taskId === taskId && log.endTime >= startDate.getTime());
     return relevantLogs.reduce((total, log) => total + log.duration, 0);
   }, [taskLogs]);
 
+  const getCategoryById = useCallback((categoryId: string) => {
+    return categories.find(cat => cat.id === categoryId);
+  }, [categories]);
 
   return {
     tasks,
     taskLogs,
     activeTimer,
+    categories,
     addTask,
     updateTask,
     deleteTask,
@@ -168,6 +207,10 @@ export function useTaskManager() {
     getLogsForTask,
     getLogsForDay,
     getTimeSpentOnTask,
+    addCategory,
+    updateCategory,
+    deleteCategory,
+    getCategoryById,
     isLoaded,
   };
 }

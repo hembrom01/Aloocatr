@@ -1,3 +1,4 @@
+
 import type { LucideIcon } from 'lucide-react';
 
 export type TaskIconName = 
@@ -10,6 +11,12 @@ export type TaskIconName =
   | 'Utensils'
   | 'Activity'; // Default icon
 
+export interface Category {
+  id: string;
+  name: string;
+  createdAt: number; // timestamp
+}
+
 export interface Task {
   id: string;
   name: string;
@@ -17,6 +24,7 @@ export interface Task {
   budgetedTime: number; // in minutes
   budgetBasis: 'weekly' | 'monthly';
   createdAt: number; // timestamp
+  categoryId?: string | null; // Link to Category
 }
 
 export interface TaskLog {

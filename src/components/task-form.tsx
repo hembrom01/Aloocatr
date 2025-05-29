@@ -1,3 +1,4 @@
+
 "use client";
 
 import type { FC } from 'react';
@@ -7,11 +8,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Label } from '@/components/ui/label'; // Unused, but kept for consistency if needed later
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import type { Task, TaskIconName } from '@/types';
+import type { Task, TaskIconName, Category } from '@/types';
 import { availableIcons, taskIcons, defaultTaskIcon } from '@/config/icons';
 import { AiTimeSuggester } from './ai-time-suggester';
 import { useToast } from '@/hooks/use-toast';
@@ -22,19 +23,21 @@ const taskFormSchema = z.object({
   icon: z.custom<TaskIconName>((val) => availableIcons.includes(val as TaskIconName), "Invalid icon"),
   budgetedTime: z.coerce.number().min(1, "Budgeted time must be at least 1 minute"),
   budgetBasis: z.enum(['weekly', 'monthly']),
+  categoryId: z.string().nullable().optional(),
 });
 
 type TaskFormData = z.infer<typeof taskFormSchema>;
 
 interface TaskFormProps {
   task?: Task | null;
+  categories: Category[];
   onSubmit: (data: TaskFormData, id?: string) => void;
   onDelete?: (taskId: string) => void;
   formTitle?: string;
   submitButtonText?: string;
 }
 
-export const TaskForm: FC<TaskFormProps> = ({ task, onSubmit, onDelete, formTitle = "Add New Task", submitButtonText = "Save Task" }) => {
+export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDelete, formTitle = "Add New Task", submitButtonText = "Save Task" }) => {
   const { toast } = useToast();
   const form = useForm<TaskFormData>({
     resolver: zodResolver(taskFormSchema),
@@ -43,6 +46,7 @@ export const TaskForm: FC<TaskFormProps> = ({ task, onSubmit, onDelete, formTitl
       icon: task?.icon || defaultTaskIcon,
       budgetedTime: task?.budgetedTime || 60,
       budgetBasis: task?.budgetBasis || 'weekly',
+      categoryId: task?.categoryId || null,
     },
   });
   
@@ -57,6 +61,7 @@ export const TaskForm: FC<TaskFormProps> = ({ task, onSubmit, onDelete, formTitl
         icon: task.icon,
         budgetedTime: task.budgetedTime,
         budgetBasis: task.budgetBasis,
+        categoryId: task.categoryId || null,
       });
       setCurrentTimeAllocationForAI(`${task.budgetedTime} minutes`);
     } else {
@@ -65,6 +70,7 @@ export const TaskForm: FC<TaskFormProps> = ({ task, onSubmit, onDelete, formTitl
         icon: defaultTaskIcon,
         budgetedTime: 60,
         budgetBasis: 'weekly',
+        categoryId: null,
       });
       setCurrentTimeAllocationForAI('60 minutes');
     }
@@ -82,14 +88,19 @@ export const TaskForm: FC<TaskFormProps> = ({ task, onSubmit, onDelete, formTitl
       title: task ? "Task Updated" : "Task Added",
       description: `Task "${data.name}" has been ${task ? 'updated' : 'added'}.`,
     });
-    if (!task) { // Reset form only if it's a new task
-      form.reset();
+    if (!task) { 
+      form.reset({ 
+        name: '', 
+        icon: defaultTaskIcon, 
+        budgetedTime: 60, 
+        budgetBasis: 'weekly', 
+        categoryId: null 
+      });
       setCurrentTimeAllocationForAI('60 minutes');
     }
   };
 
   const handleAiSuggestionApplied = (suggestedTime: string) => {
-    // Attempt to parse "X minutes" or "Y hours" from suggestion
     const timeValue = parseInt(suggestedTime.split(' ')[0]);
     let minutes = 0;
     if (suggestedTime.includes('hour')) {
@@ -174,6 +185,35 @@ export const TaskForm: FC<TaskFormProps> = ({ task, onSubmit, onDelete, formTitl
               )}
             />
             
+            <FormField
+              control={form.control}
+              name="categoryId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Category (Optional)</FormLabel>
+                  <Select 
+                    onValueChange={(value) => field.onChange(value === "null" ? null : value)} 
+                    value={field.value || "null"}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a category" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="null">Uncategorized</SelectItem>
+                      {categories.map(category => (
+                        <SelectItem key={category.id} value={category.id}>
+                          {category.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <FormField
               control={form.control}
               name="budgetedTime"
