@@ -7,7 +7,7 @@ import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import type { Task } from '@/types';
 import { taskIcons, defaultTaskIcon } from '@/config/icons';
-import { formatMinutesToFriendlyDuration } from '@/lib/utils'; // Updated import
+import { formatMinutesToFriendlyDuration } from '@/lib/utils';
 
 interface BudgetedTaskTrackerProps {
   tasks: Task[];
@@ -40,6 +40,10 @@ export const BudgetedTaskTracker: FC<BudgetedTaskTrackerProps> = ({ tasks, getTi
               const IconComponent = taskIcons[task.icon] || taskIcons[defaultTaskIcon];
               const timeSpent = getTimeSpent(task.id, task.budgetBasis);
               const progressPercentage = task.budgetedTime > 0 ? Math.min((timeSpent / task.budgetedTime) * 100, 100) : 0;
+              
+              const basisDisplay = (typeof task.budgetBasis === 'string' && (task.budgetBasis === 'weekly' || task.budgetBasis === 'monthly'))
+                                   ? ` (${task.budgetBasis})`
+                                   : '';
 
               return (
                 <div key={task.id} className="p-3 rounded-lg border hover:shadow-md transition-shadow">
@@ -49,13 +53,13 @@ export const BudgetedTaskTracker: FC<BudgetedTaskTrackerProps> = ({ tasks, getTi
                       <span className="font-medium">{task.name}</span>
                     </div>
                     <span className="text-sm text-muted-foreground">
-                      {formatMinutesToFriendlyDuration(timeSpent)} / {formatMinutesToFriendlyDuration(task.budgetedTime)} ({task.budgetBasis}) {/* Updated format */}
+                      {formatMinutesToFriendlyDuration(timeSpent)} / {formatMinutesToFriendlyDuration(task.budgetedTime)}{basisDisplay}
                     </span>
                   </div>
                   <Progress value={progressPercentage} aria-label={`${task.name} progress`} className="h-3" />
                   {timeSpent > task.budgetedTime && (
                      <p className="text-xs text-destructive mt-1">
-                       Over budget by {formatMinutesToFriendlyDuration(timeSpent - task.budgetedTime)} {/* Updated format */}
+                       Over budget by {formatMinutesToFriendlyDuration(timeSpent - task.budgetedTime)}
                      </p>
                   )}
                 </div>
