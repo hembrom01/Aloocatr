@@ -37,7 +37,7 @@ export default function TrackerPage() {
   return (
     <div className="space-y-6">
       <div className="text-center mt-4">
-        <p className="text-muted-foreground">Click on a task below to start or stop tracking.</p>
+        <p className="text-foreground">Click on a task below to start or stop tracking.</p> {/* Changed text-muted-foreground to text-foreground */}
       </div>
       
       <Separator className="my-4" />
