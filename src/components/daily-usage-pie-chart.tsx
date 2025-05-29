@@ -7,7 +7,7 @@ import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recha
 import type { Task, TaskLog } from '@/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { format } from 'date-fns';
-import { formatMinutesToFriendlyDuration } from '@/lib/utils'; // Updated import
+import { formatMinutesToFriendlyDuration } from '@/lib/utils';
 
 interface DailyUsagePieChartProps {
   tasks: Task[];
@@ -47,7 +47,7 @@ export const DailyUsagePieChart: FC<DailyUsagePieChartProps> = ({ tasks, taskLog
     });
 
     const totalMinutesInDay = 24 * 60;
-    const untrackedTime = Math.max(0, totalMinutesInDay - totalTrackedTime); // Ensure untracked time isn't negative
+    const untrackedTime = Math.max(0, totalMinutesInDay - totalTrackedTime); 
 
     const chartData = Object.entries(aggregatedData).map(([name, data]) => ({
       name,
@@ -55,17 +55,14 @@ export const DailyUsagePieChart: FC<DailyUsagePieChartProps> = ({ tasks, taskLog
       isTask: data.isTask,
     }));
 
-    if (untrackedTime > 0 || chartData.length === 0) { // Add untracked if it's > 0 or if no tasks logged at all
+    if (untrackedTime > 0 || chartData.length === 0) { 
       chartData.push({ name: 'Untracked Time', value: untrackedTime, isTask: false });
     }
     
-    return chartData.filter(d => d.value > 0 || d.name === 'Untracked Time'); // Show segments with time or always show untracked if it's the only item
+    return chartData.filter(d => d.value > 0 || (d.name === 'Untracked Time' && d.value >= 0));
   }, [taskLogs, tasks]);
 
-  if (dataForChart.length === 0 || (dataForChart.length === 1 && dataForChart[0].name === 'Untracked Time' && dataForChart[0].value === 0 && taskLogs.length > 0) ) {
-     // This condition means all time is tracked, and untracked is 0, but we still want to show the chart if tasks exist.
-     // Let's refine the "no data" condition: show "no data" only if there are no task logs for the day.
-     if (taskLogs.length === 0) {
+  if (taskLogs.length === 0 && (dataForChart.length === 0 || (dataForChart.length === 1 && dataForChart[0].name === 'Untracked Time' && dataForChart[0].value === 24*60) )) {
       return (
         <Card className="mt-6 shadow-md">
           <CardHeader>
@@ -77,26 +74,44 @@ export const DailyUsagePieChart: FC<DailyUsagePieChartProps> = ({ tasks, taskLog
           </CardContent>
         </Card>
       );
-    }
   }
 
 
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
-      const percentage = (payload[0].percent * 100).toFixed(0);
+      const rawPercent = payload[0].percent;
+      const percentage = (typeof rawPercent === 'number' && !isNaN(rawPercent))
+                         ? (rawPercent * 100).toFixed(0)
+                         : '0';
       return (
         <div className="p-2 bg-background border border-border rounded-md shadow-lg">
           <p className="font-semibold">{`${data.name}`}</p>
-          <p className="text-sm text-muted-foreground">{`Time: ${formatMinutesToFriendlyDuration(data.value)} (${percentage}%)`}</p> {/* Updated format */}
+          <p className="text-sm text-muted-foreground">{`Time: ${formatMinutesToFriendlyDuration(data.value)} (${percentage}%)`}</p>
         </div>
       );
     }
     return null;
   };
   
-  // If the only entry is "Untracked Time" and it's the full 1440 minutes, it means no tasks were logged.
-  // This is handled by the taskLogs.length === 0 check above.
+  // If dataForChart is effectively empty (only untracked time with full day value, meaning no tasks logged)
+  // the check above for taskLogs.length === 0 handles this.
+  // If all task values are 0 and untracked time is also 0, the chart might be empty or show 100% untracked with 0 value.
+  // The CustomTooltip fix handles NaN% in such cases.
+  if (dataForChart.every(d => d.value === 0) && dataForChart.length > 0) {
+     return (
+        <Card className="mt-6 shadow-md">
+          <CardHeader>
+            <CardTitle>Daily Time Breakdown</CardTitle>
+            <CardDescription>For {format(selectedDate, 'MMMM d, yyyy')}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground text-center py-10">No time logged for any tasks on this day.</p>
+          </CardContent>
+        </Card>
+      );
+  }
+
 
   return (
     <Card className="mt-6 shadow-md">
@@ -112,12 +127,11 @@ export const DailyUsagePieChart: FC<DailyUsagePieChartProps> = ({ tasks, taskLog
               cx="50%"
               cy="50%"
               labelLine={false}
-              // label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
               outerRadius={100}
-              innerRadius={50} // Makes it a donut chart
+              innerRadius={50} 
               fill="#8884d8"
               dataKey="value"
-              paddingAngle={2}
+              paddingAngle={dataForChart.length > 1 ? 2 : 0} // No padding if only one segment
             >
               {dataForChart.map((entry, index) => (
                 <Cell 
@@ -132,11 +146,10 @@ export const DailyUsagePieChart: FC<DailyUsagePieChartProps> = ({ tasks, taskLog
               verticalAlign="bottom" 
               height={36}
               formatter={(value, entry) => {
-                const { color } = entry;
-                // Format time for legend if needed, here we just show name.
-                // const itemData = dataForChart.find(d => d.name === value);
-                // const formattedTime = itemData ? formatMinutesToFriendlyDuration(itemData.value) : '';
-                // return <span style={{ color }}>{value} ({formattedTime})</span>;
+                // The 'color' property on 'entry' from formatter is not standardly populated with the Cell's fill.
+                // We find the original item to get its properties if needed.
+                const itemData = dataForChart.find(d => d.name === value);
+                const color = itemData?.isTask ? COLORS[dataForChart.filter(d => d.isTask).findIndex(d => d.name === value) % COLORS.length] : UNTRACKED_COLOR;
                 return <span style={{ color }}>{value}</span>;
               }}
             />
@@ -146,3 +159,4 @@ export const DailyUsagePieChart: FC<DailyUsagePieChartProps> = ({ tasks, taskLog
     </Card>
   );
 };
+
