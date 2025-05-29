@@ -37,16 +37,16 @@ export default function TrackerPage() {
   return (
     <div className="space-y-6">
       <div className="text-center mt-4">
-        <p className="text-foreground">Click on a task below to start or stop tracking.</p> {/* Changed text-muted-foreground to text-foreground */}
+        <p className="text-foreground">Click on a task below to start or stop tracking.</p>
       </div>
       
       <Separator className="my-4" />
 
       {tasks.length === 0 && (
-        <Alert variant="default" className="border-primary/50 text-primary-foreground bg-primary/10">
+        <Alert variant="default" className="border-primary/50 bg-primary/10"> {/* Removed text-primary-foreground from here */}
           <AlertCircle className="h-4 w-4 !text-primary" />
-          <AlertTitle className="font-semibold">No Tasks Yet!</AlertTitle>
-          <AlertDescription>
+          <AlertTitle className="font-semibold text-primary">No Tasks Yet!</AlertTitle> {/* Set title color to text-primary */}
+          <AlertDescription className="text-foreground"> {/* Set description color to text-foreground */}
             You haven't added any tasks. Click the 
             <Button variant="link" asChild className="p-0 h-auto ml-1 mr-1 text-primary hover:underline">
               <Link href="/settings">plus icon</Link>
