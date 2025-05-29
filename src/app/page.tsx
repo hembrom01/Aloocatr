@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { useTaskManager } from '@/hooks/use-task-manager';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { AlertCircle, Zap, PlusCircle, TimerIcon } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -12,18 +12,18 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { taskIcons, defaultTaskIcon } from '@/config/icons';
 import { cn } from '@/lib/utils';
 import { useEffect, useState } from 'react'; 
-import { formatSecondsToHHMMSS } from '@/lib/utils'; // Added
+import { formatSecondsToHHMMSS } from '@/lib/utils';
 
 // Component to display individual active task bar
 const ActiveTaskBar = ({ activeTimer, task, onStop }: { activeTimer: import('@/types').ActiveTimer; task: import('@/types').Task | undefined; onStop: () => void }) => {
-  const [elapsedTime, setElapsedTime] = useState('00:00:00'); // Changed default
+  const [elapsedTime, setElapsedTime] = useState('00:00:00');
 
   useEffect(() => {
     const updateDisplay = () => {
       const now = Date.now();
       const diffMs = now - activeTimer.startTime;
       const totalSeconds = Math.floor(diffMs / 1000);
-      setElapsedTime(formatSecondsToHHMMSS(totalSeconds)); // Used new formatter
+      setElapsedTime(formatSecondsToHHMMSS(totalSeconds));
     };
 
     updateDisplay(); // Initial display
@@ -84,7 +84,7 @@ export default function TrackerPage() {
   }
 
   return (
-    <>
+    <div className="animate-page-content-appear">
       {/* Active Timer Display Bars - MOVED TO TOP & MODIFIED */}
       {activeTimers.length > 0 && (
         <div className="w-full max-w-lg mx-auto mb-6 space-y-2">
@@ -169,6 +169,6 @@ export default function TrackerPage() {
           </div>
         </TooltipProvider>
       </div>
-    </>
+    </div>
   );
 }

@@ -97,7 +97,7 @@ export default function SettingsPage() {
   const uncategorizedTasks = tasks.filter(task => !task.categoryId || !categories.find(c => c.id === task.categoryId));
   
   return (
-    <div className="space-y-8 pb-24"> {/* Added padding-bottom for FAB */}
+    <div className="space-y-8 pb-24 animate-page-content-appear"> {/* Added padding-bottom for FAB and animation class */}
       <header className="mb-10">
         <h1 className="text-4xl font-bold tracking-tight text-foreground">Settings</h1>
         <p className="text-muted-foreground">Manage your tasks, categories, and application preferences.</p>

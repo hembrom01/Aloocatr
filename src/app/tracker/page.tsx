@@ -22,7 +22,7 @@ export default function TrackerPage() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 animate-page-content-appear"> {/* Added animation class */}
       <header className="mb-10">
         <h1 className="text-4xl font-bold tracking-tight text-foreground">Task Progress Tracker</h1>
         <p className="text-muted-foreground">Monitor your time spent against your budgeted tasks.</p>
@@ -35,4 +35,3 @@ export default function TrackerPage() {
     </div>
   );
 }
-

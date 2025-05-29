@@ -30,7 +30,7 @@ export default function TimelinePage() {
   }
 
   return (
-    <div className="space-y-8 pb-16"> {/* Added padding-bottom for nav bar */}
+    <div className="space-y-8 pb-16 animate-page-content-appear"> {/* Added padding-bottom for nav bar and animation class */}
       <header className="mb-6">
         <h1 className="text-4xl font-bold tracking-tight text-foreground">
           Timeline for {format(selectedDate, 'MMMM d')}
@@ -54,4 +54,3 @@ export default function TimelinePage() {
     </div>
   );
 }
-
