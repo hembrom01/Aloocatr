@@ -4,7 +4,15 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { Task, TaskLog, ActiveTimer, Category } from '@/types';
 import { v4 as uuidv4 } from 'uuid';
-import { startOfDay as dateFnsStartOfDay, startOfWeek as dateFnsStartOfWeek, startOfMonth as dateFnsStartOfMonth } from 'date-fns';
+import { 
+  startOfDay as dateFnsStartOfDay, 
+  startOfWeek as dateFnsStartOfWeek, 
+  startOfMonth as dateFnsStartOfMonth,
+  endOfDay as dateFnsEndOfDay,
+  eachDayOfInterval,
+  format as dateFnsFormat,
+  isSameDay
+} from 'date-fns';
 
 
 const TASKS_STORAGE_KEY = 'chronoFlowTasks';
@@ -153,11 +161,9 @@ export function useTaskManager() {
     return taskLogs.filter(log => log.taskId === taskId);
   }, [taskLogs]);
   
-  const getLogsForDay = useCallback((date: Date) => {
-    const startOfDay = new Date(date);
-    startOfDay.setHours(0, 0, 0, 0);
-    const endOfDay = new Date(date);
-    endOfDay.setHours(23, 59, 59, 999);
+  const getLogsForDay = useCallback((date: Date): TaskLog[] => {
+    const startOfDay = dateFnsStartOfDay(date);
+    const endOfDay = dateFnsEndOfDay(date);
 
     return taskLogs.filter(log => log.startTime >= startOfDay.getTime() && log.startTime <= endOfDay.getTime())
                    .sort((a, b) => a.startTime - b.startTime);
@@ -170,23 +176,15 @@ export function useTaskManager() {
     if (basis === 'daily') {
       startDate = dateFnsStartOfDay(now);
     } else if (basis === 'weekly') {
-      // Assuming week starts on Sunday for getDay(). For Monday start:
-      // const dayOfWeek = now.getDay(); // 0 (Sun) - 6 (Sat)
-      // const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek; // Adjust for Monday start
-      // startDate = new Date(now);
-      // startDate.setDate(now.getDate() + diff);
-      // startDate.setHours(0,0,0,0);
       startDate = dateFnsStartOfWeek(now, { weekStartsOn: 1 }); // Monday
     } else if (basis === 'monthly') {
       startDate = dateFnsStartOfMonth(now);
     } else { 
       startDate = new Date(0); 
     }
-    // Ensure time component is zeroed out for day, week, month starts
     if (basis !== 'total') {
         startDate.setHours(0,0,0,0);
     }
-
 
     const relevantLogs = taskLogs.filter(log => log.taskId === taskId && log.endTime >= startDate.getTime());
     return relevantLogs.reduce((total, log) => total + log.duration, 0);
@@ -195,6 +193,19 @@ export function useTaskManager() {
   const getCategoryById = useCallback((categoryId: string) => {
     return categories.find(cat => cat.id === categoryId);
   }, [categories]);
+
+  const getAggregatedLogsForPeriod = useCallback((startDate: Date, endDate: Date, dateFormat: 'EEE' | 'MMM d' = 'EEE'): { dateLabel: string, totalMinutes: number }[] => {
+    const daysInPeriod = eachDayOfInterval({ start: startDate, end: endDate });
+    return daysInPeriod.map(day => {
+      const logsForThisDay = getLogsForDay(day);
+      const totalMinutes = logsForThisDay.reduce((sum, log) => sum + log.duration, 0);
+      return {
+        dateLabel: dateFnsFormat(day, dateFormat),
+        totalMinutes,
+      };
+    });
+  }, [getLogsForDay]);
+
 
   return {
     tasks,
@@ -216,6 +227,7 @@ export function useTaskManager() {
     updateCategory,
     deleteCategory,
     getCategoryById,
+    getAggregatedLogsForPeriod, // Export new function
     isLoaded,
   };
 }

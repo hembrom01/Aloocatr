@@ -1,24 +1,38 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { DailyTaskTimeline } from '@/components/daily-task-timeline';
 import { DateNavigator } from '@/components/date-navigator';
 import { useTaskManager } from '@/hooks/use-task-manager';
 import { Zap } from 'lucide-react';
-import { format } from 'date-fns';
+import { format, startOfWeek, endOfWeek } from 'date-fns';
 import { DailyUsagePieChart } from '@/components/daily-usage-pie-chart';
+import { ProductivityTrendChart } from '@/components/productivity-trend-chart'; // New import
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'; // For dropdown
+import { Card, CardContent } from '@/components/ui/card'; // For chart container
+
+type ChartType = 'dailyBreakdown' | 'weeklyProductivity';
 
 export default function TimelinePage() {
   const { 
     tasks, 
     getLogsForDay, 
+    getAggregatedLogsForPeriod, // New hook function
     isLoaded 
   } = useTaskManager();
   
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedChartType, setSelectedChartType] = useState<ChartType>('dailyBreakdown');
 
-  const dailyLogs = getLogsForDay(selectedDate);
+  const dailyLogs = useMemo(() => getLogsForDay(selectedDate), [selectedDate, getLogsForDay]);
+
+  const weeklyProductivityData = useMemo(() => {
+    if (selectedChartType !== 'weeklyProductivity') return [];
+    const weekStart = startOfWeek(selectedDate, { weekStartsOn: 1 }); // Monday
+    const weekEnd = endOfWeek(selectedDate, { weekStartsOn: 1 });
+    return getAggregatedLogsForPeriod(weekStart, weekEnd, 'EEE');
+  }, [selectedDate, selectedChartType, getAggregatedLogsForPeriod]);
 
   if (!isLoaded) {
     return (
@@ -29,23 +43,58 @@ export default function TimelinePage() {
     );
   }
 
+  const renderChart = () => {
+    switch (selectedChartType) {
+      case 'dailyBreakdown':
+        return <DailyUsagePieChart tasks={tasks} taskLogs={dailyLogs} selectedDate={selectedDate} />;
+      case 'weeklyProductivity':
+        return (
+          <ProductivityTrendChart 
+            data={weeklyProductivityData} 
+            title="Weekly Productivity Trend"
+            description={`Tracked time from ${format(startOfWeek(selectedDate, { weekStartsOn: 1 }), 'MMM d')} to ${format(endOfWeek(selectedDate, { weekStartsOn: 1 }), 'MMM d, yyyy')}`}
+          />
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
-    <div className="space-y-8 pb-16 animate-page-content-appear"> {/* Added padding-bottom for nav bar and animation class */}
+    <div className="animate-page-content-appear space-y-8 pb-16">
       <header className="mb-6">
         <h1 className="text-4xl font-bold tracking-tight text-foreground">
           Timeline for {format(selectedDate, 'MMMM d')}
         </h1>
         <p className="text-muted-foreground">
-          A chronological view of your tasks for {format(selectedDate, 'PPP')}.
+          A chronological view of your tasks and productivity for {format(selectedDate, 'PPP')}.
         </p>
       </header>
       
       <DateNavigator selectedDate={selectedDate} onDateChange={setSelectedDate} />
-
-      <section aria-labelledby="daily-usage-pie-chart-title">
-        <h2 id="daily-usage-pie-chart-title" className="sr-only">Daily Time Usage Pie Chart for {format(selectedDate, 'PPP')}</h2>
-        <DailyUsagePieChart tasks={tasks} taskLogs={dailyLogs} selectedDate={selectedDate} />
-      </section>
+      
+      <Card className="shadow-md">
+        <CardContent className="p-4 space-y-4">
+          <div>
+            <label htmlFor="chartTypeSelect" className="text-sm font-medium text-muted-foreground">
+              Select Chart View:
+            </label>
+            <Select value={selectedChartType} onValueChange={(value) => setSelectedChartType(value as ChartType)}>
+              <SelectTrigger id="chartTypeSelect" className="w-full sm:w-[280px] mt-1">
+                <SelectValue placeholder="Select chart type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="dailyBreakdown">Daily Time Breakdown (Pie Chart)</SelectItem>
+                <SelectItem value="weeklyProductivity">Weekly Productivity (Line Chart)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          
+          <div className="mt-4">
+            {renderChart()}
+          </div>
+        </CardContent>
+      </Card>
 
       <section aria-labelledby="daily-task-timeline-title">
         <h2 id="daily-task-timeline-title" className="sr-only">Daily Task Log for {format(selectedDate, 'PPP')}</h2>
