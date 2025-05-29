@@ -4,13 +4,13 @@
 import { useState } from 'react';
 import { TaskForm } from '@/components/task-form';
 import { useTaskManager } from '@/hooks/use-task-manager';
-import type { Task, Category, TaskSubmitData } from '@/types'; // Updated TaskSubmitData import
+import type { Task, Category, TaskFormDataValues } from '@/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger, DialogClose } from '@/components/ui/dialog';
-import { taskIconsLookup, defaultTaskIcon } from '@/config/icons'; // Changed to taskIconsLookup
+import { taskIconsLookup, defaultTaskIcon } from '@/config/icons';
 import { Edit2, PlusCircle, Palette, UserCircle, Zap, Trash2, FolderPlus, Plus } from 'lucide-react';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Separator } from '@/components/ui/separator';
@@ -30,11 +30,11 @@ export default function SettingsPage() {
   const { toast } = useToast();
 
   const [editingTask, setEditingTask] = useState<Task | null>(null);
-  const [showTaskFormDialog, setShowTaskFormDialog] = useState(false); // Renamed for clarity
+  const [showTaskFormDialog, setShowTaskFormDialog] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState('');
   const [isAddCategoryDialogOpen, setIsAddCategoryDialogOpen] = useState(false);
 
-  const handleTaskSubmit = (data: TaskSubmitData, id?: string) => { // Data type is TaskSubmitData now
+  const handleTaskSubmit = (data: TaskFormDataValues, id?: string) => {
     if (id) {
       updateTask({ 
         ...data, 
@@ -102,17 +102,20 @@ export default function SettingsPage() {
       </header>
 
       <Dialog open={showTaskFormDialog} onOpenChange={setShowTaskFormDialog}>
-        <DialogContent className="sm:max-w-lg">
-            {/* DialogHeader and DialogFooter are now part of TaskForm or handled by DialogContent */}
-            <TaskForm
-              task={editingTask}
-              categories={categories}
-              onSubmit={handleTaskSubmit}
-              onDelete={handleDeleteTaskWithConfirmation}
-              onClose={() => setShowTaskFormDialog(false)} // Pass onClose handler
-              formTitle={editingTask ? "Edit Task" : "Add New Task"}
-              submitButtonText={editingTask ? "Update Task" : "Save Task"}
-            />
+        <DialogContent className="sm:max-w-lg max-h-[85vh] p-0"> {/* Adjusted for scrollability */}
+          <ScrollArea className="h-full">
+            <div className="p-6"> {/* Padding applied inside ScrollArea */}
+              <TaskForm
+                task={editingTask}
+                categories={categories}
+                onSubmit={handleTaskSubmit}
+                onDelete={handleDeleteTaskWithConfirmation}
+                onClose={() => setShowTaskFormDialog(false)}
+                formTitle={editingTask ? "Edit Task" : "Add New Task"}
+                submitButtonText={editingTask ? "Update Task" : "Save Task"}
+              />
+            </div>
+          </ScrollArea>
         </DialogContent>
       </Dialog>
 
@@ -274,3 +277,5 @@ export default function SettingsPage() {
     </div>
   );
 }
+
+    
