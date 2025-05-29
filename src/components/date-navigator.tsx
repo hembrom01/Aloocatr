@@ -3,8 +3,19 @@
 
 import type { FC } from 'react';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { format, addDays, subDays, isToday } from 'date-fns';
+import {
+  format,
+  addWeeks,
+  subWeeks,
+  startOfWeek,
+  endOfWeek,
+  eachDayOfInterval,
+  isSameDay,
+  isToday as dateFnsIsToday,
+} from 'date-fns';
+import { cn } from '@/lib/utils';
 
 interface DateNavigatorProps {
   selectedDate: Date;
@@ -12,41 +23,74 @@ interface DateNavigatorProps {
 }
 
 export const DateNavigator: FC<DateNavigatorProps> = ({ selectedDate, onDateChange }) => {
-  const handlePreviousDay = () => {
-    onDateChange(subDays(selectedDate, 1));
+  const currentWeekStart = startOfWeek(selectedDate, { weekStartsOn: 1 }); // Monday
+  const currentWeekEnd = endOfWeek(selectedDate, { weekStartsOn: 1 });
+  const daysInWeek = eachDayOfInterval({ start: currentWeekStart, end: currentWeekEnd });
+
+  const handlePreviousWeek = () => {
+    onDateChange(subWeeks(selectedDate, 1));
   };
 
-  const handleNextDay = () => {
-    onDateChange(addDays(selectedDate, 1));
+  const handleNextWeek = () => {
+    onDateChange(addWeeks(selectedDate, 1));
   };
 
-  const handleGoToToday = () => {
+  const handleGoToCurrentWeek = () => {
     onDateChange(new Date());
   };
 
+  const formattedWeekRange = `${format(currentWeekStart, 'MMM d')} - ${format(currentWeekEnd, 'MMM d, yyyy')}`;
+
+  const today = new Date();
+  const startOfActualCurrentWeek = startOfWeek(today, { weekStartsOn: 1 });
+  const endOfActualCurrentWeek = endOfWeek(today, { weekStartsOn: 1 });
+  const isViewingCurrentActualWeek = selectedDate >= startOfActualCurrentWeek && selectedDate <= endOfActualCurrentWeek;
+
   return (
-    <Card className="mb-6 shadow">
-      <CardContent className="p-4 flex items-center justify-between">
-        <Button variant="outline" size="icon" onClick={handlePreviousDay} aria-label="Previous day">
-          <ChevronLeft className="h-5 w-5" />
-        </Button>
-        <div className="flex flex-col items-center">
-          <span className="text-lg font-semibold text-foreground">
-            {format(selectedDate, 'MMMM d, yyyy')}
-          </span>
-          {!isToday(selectedDate) && (
-             <Button variant="link" size="sm" onClick={handleGoToToday} className="p-0 h-auto text-primary hover:underline">
-              Go to Today
-            </Button>
-          )}
+    <Card className="mb-6 shadow-md">
+      <CardContent className="p-3 sm:p-4 space-y-3">
+        <div className="flex items-center justify-between">
+          <Button variant="outline" size="icon" onClick={handlePreviousWeek} aria-label="Previous week">
+            <ChevronLeft className="h-5 w-5" />
+          </Button>
+          <h3 className="text-md sm:text-lg font-semibold text-foreground text-center tabular-nums">
+            {formattedWeekRange}
+          </h3>
+          <Button variant="outline" size="icon" onClick={handleNextWeek} aria-label="Next week">
+            <ChevronRight className="h-5 w-5" />
+          </Button>
         </div>
-        <Button variant="outline" size="icon" onClick={handleNextDay} aria-label="Next day" disabled={isToday(selectedDate)}>
-          <ChevronRight className="h-5 w-5" />
-        </Button>
+
+        <div className="grid grid-cols-7 gap-1 sm:gap-2">
+          {daysInWeek.map((day) => {
+            const isSelected = isSameDay(day, selectedDate);
+            const isCurrentDayToday = dateFnsIsToday(day);
+            return (
+              <Button
+                key={day.toISOString()}
+                variant={isSelected ? 'default' : isCurrentDayToday ? 'secondary' : 'ghost'}
+                className={cn(
+                  "p-1 sm:p-2 h-auto flex flex-col items-center justify-center rounded-md text-xs sm:text-sm",
+                  isSelected && "ring-2 ring-primary shadow-lg",
+                  isCurrentDayToday && !isSelected && "border border-primary/70"
+                )}
+                onClick={() => onDateChange(day)}
+              >
+                <span className="font-medium">{format(day, 'EEE')}</span>
+                <span className="text-lg sm:text-xl font-bold">{format(day, 'd')}</span>
+              </Button>
+            );
+          })}
+        </div>
+
+        {!isViewingCurrentActualWeek && (
+          <div className="flex justify-center pt-1">
+            <Button variant="link" onClick={handleGoToCurrentWeek} className="text-primary hover:underline h-auto p-1 text-sm">
+              Go to Current Week
+            </Button>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
 };
-
-// Need to add Card and CardContent imports
-import { Card, CardContent } from '@/components/ui/card';
