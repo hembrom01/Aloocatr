@@ -1,10 +1,12 @@
 
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react'; // Removed useEffect
 import { DailyTaskTimeline } from '@/components/daily-task-timeline';
+import { DateNavigator } from '@/components/date-navigator'; // Added
 import { useTaskManager } from '@/hooks/use-task-manager';
 import { Zap } from 'lucide-react';
+import { format } from 'date-fns'; // Added for title
 
 export default function TimelinePage() {
   const { 
@@ -13,16 +15,11 @@ export default function TimelinePage() {
     isLoaded 
   } = useTaskManager();
   
-  const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(new Date()); // Renamed from currentDate
 
-  useEffect(() => {
-    const timerId = setInterval(() => {
-      setCurrentDate(new Date());
-    }, 60000); // Update every minute to refresh timeline for "today"
-    return () => clearInterval(timerId);
-  }, []);
+  // Removed useEffect for auto-updating to today, as date is now manually selected
 
-  const dailyLogs = getLogsForDay(currentDate);
+  const dailyLogs = getLogsForDay(selectedDate);
 
   if (!isLoaded) {
     return (
@@ -35,14 +32,20 @@ export default function TimelinePage() {
 
   return (
     <div className="space-y-8">
-      <header className="mb-10">
-        <h1 className="text-4xl font-bold tracking-tight text-foreground">Daily Timeline</h1>
-        <p className="text-muted-foreground">A chronological view of your tasks for the day.</p>
+      <header className="mb-6"> {/* Adjusted margin */}
+        <h1 className="text-4xl font-bold tracking-tight text-foreground">
+          Timeline for {format(selectedDate, 'MMMM d')}
+        </h1>
+        <p className="text-muted-foreground">
+          A chronological view of your tasks for {format(selectedDate, 'PPP')}.
+        </p>
       </header>
       
+      <DateNavigator selectedDate={selectedDate} onDateChange={setSelectedDate} />
+
       <section aria-labelledby="daily-task-timeline-title">
-        <h2 id="daily-task-timeline-title" className="sr-only">Daily Task Log</h2>
-        <DailyTaskTimeline tasks={tasks} taskLogs={dailyLogs} currentDate={currentDate} />
+        <h2 id="daily-task-timeline-title" className="sr-only">Daily Task Log for {format(selectedDate, 'PPP')}</h2>
+        <DailyTaskTimeline tasks={tasks} taskLogs={dailyLogs} currentDate={selectedDate} />
       </section>
     </div>
   );

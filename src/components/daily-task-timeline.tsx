@@ -1,3 +1,4 @@
+
 "use client";
 
 import type { FC } from 'react';
@@ -6,12 +7,12 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import type { Task, TaskLog } from '@/types';
 import { taskIcons, defaultTaskIcon } from '@/config/icons';
-import { format } from 'date-fns';
+import { format, isToday } from 'date-fns'; // Added isToday
 
 interface DailyTaskTimelineProps {
   tasks: Task[];
   taskLogs: TaskLog[];
-  currentDate: Date;
+  currentDate: Date; // Prop name remains currentDate to match usage, but it's the selected date
 }
 
 export const DailyTaskTimeline: FC<DailyTaskTimelineProps> = ({ tasks, taskLogs, currentDate }) => {
@@ -21,14 +22,18 @@ export const DailyTaskTimeline: FC<DailyTaskTimelineProps> = ({ tasks, taskLogs,
     return task ? taskIcons[task.icon] || taskIcons[defaultTaskIcon] : taskIcons[defaultTaskIcon];
   };
 
+  const timelineTitle = isToday(currentDate) ? "Today's Timeline" : `Timeline for ${format(currentDate, 'MMMM d')}`;
+  const timelineDescription = format(currentDate, 'PPP');
+
   if (!taskLogs.length) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Today's Timeline ({format(currentDate, 'PPP')})</CardTitle>
+          <CardTitle>{timelineTitle}</CardTitle>
+          <CardDescription>{timelineDescription}</CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground">No tasks logged for today yet. Start a timer to see your progress!</p>
+          <p className="text-muted-foreground">No tasks logged for {isToday(currentDate) ? 'today' : format(currentDate, 'MMMM d')} yet. Start a timer to see your progress!</p>
         </CardContent>
       </Card>
     );
@@ -37,8 +42,8 @@ export const DailyTaskTimeline: FC<DailyTaskTimelineProps> = ({ tasks, taskLogs,
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Today's Timeline</CardTitle>
-        <CardDescription>{format(currentDate, 'PPP')}</CardDescription>
+        <CardTitle>{timelineTitle}</CardTitle>
+        <CardDescription>{timelineDescription}</CardDescription>
       </CardHeader>
       <CardContent>
         <ScrollArea className="h-[300px] pr-4">
