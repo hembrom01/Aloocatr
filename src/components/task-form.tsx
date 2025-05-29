@@ -42,12 +42,14 @@ interface TaskFormProps {
 }
 
 const durationPresets = [
-  { label: "Custom", value: "custom" },
+  { label: "Custom (enter days below)", value: "custom" },
+  { label: "Indefinite (no end date)", value: "0" },
   { label: "7 days (1 Week)", value: "7" },
   { label: "14 days (2 Weeks)", value: "14" },
-  { label: "30 days (1 Month)", value: "30" },
-  { label: "60 days (2 Months)", value: "60" },
-  { label: "90 days (3 Months)", value: "90" },
+  { label: "30 days (~1 Month)", value: "30" },
+  { label: "60 days (~2 Months)", value: "60" },
+  { label: "90 days (~3 Months/Quarterly)", value: "90" },
+  { label: "Monday to Friday (5 days, daily budget)", value: "5_daily" },
 ];
 
 export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDelete, onClose, formTitle = "Add New Task", submitButtonText = "Save Task" }) => {
@@ -70,7 +72,7 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
         budgetTimeUnit,
         budgetBasis: taskToEdit.budgetBasis,
         categoryId: taskToEdit.categoryId || null,
-        targetDurationDays: taskToEdit.targetDurationDays === undefined ? null : taskToEdit.targetDurationDays,
+        targetDurationDays: taskToEdit.targetDurationDays === undefined || taskToEdit.targetDurationDays === null ? null : taskToEdit.targetDurationDays,
       };
     }
     return {
@@ -80,7 +82,7 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
       budgetTimeUnit: 'minutes',
       budgetBasis: 'weekly',
       categoryId: null,
-      targetDurationDays: null,
+      targetDurationDays: null, // Default to null for indefinite unless a preset is chosen
     };
   };
   
@@ -99,7 +101,7 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
     const currentValues = getInitialFormValues(task);
     setCurrentTimeAllocationForAI(`${currentValues.budgetTimeValue} ${currentValues.budgetTimeUnit}`);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [task]); // form.reset is stable, no need to include in deps array
+  }, [task]);
   
   const watchedBudgetTimeValue = form.watch("budgetTimeValue");
   const watchedBudgetTimeUnit = form.watch("budgetTimeUnit");
@@ -122,7 +124,7 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
       budgetedTime: totalMinutes,
       budgetBasis: data.budgetBasis,
       categoryId: data.categoryId,
-      targetDurationDays: data.targetDurationDays === null || data.targetDurationDays === undefined ? undefined : data.targetDurationDays,
+      targetDurationDays: data.targetDurationDays === null || data.targetDurationDays === undefined ? null : Number(data.targetDurationDays),
     };
 
     onSubmit(taskDataToSubmit, task?.id);
@@ -161,12 +163,18 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
   
   const handleDurationPresetChange = (value: string) => {
     if (value === "custom") {
-      // User might want to clear or manually edit
-      // form.setValue('targetDurationDays', null); // Optional: clear if they select custom
+      // Do nothing, user will input manually
+    } else if (value === "5_daily") {
+      form.setValue('targetDurationDays', 5);
+      form.setValue('budgetBasis', 'daily', { shouldValidate: true });
     } else {
       const days = parseInt(value, 10);
       if (!isNaN(days)) {
         form.setValue('targetDurationDays', days);
+         // If setting a specific duration like 7 days, and budget basis is not daily,
+        // it makes sense for it to be weekly or monthly.
+        // Let's not force change budgetBasis here unless it's the 5_daily preset.
+        // User can select budgetBasis independently for other durations.
       }
     }
   };
@@ -302,7 +310,7 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Budget Basis</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select budget basis" />
@@ -325,7 +333,7 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
               name="targetDurationDays"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Target Duration (days, optional)</FormLabel>
+                  <FormLabel>Target Duration (days)</FormLabel>
                   <FormControl>
                     <Input 
                       type="number" 
@@ -344,7 +352,7 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
             />
              <FormItem>
                 <FormLabel>Set Duration Preset</FormLabel>
-                <Select onValueChange={handleDurationPresetChange}>
+                <Select onValueChange={handleDurationPresetChange} defaultValue="custom">
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select a preset" />
@@ -358,6 +366,9 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
                 </Select>
               </FormItem>
           </div>
+          <p className="text-xs text-muted-foreground -mt-2">
+            Set to 0 or leave "Target Duration (days)" empty for an indefinite task.
+          </p>
           
           <ShadDialogFooter className="mt-8">
             <Button variant="destructive" type="button" onClick={onClose}>
@@ -372,3 +383,5 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
     </>
   );
 };
+
+    

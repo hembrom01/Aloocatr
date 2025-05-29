@@ -2,28 +2,41 @@
 "use client";
 
 import type { FC } from 'react';
-import { memo } from 'react';
+import { memo, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import type { Task } from '@/types';
-import { taskIconsLookup, defaultTaskIcon } from '@/config/icons'; // Changed to taskIconsLookup
+import { taskIconsLookup, defaultTaskIcon } from '@/config/icons';
 import { formatMinutesToFriendlyDuration } from '@/lib/utils';
 
 interface BudgetedTaskTrackerProps {
   tasks: Task[];
-  getTimeSpent: (taskId: string, basis: 'daily' | 'weekly' | 'monthly') => number; // Added 'daily'
+  getTimeSpent: (taskId: string, basis: 'daily' | 'weekly' | 'monthly') => number;
 }
 
 const BudgetedTaskTrackerComponent: FC<BudgetedTaskTrackerProps> = ({ tasks, getTimeSpent }) => {
-  if (!tasks.length) {
+
+  const activeTasks = useMemo(() => {
+    const now = Date.now();
+    return tasks.filter(task => {
+      if (task.targetDurationDays === null || task.targetDurationDays === undefined || task.targetDurationDays <= 0) {
+        return true; // Indefinite task, always active
+      }
+      const taskEndDate = task.createdAt + (task.targetDurationDays * 24 * 60 * 60 * 1000);
+      return taskEndDate > now; // Active if end date is in the future
+    });
+  }, [tasks]);
+
+
+  if (!activeTasks.length) {
     return (
       <Card>
         <CardHeader>
           <CardTitle>Budgeted Task Tracker</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground">No tasks budgeted yet. Add tasks in Settings to track your progress.</p>
+          <p className="text-muted-foreground">No active budgeted tasks. Add tasks in Settings or check if existing tasks have expired.</p>
         </CardContent>
       </Card>
     );
@@ -37,7 +50,7 @@ const BudgetedTaskTrackerComponent: FC<BudgetedTaskTrackerProps> = ({ tasks, get
       <CardContent>
         <ScrollArea className="h-[300px] pr-4">
           <div className="space-y-6">
-            {tasks.map((task) => {
+            {activeTasks.map((task) => {
               const IconComponent = taskIconsLookup[task.icon] || taskIconsLookup[defaultTaskIcon];
               const timeSpent = getTimeSpent(task.id, task.budgetBasis);
               const progressPercentage = task.budgetedTime > 0 ? Math.min((timeSpent / task.budgetedTime) * 100, 100) : 0;
@@ -82,3 +95,5 @@ const BudgetedTaskTrackerComponent: FC<BudgetedTaskTrackerProps> = ({ tasks, get
 
 export const BudgetedTaskTracker = memo(BudgetedTaskTrackerComponent);
 BudgetedTaskTracker.displayName = 'BudgetedTaskTracker';
+
+    
