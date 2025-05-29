@@ -127,8 +127,8 @@ export default function TrackerPage() {
         )}
 
         <TooltipProvider>
-          {/* Main container for task buttons - Adjusted gap and button size */}
-          <div className="flex flex-wrap justify-center items-start gap-1 px-6">
+          {/* Main container for task buttons - Using Grid for 4 columns */}
+          <div className="grid grid-cols-4 gap-1 px-6">
             {tasks.map((task) => {
               const IconComponent = taskIcons[task.icon] || taskIcons[defaultTaskIcon];
               const isActive = isTaskActive(task.id);
