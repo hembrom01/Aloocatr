@@ -127,7 +127,7 @@ export default function TrackerPage() {
         )}
 
         <TooltipProvider>
-          <div className="flex flex-wrap justify-center items-start gap-3 px-6">
+          <div className="grid grid-cols-4 gap-3 px-8"> {/* Changed from flex to grid, increased padding */}
             {tasks.map((task) => {
               const IconComponent = taskIcons[task.icon] || taskIcons[defaultTaskIcon];
               const isActive = isTaskActive(task.id);
@@ -137,7 +137,7 @@ export default function TrackerPage() {
                     <Button
                       variant="outline"
                       className={cn(
-                        "flex flex-col items-center justify-center h-20 w-20 p-2 shadow-sm hover:shadow-md transition-all transform hover:scale-105", 
+                        "flex flex-col items-center justify-center aspect-square p-2 shadow-sm hover:shadow-md transition-all transform hover:scale-105", // Added aspect-square, removed fixed h/w
                         isActive && "ring-2 ring-primary bg-primary/10 border-primary"
                       )}
                       onClick={() => toggleTask(task.id)}
@@ -160,7 +160,7 @@ export default function TrackerPage() {
                 <Link href="/settings" passHref legacyBehavior>
                   <Button
                     variant="outline"
-                    className="flex flex-col items-center justify-center h-20 w-20 p-2 shadow-sm hover:shadow-md transition-all transform hover:scale-105" 
+                    className="flex flex-col items-center justify-center aspect-square p-2 shadow-sm hover:shadow-md transition-all transform hover:scale-105" // Added aspect-square, removed fixed h/w
                     aria-label="Add new task"
                   >
                     <PlusCircle className="h-8 w-8 text-muted-foreground" />
