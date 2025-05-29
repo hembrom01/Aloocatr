@@ -143,7 +143,7 @@ export default function TrackerPage() {
                       onClick={() => toggleTask(task.id)}
                       aria-label={isActive ? `Stop ${task.name}` : `Start ${task.name}`}
                     >
-                      <IconComponent className={cn("h-[72px] w-[72px]", isActive ? "text-primary" : "text-muted-foreground")} /> 
+                      <IconComponent className={cn("h-[90px] w-[90px]", isActive ? "text-primary" : "text-muted-foreground")} /> 
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
@@ -160,7 +160,7 @@ export default function TrackerPage() {
                     className="flex flex-col items-center justify-center p-2 h-24 w-24 shadow-sm hover:shadow-md transition-all transform hover:scale-105"
                     aria-label="Add new task"
                   >
-                    <PlusCircle className="h-[72px] w-[72px] text-muted-foreground" /> 
+                    <PlusCircle className="h-[90px] w-[90px] text-muted-foreground" /> 
                   </Button>
                 </Link>
               </TooltipTrigger>
