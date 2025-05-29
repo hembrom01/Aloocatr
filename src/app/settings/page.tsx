@@ -102,20 +102,17 @@ export default function SettingsPage() {
       </header>
 
       <Dialog open={showTaskFormDialog} onOpenChange={setShowTaskFormDialog}>
-        <DialogContent className="sm:max-w-lg max-h-[85vh] p-0"> {/* Adjusted for scrollability */}
-          <ScrollArea className="h-full">
-            <div className="p-6"> {/* Padding applied inside ScrollArea */}
-              <TaskForm
-                task={editingTask}
-                categories={categories}
-                onSubmit={handleTaskSubmit}
-                onDelete={handleDeleteTaskWithConfirmation}
-                onClose={() => setShowTaskFormDialog(false)}
-                formTitle={editingTask ? "Edit Task" : "Add New Task"}
-                submitButtonText={editingTask ? "Update Task" : "Save Task"}
-              />
-            </div>
-          </ScrollArea>
+        <DialogContent className="sm:max-w-lg max-h-[85vh] overflow-y-auto"> {/* MODIFIED: Added overflow-y-auto, removed p-0 */}
+          {/* REMOVED ScrollArea and inner div with padding */}
+          <TaskForm
+            task={editingTask}
+            categories={categories}
+            onSubmit={handleTaskSubmit}
+            onDelete={handleDeleteTaskWithConfirmation}
+            onClose={() => setShowTaskFormDialog(false)}
+            formTitle={editingTask ? "Edit Task" : "Add New Task"}
+            submitButtonText={editingTask ? "Update Task" : "Save Task"}
+          />
         </DialogContent>
       </Dialog>
 
@@ -277,5 +274,3 @@ export default function SettingsPage() {
     </div>
   );
 }
-
-    
