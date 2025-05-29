@@ -17,7 +17,21 @@ export type TaskIconName =
   | 'ShoppingCart'
   | 'Tv'
   | 'Users'
-  | 'Home';
+  | 'Home'
+  // New Icons
+  | 'GraduationCap' // Academics/Learning
+  | 'Sprout' // Personal Growth/New Habits
+  | 'BriefcaseMedical' // Health/Appointments
+  | 'MessageSquare' // Communication/Meetings
+  | 'Car' // Commute/Travel
+  | 'Wrench' // Chores/Maintenance
+  | 'Bed' // Rest/Sleep
+  | 'PenTool' // Writing/Journaling
+  | 'ShieldCheck' // Responsibilities
+  | 'Brain' // Deep Work/Focus
+  | 'Lightbulb' // Ideas/Brainstorming
+  | 'Mountain' // Outdoor Activities/Challenges
+  | 'Dog'; // Pets
 
 export interface Category {
   id: string;
@@ -36,6 +50,17 @@ export interface Task {
   targetDurationDays?: number | null; // Optional: for how many days the target is active
 }
 
+// Renamed from TaskSubmitData in previous iterations, more generic now
+export interface TaskFormDataValues {
+  name: string;
+  icon: TaskIconName;
+  budgetedTime: number; // in minutes
+  budgetBasis: 'daily' | 'weekly' | 'monthly';
+  categoryId?: string | null;
+  targetDurationDays?: number | null;
+}
+
+
 export interface TaskLog {
   id: string;
   taskId: string;
@@ -48,3 +73,4 @@ export interface ActiveTimer {
   taskId: string;
   startTime: number;
 }
+

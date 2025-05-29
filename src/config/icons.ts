@@ -2,7 +2,9 @@
 import type { LucideIcon } from 'lucide-react';
 import { 
   Briefcase, BookOpen, Coffee, Dumbbell, Code, Music, Utensils, Activity,
-  Plane, Palette, DollarSign, Heart, ShoppingCart, Tv, Users, Home
+  Plane, Palette, DollarSign, Heart, ShoppingCart, Tv, Users, Home,
+  GraduationCap, Sprout, BriefcaseMedical, MessageSquare, Car, Wrench,
+  Bed, PenTool, ShieldCheck, Brain, Lightbulb, Mountain, Dog
 } from 'lucide-react';
 import type { TaskIconName } from '@/types';
 
@@ -21,8 +23,20 @@ export const categorizedTaskIcons: IconCategory[] = [
     categoryLabel: "Work & Productivity",
     icons: [
       { name: 'Briefcase', IconComponent: Briefcase },
-      { name: 'BookOpen', IconComponent: BookOpen },
       { name: 'Code', IconComponent: Code },
+      { name: 'MessageSquare', IconComponent: MessageSquare },
+      { name: 'Brain', IconComponent: Brain },
+      { name: 'Lightbulb', IconComponent: Lightbulb },
+      { name: 'ShieldCheck', IconComponent: ShieldCheck },
+    ],
+  },
+  {
+    categoryLabel: "Education & Growth",
+    icons: [
+      { name: 'BookOpen', IconComponent: BookOpen },
+      { name: 'GraduationCap', IconComponent: GraduationCap },
+      { name: 'Sprout', IconComponent: Sprout },
+      { name: 'PenTool', IconComponent: PenTool },
     ],
   },
   {
@@ -32,9 +46,18 @@ export const categorizedTaskIcons: IconCategory[] = [
       { name: 'Dumbbell', IconComponent: Dumbbell },
       { name: 'Music', IconComponent: Music },
       { name: 'Utensils', IconComponent: Utensils },
-      { name: 'Palette', IconComponent: Palette }, // Art/Creativity
-      { name: 'Heart', IconComponent: Heart }, // Health/Wellbeing/Relationships
-      { name: 'Tv', IconComponent: Tv }, // Entertainment
+      { name: 'Palette', IconComponent: Palette },
+      { name: 'Tv', IconComponent: Tv },
+      { name: 'Mountain', IconComponent: Mountain },
+      { name: 'Dog', IconComponent: Dog },
+    ],
+  },
+  {
+    categoryLabel: "Health & Wellbeing",
+    icons: [
+      { name: 'Heart', IconComponent: Heart },
+      { name: 'BriefcaseMedical', IconComponent: BriefcaseMedical },
+      { name: 'Bed', IconComponent: Bed },
     ],
   },
   {
@@ -42,6 +65,8 @@ export const categorizedTaskIcons: IconCategory[] = [
     icons: [
       { name: 'Plane', IconComponent: Plane },
       { name: 'ShoppingCart', IconComponent: ShoppingCart },
+      { name: 'Car', IconComponent: Car },
+      { name: 'Wrench', IconComponent: Wrench },
     ],
   },
   {
@@ -81,4 +106,3 @@ export const defaultTaskIcon: TaskIconName = 'Activity';
 
 // For compatibility with old references, though categorizedTaskIcons and taskIconsLookup are preferred
 export const taskIcons: Record<TaskIconName, LucideIcon> = taskIconsLookup;
-

@@ -2,21 +2,22 @@
 "use client";
 
 import type { FC } from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect }import 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup, SelectLabel as ShadSelectLabel } from '@/components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card'; // Added CardFooter
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+// Removed Card imports as form is in Dialog
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import type { Task, TaskIconName, Category } from '@/types';
-import { categorizedTaskIcons, taskIconsLookup, defaultTaskIcon } from '@/config/icons'; // Updated imports
+import type { Task, TaskIconName, Category, TaskFormDataValues } from '@/types'; // Updated TaskFormDataValues
+import { taskIconsLookup, defaultTaskIcon } from '@/config/icons';
 import { AiTimeSuggester } from './ai-time-suggester';
 import { useToast } from '@/hooks/use-toast';
-import { Trash2 } from 'lucide-react';
-import { DialogFooter as ShadDialogFooter } from '@/components/ui/dialog'; // For the main dialog footer
+import { Trash2, ChevronDown } from 'lucide-react'; // Added ChevronDown for IconPicker button
+import { DialogFooter as ShadDialogFooter } from '@/components/ui/dialog';
+import { IconPicker } from './icon-picker'; // Import the new IconPicker
 
 const taskFormSchema = z.object({
   name: z.string().min(1, "Task name is required"),
@@ -28,27 +29,32 @@ const taskFormSchema = z.object({
   targetDurationDays: z.coerce.number().min(0, "Duration must be 0 or more days").optional().nullable(), // 0 or null for indefinite
 });
 
-// This will be the data structure used by the form internally
-type TaskFormData = z.infer<typeof taskFormSchema>;
-
-// This is the structure expected by the onSubmit prop (matches Task, but without id/createdAt)
-type TaskSubmitData = Omit<Task, 'id' | 'createdAt'>;
-
+type TaskFormInternalData = z.infer<typeof taskFormSchema>;
 
 interface TaskFormProps {
   task?: Task | null;
   categories: Category[];
-  onSubmit: (data: TaskSubmitData, id?: string) => void;
+  onSubmit: (data: TaskFormDataValues, id?: string) => void;
   onDelete?: (taskId: string) => void;
-  onClose: () => void; // New prop to handle closing the dialog
+  onClose: () => void;
   formTitle?: string;
   submitButtonText?: string;
 }
 
+const durationPresets = [
+  { label: "Custom", value: "custom" },
+  { label: "7 days (1 Week)", value: "7" },
+  { label: "14 days (2 Weeks)", value: "14" },
+  { label: "30 days (1 Month)", value: "30" },
+  { label: "60 days (2 Months)", value: "60" },
+  { label: "90 days (3 Months)", value: "90" },
+];
+
 export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDelete, onClose, formTitle = "Add New Task", submitButtonText = "Save Task" }) => {
   const { toast } = useToast();
+  const [isIconPickerOpen, setIsIconPickerOpen] = useState(false);
 
-  const getInitialFormValues = (taskToEdit?: Task | null): TaskFormData => {
+  const getInitialFormValues = (taskToEdit?: Task | null): TaskFormInternalData => {
     if (taskToEdit) {
       const totalMinutes = taskToEdit.budgetedTime;
       let budgetTimeValue = totalMinutes;
@@ -74,11 +80,11 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
       budgetTimeUnit: 'minutes',
       budgetBasis: 'weekly',
       categoryId: null,
-      targetDurationDays: null, // Default to null (indefinite)
+      targetDurationDays: null,
     };
   };
   
-  const form = useForm<TaskFormData>({
+  const form = useForm<TaskFormInternalData>({
     resolver: zodResolver(taskFormSchema),
     defaultValues: getInitialFormValues(task),
   });
@@ -93,23 +99,24 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
     const currentValues = getInitialFormValues(task);
     setCurrentTimeAllocationForAI(`${currentValues.budgetTimeValue} ${currentValues.budgetTimeUnit}`);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [task, form.reset]); // form.reset is stable
+  }, [task]); // form.reset is stable, no need to include in deps array
   
   const watchedBudgetTimeValue = form.watch("budgetTimeValue");
   const watchedBudgetTimeUnit = form.watch("budgetTimeUnit");
+  const watchedIcon = form.watch("icon");
 
   useEffect(() => {
     setCurrentTimeAllocationForAI(`${watchedBudgetTimeValue || 0} ${watchedBudgetTimeUnit || 'minutes'}`);
   }, [watchedBudgetTimeValue, watchedBudgetTimeUnit]);
 
 
-  const handleFormSubmit: SubmitHandler<TaskFormData> = (data) => {
+  const handleFormSubmit: SubmitHandler<TaskFormInternalData> = (data) => {
     let totalMinutes = data.budgetTimeValue;
     if (data.budgetTimeUnit === 'hours') {
       totalMinutes = data.budgetTimeValue * 60;
     }
 
-    const taskDataToSubmit: TaskSubmitData = {
+    const taskDataToSubmit: TaskFormDataValues = {
       name: data.name,
       icon: data.icon,
       budgetedTime: totalMinutes,
@@ -127,7 +134,7 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
       form.reset(getInitialFormValues(null));
       setCurrentTimeAllocationForAI('60 minutes');
     }
-    // onClose(); // Close dialog after submit. The parent component (SettingsPage) might also handle this.
+    // onClose(); // Parent component (SettingsPage) closes the dialog on submit now
   };
 
   const handleAiSuggestionApplied = (suggestedTime: string) => {
@@ -151,11 +158,22 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
       toast({ title: "AI Suggestion Format Error", description: `Could not parse unit from "${suggestedTime}".`, variant: "destructive" });
     }
   };
+  
+  const handleDurationPresetChange = (value: string) => {
+    if (value === "custom") {
+      // User might want to clear or manually edit
+      // form.setValue('targetDurationDays', null); // Optional: clear if they select custom
+    } else {
+      const days = parseInt(value, 10);
+      if (!isNaN(days)) {
+        form.setValue('targetDurationDays', days);
+      }
+    }
+  };
+  
+  const SelectedIconComponent = taskIconsLookup[watchedIcon] || taskIconsLookup[defaultTaskIcon];
 
   return (
-    // This component is now rendered inside a DialogContent, so Card isn't strictly needed for modal appearance.
-    // However, keeping it for structure and potential reuse elsewhere if needed.
-    // Removing Card and CardHeader/Content for direct Dialog styling if preferred.
     <>
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold">{formTitle}</h2>
@@ -183,40 +201,25 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="icon"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Icon</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select an icon" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {categorizedTaskIcons.map(category => (
-                      <SelectGroup key={category.categoryLabel}>
-                        <ShadSelectLabel>{category.categoryLabel}</ShadSelectLabel>
-                        {category.icons.map(iconItem => {
-                          const IconComponent = iconItem.IconComponent;
-                          return (
-                            <SelectItem key={iconItem.name} value={iconItem.name}>
-                              <div className="flex items-center">
-                                <IconComponent className="mr-2 h-5 w-5" />
-                                {iconItem.name}
-                              </div>
-                            </SelectItem>
-                          );
-                        })}
-                      </SelectGroup>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
+          <FormItem>
+            <FormLabel>Icon</FormLabel>
+            <Button 
+              variant="outline" 
+              type="button" 
+              className="w-full justify-start text-left font-normal"
+              onClick={() => setIsIconPickerOpen(true)}
+            >
+              <SelectedIconComponent className="mr-2 h-5 w-5" />
+              {watchedIcon}
+              <ChevronDown className="ml-auto h-4 w-4 opacity-50" />
+            </Button>
+            <FormMessage>{form.formState.errors.icon?.message}</FormMessage>
+          </FormItem>
+          <IconPicker 
+            isOpen={isIconPickerOpen}
+            onOpenChange={setIsIconPickerOpen}
+            currentIcon={watchedIcon}
+            onIconSelect={(iconName) => form.setValue('icon', iconName, { shouldValidate: true })}
           />
           
           <FormField
@@ -267,7 +270,7 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
               name="budgetTimeUnit"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="sr-only">Time Unit</FormLabel> {/* Label is visually covered by "Budgeted Time" */}
+                  <FormLabel className="sr-only">Time Unit</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
@@ -315,29 +318,47 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
               </FormItem>
             )}
           />
-
-          <FormField
-            control={form.control}
-            name="targetDurationDays"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Target Duration (days, optional)</FormLabel>
-                <FormControl>
-                  <Input 
-                    type="number" 
-                    placeholder="e.g., 30 (0 or empty for indefinite)" 
-                    {...field} 
-                    value={field.value === null || field.value === undefined ? '' : field.value}
-                    onChange={e => field.onChange(e.target.value === '' ? null : parseInt(e.target.value, 10))}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
           
-          {/* DialogFooter is handled by the parent DialogContent component */}
-          {/* This form's submit button will be placed in the DialogFooter by parent */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
+            <FormField
+              control={form.control}
+              name="targetDurationDays"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Target Duration (days, optional)</FormLabel>
+                  <FormControl>
+                    <Input 
+                      type="number" 
+                      placeholder="e.g., 30 (0 or empty for indefinite)" 
+                      {...field} 
+                      value={field.value === null || field.value === undefined ? '' : String(field.value)}
+                      onChange={e => {
+                        const val = e.target.value;
+                        field.onChange(val === '' ? null : parseInt(val, 10));
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+             <FormItem>
+                <FormLabel>Set Duration Preset</FormLabel>
+                <Select onValueChange={handleDurationPresetChange}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a preset" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {durationPresets.map(preset => (
+                       <SelectItem key={preset.value} value={preset.value}>{preset.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormItem>
+          </div>
+          
           <ShadDialogFooter className="mt-8">
             <Button variant="destructive" type="button" onClick={onClose}>
               Close
