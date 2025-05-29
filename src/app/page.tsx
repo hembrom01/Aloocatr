@@ -138,7 +138,7 @@ export default function TrackerPage() {
                     <Button
                       variant="outline"
                       className={cn(
-                        "h-18 w-18 p-2 flex flex-col items-center justify-start", // Changed to justify-start
+                        "h-22 w-18 p-2 flex flex-col items-center justify-center",
                         "shadow-sm hover:shadow-md transition-all transform hover:scale-105",
                         isActive && "ring-2 ring-primary bg-primary/10 border-primary"
                       )}
@@ -146,7 +146,7 @@ export default function TrackerPage() {
                       aria-label={isActive ? `Stop ${task.name}` : `Start ${task.name}`}
                     >
                       <IconComponent className={cn("h-8 w-8", isActive ? "text-primary" : "text-muted-foreground")} />
-                      <span className="mt-1 text-[11px] text-center w-full overflow-hidden"> {/* Added overflow-hidden */}
+                      <span className="mt-1 text-[11px] text-center w-full">
                         {task.name}
                       </span>
                     </Button>
@@ -162,11 +162,11 @@ export default function TrackerPage() {
                 <Link href="/settings" passHref legacyBehavior>
                   <Button
                     variant="outline"
-                    className="h-18 w-18 p-2 flex flex-col items-center justify-start shadow-sm hover:shadow-md transition-all transform hover:scale-105"  // Changed to justify-start
+                    className="h-22 w-18 p-2 flex flex-col items-center justify-center shadow-sm hover:shadow-md transition-all transform hover:scale-105"
                     aria-label="Add new task"
                   >
                     <PlusCircle className="h-8 w-8 text-muted-foreground" />
-                     <span className="mt-1 text-[11px] text-center w-full overflow-hidden"> {/* Added overflow-hidden */}
+                     <span className="mt-1 text-[11px] text-center w-full">
                         Add Task
                       </span>
                   </Button>
@@ -182,3 +182,4 @@ export default function TrackerPage() {
     </div>
   );
 }
+
