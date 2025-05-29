@@ -137,7 +137,7 @@ export default function TrackerPage() {
                     <Button
                       variant="outline"
                       className={cn(
-                        "flex flex-col items-center justify-center p-2 h-24 w-24 shadow-sm hover:shadow-md transition-all transform hover:scale-105",
+                        "flex flex-col items-center justify-center h-24 w-24 shadow-sm hover:shadow-md transition-all transform hover:scale-105", // Removed p-2
                         isActive && "ring-2 ring-primary bg-primary/10 border-primary" 
                       )}
                       onClick={() => toggleTask(task.id)}
@@ -157,7 +157,7 @@ export default function TrackerPage() {
                 <Link href="/settings" passHref legacyBehavior>
                   <Button
                     variant="outline"
-                    className="flex flex-col items-center justify-center p-2 h-24 w-24 shadow-sm hover:shadow-md transition-all transform hover:scale-105"
+                    className="flex flex-col items-center justify-center h-24 w-24 shadow-sm hover:shadow-md transition-all transform hover:scale-105" // Removed p-2
                     aria-label="Add new task"
                   >
                     <PlusCircle className="h-[90px] w-[90px] text-muted-foreground" /> 
