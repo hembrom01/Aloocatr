@@ -7,7 +7,7 @@ import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import type { Task } from '@/types';
 import { taskIcons, defaultTaskIcon } from '@/config/icons';
-import { formatMinutesToHHMM } from '@/lib/utils'; // Added
+import { formatMinutesToFriendlyDuration } from '@/lib/utils'; // Updated import
 
 interface BudgetedTaskTrackerProps {
   tasks: Task[];
@@ -49,13 +49,13 @@ export const BudgetedTaskTracker: FC<BudgetedTaskTrackerProps> = ({ tasks, getTi
                       <span className="font-medium">{task.name}</span>
                     </div>
                     <span className="text-sm text-muted-foreground">
-                      {formatMinutesToHHMM(timeSpent)} / {formatMinutesToHHMM(task.budgetedTime)} ({task.budgetBasis})
+                      {formatMinutesToFriendlyDuration(timeSpent)} / {formatMinutesToFriendlyDuration(task.budgetedTime)} ({task.budgetBasis}) {/* Updated format */}
                     </span>
                   </div>
                   <Progress value={progressPercentage} aria-label={`${task.name} progress`} className="h-3" />
                   {timeSpent > task.budgetedTime && (
                      <p className="text-xs text-destructive mt-1">
-                       Over budget by {formatMinutesToHHMM(timeSpent - task.budgetedTime)}
+                       Over budget by {formatMinutesToFriendlyDuration(timeSpent - task.budgetedTime)} {/* Updated format */}
                      </p>
                   )}
                 </div>

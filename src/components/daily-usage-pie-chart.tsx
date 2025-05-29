@@ -7,7 +7,7 @@ import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recha
 import type { Task, TaskLog } from '@/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { format } from 'date-fns';
-import { formatMinutesToHHMM } from '@/lib/utils'; // Added
+import { formatMinutesToFriendlyDuration } from '@/lib/utils'; // Updated import
 
 interface DailyUsagePieChartProps {
   tasks: Task[];
@@ -88,7 +88,7 @@ export const DailyUsagePieChart: FC<DailyUsagePieChartProps> = ({ tasks, taskLog
       return (
         <div className="p-2 bg-background border border-border rounded-md shadow-lg">
           <p className="font-semibold">{`${data.name}`}</p>
-          <p className="text-sm text-muted-foreground">{`Time: ${formatMinutesToHHMM(data.value)} (${percentage}%)`}</p>
+          <p className="text-sm text-muted-foreground">{`Time: ${formatMinutesToFriendlyDuration(data.value)} (${percentage}%)`}</p> {/* Updated format */}
         </div>
       );
     }
@@ -135,7 +135,7 @@ export const DailyUsagePieChart: FC<DailyUsagePieChartProps> = ({ tasks, taskLog
                 const { color } = entry;
                 // Format time for legend if needed, here we just show name.
                 // const itemData = dataForChart.find(d => d.name === value);
-                // const formattedTime = itemData ? formatMinutesToHHMM(itemData.value) : '';
+                // const formattedTime = itemData ? formatMinutesToFriendlyDuration(itemData.value) : '';
                 // return <span style={{ color }}>{value} ({formattedTime})</span>;
                 return <span style={{ color }}>{value}</span>;
               }}

@@ -8,7 +8,7 @@ import { Separator } from '@/components/ui/separator';
 import type { Task, TaskLog } from '@/types';
 import { taskIcons, defaultTaskIcon } from '@/config/icons';
 import { format, isToday } from 'date-fns'; 
-import { formatMinutesToHHMM } from '@/lib/utils'; // Added
+import { formatMinutesToFriendlyDuration } from '@/lib/utils'; // Updated import
 
 interface DailyTaskTimelineProps {
   tasks: Task[];
@@ -62,7 +62,7 @@ export const DailyTaskTimeline: FC<DailyTaskTimelineProps> = ({ tasks, taskLogs,
                       </p>
                     </div>
                     <p className="text-sm font-semibold text-primary whitespace-nowrap">
-                      {formatMinutesToHHMM(log.duration)}
+                      {formatMinutesToFriendlyDuration(log.duration)} {/* Updated format */}
                     </p>
                   </div>
                   {index < taskLogs.length - 1 && <Separator className="my-1" />}
