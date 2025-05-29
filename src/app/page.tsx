@@ -138,7 +138,7 @@ export default function TrackerPage() {
                     <Button
                       variant="outline"
                       className={cn(
-                        "h-24 w-18 p-2 flex flex-col items-center justify-center overflow-hidden", // Added overflow-hidden
+                        "h-24 w-18 p-2 flex flex-col items-center justify-start overflow-hidden", // Changed to justify-start
                         "shadow-sm hover:shadow-md transition-all transform hover:scale-105",
                         isActive && "ring-2 ring-primary bg-primary/10 border-primary"
                       )}
@@ -147,7 +147,7 @@ export default function TrackerPage() {
                     >
                       <IconComponent className={cn("h-8 w-8", isActive ? "text-primary" : "text-muted-foreground")} />
                       <span className={cn(
-                        "mt-1 text-[11px] text-center w-full break-words",
+                        "mt-1 text-[11px] text-center w-full", // Removed break-words
                         isActive ? "text-primary" : "text-foreground"
                         )}>
                         {task.name}
@@ -165,11 +165,11 @@ export default function TrackerPage() {
                 <Link href="/settings" passHref legacyBehavior>
                   <Button
                     variant="outline"
-                    className="h-24 w-18 p-2 flex flex-col items-center justify-center overflow-hidden shadow-sm hover:shadow-md transition-all transform hover:scale-105" // Added overflow-hidden
+                    className="h-24 w-18 p-2 flex flex-col items-center justify-start overflow-hidden shadow-sm hover:shadow-md transition-all transform hover:scale-105" // Changed to justify-start
                     aria-label="Add new task"
                   >
                     <PlusCircle className="h-8 w-8 text-muted-foreground" />
-                     <span className="mt-1 text-[11px] text-center w-full break-words text-foreground">
+                     <span className="mt-1 text-[11px] text-center w-full text-foreground"> {/* Removed break-words */}
                         Add Task
                       </span>
                   </Button>
@@ -185,4 +185,3 @@ export default function TrackerPage() {
     </div>
   );
 }
-
