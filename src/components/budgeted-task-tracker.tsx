@@ -41,9 +41,10 @@ export const BudgetedTaskTracker: FC<BudgetedTaskTrackerProps> = ({ tasks, getTi
               const timeSpent = getTimeSpent(task.id, task.budgetBasis);
               const progressPercentage = task.budgetedTime > 0 ? Math.min((timeSpent / task.budgetedTime) * 100, 100) : 0;
               
-              const basisDisplay = (typeof task.budgetBasis === 'string' && (task.budgetBasis === 'weekly' || task.budgetBasis === 'monthly'))
-                                   ? ` (${task.budgetBasis})`
-                                   : '';
+              let basisDisplay = '';
+              if (task.budgetBasis === 'weekly' || task.budgetBasis === 'monthly') {
+                basisDisplay = ` (${task.budgetBasis})`;
+              }
 
               return (
                 <div key={task.id} className="p-3 rounded-lg border hover:shadow-md transition-shadow">
