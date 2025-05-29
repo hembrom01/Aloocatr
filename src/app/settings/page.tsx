@@ -11,12 +11,12 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger, DialogClose } from '@/components/ui/dialog';
 import { taskIconsLookup, defaultTaskIcon } from '@/config/icons';
-import { Edit2, PlusCircle, Palette, UserCircle, Zap, Trash2, FolderPlus, Plus } from 'lucide-react';
+import { Edit2, PlusCircle, Palette, UserCircle, Zap, Trash2, FolderPlus, Plus, Settings as AppSettingsIcon } from 'lucide-react';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 
-export default function SettingsPage() {
+export default function TasksPage() { // Renamed from SettingsPage
   const { 
     tasks, 
     categories,
@@ -87,7 +87,7 @@ export default function SettingsPage() {
     return (
        <div className="flex justify-center items-center min-h-screen">
         <Zap className="h-12 w-12 text-primary animate-pulse" />
-        <p className="ml-4 text-xl font-semibold">Loading Settings...</p>
+        <p className="ml-4 text-xl font-semibold">Loading Tasks...</p> 
       </div>
     );
   }
@@ -97,13 +97,12 @@ export default function SettingsPage() {
   return (
     <div className="space-y-8 pb-24 animate-page-content-appear">
       <header className="mb-10">
-        <h1 className="text-4xl font-bold tracking-tight text-foreground">Settings</h1>
+        <h1 className="text-4xl font-bold tracking-tight text-foreground">Tasks</h1>
         <p className="text-muted-foreground">Manage your tasks, categories, and application preferences.</p>
       </header>
 
       <Dialog open={showTaskFormDialog} onOpenChange={setShowTaskFormDialog}>
-        <DialogContent className="sm:max-w-lg max-h-[85vh] overflow-y-auto"> {/* MODIFIED: Added overflow-y-auto, removed p-0 */}
-          {/* REMOVED ScrollArea and inner div with padding */}
+        <DialogContent className="sm:max-w-lg max-h-[85vh] overflow-y-auto">
           <TaskForm
             task={editingTask}
             categories={categories}
@@ -253,6 +252,15 @@ export default function SettingsPage() {
                 <h3 className="font-medium">Account</h3>
                 <p className="text-sm text-muted-foreground">
                   Login and account synchronization features are coming soon!
+                </p>
+              </div>
+            </div>
+             <div className="flex items-start p-3 bg-muted/30 rounded-md border">
+               <AppSettingsIcon className="h-5 w-5 mr-3 mt-1 text-muted-foreground flex-shrink-0" />
+              <div>
+                <h3 className="font-medium">More Settings</h3>
+                <p className="text-sm text-muted-foreground">
+                  Advanced application settings will be available here.
                 </p>
               </div>
             </div>
