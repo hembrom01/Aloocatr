@@ -4,16 +4,18 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { Task, TaskLog, ActiveTimer, Category } from '@/types';
 import { v4 as uuidv4 } from 'uuid';
+import { startOfDay as dateFnsStartOfDay, startOfWeek as dateFnsStartOfWeek, startOfMonth as dateFnsStartOfMonth } from 'date-fns';
+
 
 const TASKS_STORAGE_KEY = 'chronoFlowTasks';
 const TASK_LOGS_STORAGE_KEY = 'chronoFlowTaskLogs';
-const ACTIVE_TIMERS_STORAGE_KEY = 'chronoFlowActiveTimers'; // Changed from ACTIVE_TIMER_STORAGE_KEY
+const ACTIVE_TIMERS_STORAGE_KEY = 'chronoFlowActiveTimers';
 const CATEGORIES_STORAGE_KEY = 'chronoFlowCategories';
 
 export function useTaskManager() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [taskLogs, setTaskLogs] = useState<TaskLog[]>([]);
-  const [activeTimers, setActiveTimers] = useState<ActiveTimer[]>([]); // Changed from activeTimer: ActiveTimer | null
+  const [activeTimers, setActiveTimers] = useState<ActiveTimer[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -25,7 +27,7 @@ export function useTaskManager() {
       const storedTaskLogs = localStorage.getItem(TASK_LOGS_STORAGE_KEY);
       if (storedTaskLogs) setTaskLogs(JSON.parse(storedTaskLogs));
       
-      const storedActiveTimers = localStorage.getItem(ACTIVE_TIMERS_STORAGE_KEY); // Changed
+      const storedActiveTimers = localStorage.getItem(ACTIVE_TIMERS_STORAGE_KEY);
       if (storedActiveTimers) setActiveTimers(JSON.parse(storedActiveTimers));
       
       const storedCategories = localStorage.getItem(CATEGORIES_STORAGE_KEY);
@@ -49,7 +51,7 @@ export function useTaskManager() {
 
   useEffect(() => {
     if (typeof window !== 'undefined' && isLoaded) {
-      localStorage.setItem(ACTIVE_TIMERS_STORAGE_KEY, JSON.stringify(activeTimers)); // Changed
+      localStorage.setItem(ACTIVE_TIMERS_STORAGE_KEY, JSON.stringify(activeTimers));
     }
   }, [activeTimers, isLoaded]);
 
@@ -104,7 +106,7 @@ export function useTaskManager() {
   const deleteTask = useCallback((taskId: string) => {
     setTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
     setTaskLogs(prevLogs => prevLogs.filter(log => log.taskId !== taskId));
-    setActiveTimers(prevTimers => prevTimers.filter(timer => timer.taskId !== taskId)); // Stop if active
+    setActiveTimers(prevTimers => prevTimers.filter(timer => timer.taskId !== taskId));
   }, []);
 
   const isTaskActive = useCallback((taskId: string) => {
@@ -112,7 +114,7 @@ export function useTaskManager() {
   }, [activeTimers]);
 
   const startTask = useCallback((taskId: string) => {
-    if (isTaskActive(taskId)) return; // Already active
+    if (isTaskActive(taskId)) return;
     setActiveTimers(prevTimers => [...prevTimers, { taskId, startTime: Date.now() }]);
   }, [isTaskActive]);
 
@@ -121,7 +123,7 @@ export function useTaskManager() {
     if (!timerToStop) return null;
 
     const endTime = Date.now();
-    const duration = Math.round((endTime - timerToStop.startTime) / (1000 * 60)); // duration in minutes
+    const duration = Math.round((endTime - timerToStop.startTime) / (1000 * 60)); 
     const newLog: TaskLog = {
       id: uuidv4(),
       taskId: timerToStop.taskId,
@@ -161,20 +163,30 @@ export function useTaskManager() {
                    .sort((a, b) => a.startTime - b.startTime);
   }, [taskLogs]);
 
-  const getTimeSpentOnTask = useCallback((taskId: string, basis: 'weekly' | 'monthly' | 'total' = 'total') => {
+  const getTimeSpentOnTask = useCallback((taskId: string, basis: 'daily' | 'weekly' | 'monthly' | 'total' = 'total') => {
     const now = new Date();
     let startDate: Date;
 
-    if (basis === 'weekly') {
-      startDate = new Date(now);
-      startDate.setDate(now.getDate() - now.getDay()); 
-      startDate.setHours(0,0,0,0);
+    if (basis === 'daily') {
+      startDate = dateFnsStartOfDay(now);
+    } else if (basis === 'weekly') {
+      // Assuming week starts on Sunday for getDay(). For Monday start:
+      // const dayOfWeek = now.getDay(); // 0 (Sun) - 6 (Sat)
+      // const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek; // Adjust for Monday start
+      // startDate = new Date(now);
+      // startDate.setDate(now.getDate() + diff);
+      // startDate.setHours(0,0,0,0);
+      startDate = dateFnsStartOfWeek(now, { weekStartsOn: 1 }); // Monday
     } else if (basis === 'monthly') {
-      startDate = new Date(now.getFullYear(), now.getMonth(), 1); 
-      startDate.setHours(0,0,0,0);
+      startDate = dateFnsStartOfMonth(now);
     } else { 
       startDate = new Date(0); 
     }
+    // Ensure time component is zeroed out for day, week, month starts
+    if (basis !== 'total') {
+        startDate.setHours(0,0,0,0);
+    }
+
 
     const relevantLogs = taskLogs.filter(log => log.taskId === taskId && log.endTime >= startDate.getTime());
     return relevantLogs.reduce((total, log) => total + log.duration, 0);
@@ -187,15 +199,15 @@ export function useTaskManager() {
   return {
     tasks,
     taskLogs,
-    activeTimers, // Changed from activeTimer
+    activeTimers,
     categories,
     addTask,
     updateTask,
     deleteTask,
-    startTask, // New
-    stopTask,  // New signature
-    toggleTask, // New
-    isTaskActive, // New
+    startTask,
+    stopTask,
+    toggleTask,
+    isTaskActive,
     getTaskById,
     getLogsForTask,
     getLogsForDay,

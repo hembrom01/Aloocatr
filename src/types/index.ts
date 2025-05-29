@@ -9,7 +9,15 @@ export type TaskIconName =
   | 'Code' 
   | 'Music' 
   | 'Utensils'
-  | 'Activity'; // Default icon
+  | 'Activity' // Default icon
+  | 'Plane'
+  | 'Palette'
+  | 'DollarSign'
+  | 'Heart'
+  | 'ShoppingCart'
+  | 'Tv'
+  | 'Users'
+  | 'Home';
 
 export interface Category {
   id: string;
@@ -21,10 +29,11 @@ export interface Task {
   id: string;
   name: string;
   icon: TaskIconName;
-  budgetedTime: number; // in minutes
-  budgetBasis: 'weekly' | 'monthly';
+  budgetedTime: number; // in minutes (total calculated from form)
+  budgetBasis: 'daily' | 'weekly' | 'monthly'; // Added 'daily'
   createdAt: number; // timestamp
   categoryId?: string | null; // Link to Category
+  targetDurationDays?: number | null; // Optional: for how many days the target is active
 }
 
 export interface TaskLog {

@@ -7,12 +7,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import type { Task } from '@/types';
-import { taskIcons, defaultTaskIcon } from '@/config/icons';
+import { taskIconsLookup, defaultTaskIcon } from '@/config/icons'; // Changed to taskIconsLookup
 import { formatMinutesToFriendlyDuration } from '@/lib/utils';
 
 interface BudgetedTaskTrackerProps {
   tasks: Task[];
-  getTimeSpent: (taskId: string, basis: 'weekly' | 'monthly') => number;
+  getTimeSpent: (taskId: string, basis: 'daily' | 'weekly' | 'monthly') => number; // Added 'daily'
 }
 
 const BudgetedTaskTrackerComponent: FC<BudgetedTaskTrackerProps> = ({ tasks, getTimeSpent }) => {
@@ -38,13 +38,13 @@ const BudgetedTaskTrackerComponent: FC<BudgetedTaskTrackerProps> = ({ tasks, get
         <ScrollArea className="h-[300px] pr-4">
           <div className="space-y-6">
             {tasks.map((task) => {
-              const IconComponent = taskIcons[task.icon] || taskIcons[defaultTaskIcon];
+              const IconComponent = taskIconsLookup[task.icon] || taskIconsLookup[defaultTaskIcon];
               const timeSpent = getTimeSpent(task.id, task.budgetBasis);
               const progressPercentage = task.budgetedTime > 0 ? Math.min((timeSpent / task.budgetedTime) * 100, 100) : 0;
               
               let basisDisplay = '';
-              if (task.budgetBasis === 'weekly' || task.budgetBasis === 'monthly') {
-                basisDisplay = ` (${task.budgetBasis})`;
+              if (task.budgetBasis === 'daily' || task.budgetBasis === 'weekly' || task.budgetBasis === 'monthly') {
+                basisDisplay = ` (${task.budgetBasis.charAt(0).toUpperCase() + task.budgetBasis.slice(1)})`;
               }
 
 
@@ -64,6 +64,11 @@ const BudgetedTaskTrackerComponent: FC<BudgetedTaskTrackerProps> = ({ tasks, get
                      <p className="text-xs text-destructive mt-1">
                        Over budget by {formatMinutesToFriendlyDuration(timeSpent - task.budgetedTime)}
                      </p>
+                  )}
+                  {task.targetDurationDays !== undefined && task.targetDurationDays !== null && task.targetDurationDays > 0 && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Target for {task.targetDurationDays} days
+                    </p>
                   )}
                 </div>
               );

@@ -4,13 +4,13 @@
 import { useState } from 'react';
 import { TaskForm } from '@/components/task-form';
 import { useTaskManager } from '@/hooks/use-task-manager';
-import type { Task, Category } from '@/types';
+import type { Task, Category, TaskSubmitData } from '@/types'; // Updated TaskSubmitData import
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger, DialogClose } from '@/components/ui/dialog';
-import { taskIcons, defaultTaskIcon } from '@/config/icons';
+import { taskIconsLookup, defaultTaskIcon } from '@/config/icons'; // Changed to taskIconsLookup
 import { Edit2, PlusCircle, Palette, UserCircle, Zap, Trash2, FolderPlus, Plus } from 'lucide-react';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Separator } from '@/components/ui/separator';
@@ -30,11 +30,11 @@ export default function SettingsPage() {
   const { toast } = useToast();
 
   const [editingTask, setEditingTask] = useState<Task | null>(null);
-  const [showAddTaskForm, setShowAddTaskForm] = useState(false);
+  const [showTaskFormDialog, setShowTaskFormDialog] = useState(false); // Renamed for clarity
   const [newCategoryName, setNewCategoryName] = useState('');
   const [isAddCategoryDialogOpen, setIsAddCategoryDialogOpen] = useState(false);
 
-  const handleTaskSubmit = (data: Omit<Task, 'id' | 'createdAt' | 'categoryId'> & { categoryId?: string | null }, id?: string) => {
+  const handleTaskSubmit = (data: TaskSubmitData, id?: string) => { // Data type is TaskSubmitData now
     if (id) {
       updateTask({ 
         ...data, 
@@ -49,21 +49,20 @@ export default function SettingsPage() {
         categoryId: data.categoryId === "null" ? null : data.categoryId
       });
     }
-    setShowAddTaskForm(false);
+    setShowTaskFormDialog(false);
   };
 
   const handleEditTask = (task: Task) => {
     setEditingTask(task);
-    setShowAddTaskForm(true); 
+    setShowTaskFormDialog(true); 
   };
 
   const handleDeleteTaskWithConfirmation = (taskId: string) => {
-    // Potentially add a confirmation dialog here
     deleteTask(taskId);
     toast({ title: "Task Deleted", description: "The task has been removed."});
     if (editingTask?.id === taskId) {
       setEditingTask(null);
-      setShowAddTaskForm(false);
+      setShowTaskFormDialog(false);
     }
   };
   
@@ -79,10 +78,9 @@ export default function SettingsPage() {
   };
 
   const handleDeleteCategoryWithConfirmation = (categoryId: string) => {
-    // Potentially add a confirmation dialog here
     const category = categories.find(c => c.id === categoryId);
     deleteCategory(categoryId);
-    toast({ title: "Category Deleted", description: `Category "${category?.name}" and its tasks (now uncategorized) removed.`});
+    toast({ title: "Category Deleted", description: `Category "${category?.name}" and its associated tasks (now uncategorized) removed.`});
   };
 
   if (!isLoaded) {
@@ -97,26 +95,26 @@ export default function SettingsPage() {
   const uncategorizedTasks = tasks.filter(task => !task.categoryId || !categories.find(c => c.id === task.categoryId));
   
   return (
-    <div className="space-y-8 pb-24 animate-page-content-appear"> {/* Added padding-bottom for FAB and animation class */}
+    <div className="space-y-8 pb-24 animate-page-content-appear">
       <header className="mb-10">
         <h1 className="text-4xl font-bold tracking-tight text-foreground">Settings</h1>
         <p className="text-muted-foreground">Manage your tasks, categories, and application preferences.</p>
       </header>
 
-      {showAddTaskForm && (
-        <Dialog open={showAddTaskForm} onOpenChange={setShowAddTaskForm}>
-          <DialogContent className="sm:max-w-lg">
-             <TaskForm
-                task={editingTask}
-                categories={categories}
-                onSubmit={handleTaskSubmit}
-                onDelete={handleDeleteTaskWithConfirmation}
-                formTitle={editingTask ? "Edit Task" : "Add New Task"}
-                submitButtonText={editingTask ? "Update Task" : "Save Task"}
-              />
-          </DialogContent>
-        </Dialog>
-      )}
+      <Dialog open={showTaskFormDialog} onOpenChange={setShowTaskFormDialog}>
+        <DialogContent className="sm:max-w-lg">
+            {/* DialogHeader and DialogFooter are now part of TaskForm or handled by DialogContent */}
+            <TaskForm
+              task={editingTask}
+              categories={categories}
+              onSubmit={handleTaskSubmit}
+              onDelete={handleDeleteTaskWithConfirmation}
+              onClose={() => setShowTaskFormDialog(false)} // Pass onClose handler
+              formTitle={editingTask ? "Edit Task" : "Add New Task"}
+              submitButtonText={editingTask ? "Update Task" : "Save Task"}
+            />
+        </DialogContent>
+      </Dialog>
 
       <section id="manage-categories-tasks">
         <Card className="shadow-lg">
@@ -136,7 +134,7 @@ export default function SettingsPage() {
                   </div>
                   <ul className="space-y-3 pl-2">
                     {tasks.filter(task => task.categoryId === category.id).map(task => {
-                      const IconComponent = taskIcons[task.icon] || taskIcons[defaultTaskIcon];
+                      const IconComponent = taskIconsLookup[task.icon] || taskIconsLookup[defaultTaskIcon];
                       return (
                         <li key={task.id} className="flex items-center justify-between p-3 bg-muted/30 rounded-md border">
                           <div className="flex items-center gap-3">
@@ -145,6 +143,7 @@ export default function SettingsPage() {
                               <span className="font-medium">{task.name}</span>
                               <p className="text-xs text-muted-foreground">
                                 {task.budgetedTime} min / {task.budgetBasis}
+                                {task.targetDurationDays ? ` for ${task.targetDurationDays} days` : ''}
                               </p>
                             </div>
                           </div>
@@ -166,7 +165,7 @@ export default function SettingsPage() {
                   <h3 className="text-xl font-semibold text-primary mb-2 p-2 bg-muted/20 rounded-t-md">Uncategorized Tasks</h3>
                   <ul className="space-y-3 pl-2">
                     {uncategorizedTasks.map(task => {
-                      const IconComponent = taskIcons[task.icon] || taskIcons[defaultTaskIcon];
+                      const IconComponent = taskIconsLookup[task.icon] || taskIconsLookup[defaultTaskIcon];
                       return (
                         <li key={task.id} className="flex items-center justify-between p-3 bg-muted/30 rounded-md border">
                           <div className="flex items-center gap-3">
@@ -175,6 +174,7 @@ export default function SettingsPage() {
                               <span className="font-medium">{task.name}</span>
                               <p className="text-xs text-muted-foreground">
                                 {task.budgetedTime} min / {task.budgetBasis}
+                                {task.targetDurationDays ? ` for ${task.targetDurationDays} days` : ''}
                               </p>
                             </div>
                           </div>
@@ -260,13 +260,12 @@ export default function SettingsPage() {
         </Card>
       </section>
 
-      {/* Floating Action Button to Add Task */}
       <Button
-        className="fixed bottom-20 right-6 h-14 w-14 rounded-lg shadow-xl z-50" // Square shape with rounded corners
+        className="fixed bottom-20 right-6 h-14 w-14 rounded-lg shadow-xl z-50"
         size="icon"
         onClick={() => {
           setEditingTask(null);
-          setShowAddTaskForm(true);
+          setShowTaskFormDialog(true);
         }}
         aria-label="Add new task"
       >
