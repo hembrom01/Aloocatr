@@ -138,7 +138,7 @@ export default function TrackerPage() {
                     <Button
                       variant="outline"
                       className={cn(
-                        "h-24 w-18 p-2 flex flex-col items-center justify-center",
+                        "h-24 w-18 p-2 flex flex-col items-center justify-center overflow-hidden", // Added overflow-hidden
                         "shadow-sm hover:shadow-md transition-all transform hover:scale-105",
                         isActive && "ring-2 ring-primary bg-primary/10 border-primary"
                       )}
@@ -165,7 +165,7 @@ export default function TrackerPage() {
                 <Link href="/settings" passHref legacyBehavior>
                   <Button
                     variant="outline"
-                    className="h-24 w-18 p-2 flex flex-col items-center justify-center shadow-sm hover:shadow-md transition-all transform hover:scale-105"
+                    className="h-24 w-18 p-2 flex flex-col items-center justify-center overflow-hidden shadow-sm hover:shadow-md transition-all transform hover:scale-105" // Added overflow-hidden
                     aria-label="Add new task"
                   >
                     <PlusCircle className="h-8 w-8 text-muted-foreground" />
