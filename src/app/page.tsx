@@ -4,20 +4,74 @@
 import Link from 'next/link';
 import { useTaskManager } from '@/hooks/use-task-manager';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertCircle, Zap, PlusCircle } from 'lucide-react';
+import { AlertCircle, Zap, PlusCircle, TimerIcon } from 'lucide-react'; // Added TimerIcon
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { taskIcons, defaultTaskIcon } from '@/config/icons';
 import { cn } from '@/lib/utils';
+import { useEffect, useState } from 'react'; // Added useEffect, useState
+
+// Component to display individual active task bar
+const ActiveTaskBar = ({ activeTimer, task, onStop }: { activeTimer: import('@/types').ActiveTimer; task: import('@/types').Task | undefined; onStop: () => void }) => {
+  const [elapsedTime, setElapsedTime] = useState('00:00');
+
+  useEffect(() => {
+    const updateDisplay = () => {
+      const now = Date.now();
+      const diffMs = now - activeTimer.startTime;
+      const totalSeconds = Math.floor(diffMs / 1000);
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+      setElapsedTime(`${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
+    };
+
+    updateDisplay(); // Initial display
+    const intervalId = setInterval(updateDisplay, 1000); // Update every second
+
+    return () => clearInterval(intervalId);
+  }, [activeTimer.startTime]);
+
+  if (!task) return null;
+
+  const IconComponent = taskIcons[task.icon] || taskIcons[defaultTaskIcon];
+
+  return (
+    <Card 
+      className="w-full mx-auto mb-2 shadow-md border-primary bg-card cursor-pointer hover:bg-muted/50 transition-colors"
+      onClick={onStop}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onStop()}
+      aria-label={`Stop ${task.name}`}
+    >
+      <CardContent className="p-3 flex items-center justify-between">
+        <div className="flex items-center">
+          <IconComponent className="h-6 w-6 mr-3 text-primary" />
+          <div>
+            <p className="text-md font-semibold text-foreground">{task.name}</p>
+            <p className="text-xs text-muted-foreground">Running...</p>
+          </div>
+        </div>
+        <div className="flex items-center">
+          <TimerIcon className="h-5 w-5 mr-2 text-primary" />
+          <p className="text-lg font-mono text-primary">{elapsedTime}</p>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
 
 export default function TrackerPage() {
   const { 
     tasks, 
-    activeTimer, 
-    startTimer, 
-    stopTimer,
+    activeTimers, 
+    toggleTask,
+    stopTask, // Added stopTask
+    isTaskActive, // Added isTaskActive
+    getTaskById, // Added getTaskById
     isLoaded 
   } = useTaskManager();
   
@@ -30,30 +84,23 @@ export default function TrackerPage() {
     );
   }
 
-  const onToggleTimer = (taskId: string) => {
-    startTimer(taskId); 
-  };
-
-  const currentActiveTask = activeTimer ? tasks.find(t => t.id === activeTimer.taskId) : null;
-
   return (
     <>
-      {/* Active Timer Display - MOVED TO TOP */}
-      {currentActiveTask && (
-        <Card className="w-full max-w-md mx-auto mb-6 shadow-lg border-primary bg-card">
-          <CardHeader className="pb-2 pt-4">
-            <CardTitle className="text-lg flex items-center">
-              <Zap className="h-5 w-5 mr-2 text-primary animate-ping" />
-              Active: {currentActiveTask.name}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pb-4">
-            <p className="text-sm text-muted-foreground">
-              Started: {new Date(activeTimer!.startTime).toLocaleTimeString()}
-            </p>
-            <Button onClick={stopTimer} className="w-full mt-3" variant="destructive" size="sm">Stop Timer</Button>
-          </CardContent>
-        </Card>
+      {/* Active Timer Display Bars - MOVED TO TOP & MODIFIED */}
+      {activeTimers.length > 0 && (
+        <div className="w-full max-w-lg mx-auto mb-6 space-y-2">
+          {activeTimers.map(timer => {
+            const task = getTaskById(timer.taskId);
+            return (
+              <ActiveTaskBar 
+                key={timer.taskId} 
+                activeTimer={timer} 
+                task={task} 
+                onStop={() => stopTask(timer.taskId)} 
+              />
+            );
+          })}
+        </div>
       )}
 
       <div className="space-y-6">
@@ -81,20 +128,20 @@ export default function TrackerPage() {
           <div className="flex flex-wrap justify-center items-center gap-3 px-2">
             {tasks.map((task) => {
               const IconComponent = taskIcons[task.icon] || taskIcons[defaultTaskIcon];
-              const isActive = activeTimer?.taskId === task.id;
+              const isActive = isTaskActive(task.id);
               return (
                 <Tooltip key={task.id}>
                   <TooltipTrigger asChild>
                     <Button
                       variant="outline"
                       className={cn(
-                        "flex flex-col items-center justify-center p-2 h-20 w-20 shadow-sm hover:shadow-md transition-all transform hover:scale-105",
-                        isActive && "ring-2 ring-primary bg-primary/10"
+                        "flex flex-col items-center justify-center p-2 h-24 w-24 shadow-sm hover:shadow-md transition-all transform hover:scale-105", // Increased size
+                        isActive && "ring-2 ring-primary bg-primary/10 border-primary" 
                       )}
-                      onClick={() => onToggleTimer(task.id)}
+                      onClick={() => toggleTask(task.id)}
                       aria-label={isActive ? `Stop ${task.name}` : `Start ${task.name}`}
                     >
-                      <IconComponent className={cn("h-9 w-9", isActive ? "text-primary" : "text-muted-foreground")} />
+                      <IconComponent className={cn("h-10 w-10", isActive ? "text-primary" : "text-muted-foreground")} /> 
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
@@ -108,10 +155,10 @@ export default function TrackerPage() {
                 <Link href="/settings" passHref legacyBehavior>
                   <Button
                     variant="outline"
-                    className="flex flex-col items-center justify-center p-2 h-20 w-20 shadow-sm hover:shadow-md transition-all transform hover:scale-105"
+                    className="flex flex-col items-center justify-center p-2 h-24 w-24 shadow-sm hover:shadow-md transition-all transform hover:scale-105" // Increased size
                     aria-label="Add new task"
                   >
-                    <PlusCircle className="h-7 w-7 mb-1 text-muted-foreground" />
+                    <PlusCircle className="h-8 w-8 mb-1 text-muted-foreground" /> 
                     <span className="text-xs text-muted-foreground">Add Task</span>
                   </Button>
                 </Link>

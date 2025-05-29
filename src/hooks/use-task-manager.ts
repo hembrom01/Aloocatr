@@ -7,13 +7,13 @@ import { v4 as uuidv4 } from 'uuid';
 
 const TASKS_STORAGE_KEY = 'chronoFlowTasks';
 const TASK_LOGS_STORAGE_KEY = 'chronoFlowTaskLogs';
-const ACTIVE_TIMER_STORAGE_KEY = 'chronoFlowActiveTimer';
+const ACTIVE_TIMERS_STORAGE_KEY = 'chronoFlowActiveTimers'; // Changed from ACTIVE_TIMER_STORAGE_KEY
 const CATEGORIES_STORAGE_KEY = 'chronoFlowCategories';
 
 export function useTaskManager() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [taskLogs, setTaskLogs] = useState<TaskLog[]>([]);
-  const [activeTimer, setActiveTimer] = useState<ActiveTimer | null>(null);
+  const [activeTimers, setActiveTimers] = useState<ActiveTimer[]>([]); // Changed from activeTimer: ActiveTimer | null
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -25,8 +25,8 @@ export function useTaskManager() {
       const storedTaskLogs = localStorage.getItem(TASK_LOGS_STORAGE_KEY);
       if (storedTaskLogs) setTaskLogs(JSON.parse(storedTaskLogs));
       
-      const storedActiveTimer = localStorage.getItem(ACTIVE_TIMER_STORAGE_KEY);
-      if (storedActiveTimer) setActiveTimer(JSON.parse(storedActiveTimer));
+      const storedActiveTimers = localStorage.getItem(ACTIVE_TIMERS_STORAGE_KEY); // Changed
+      if (storedActiveTimers) setActiveTimers(JSON.parse(storedActiveTimers));
       
       const storedCategories = localStorage.getItem(CATEGORIES_STORAGE_KEY);
       if (storedCategories) setCategories(JSON.parse(storedCategories));
@@ -49,13 +49,9 @@ export function useTaskManager() {
 
   useEffect(() => {
     if (typeof window !== 'undefined' && isLoaded) {
-      if (activeTimer) {
-        localStorage.setItem(ACTIVE_TIMER_STORAGE_KEY, JSON.stringify(activeTimer));
-      } else {
-        localStorage.removeItem(ACTIVE_TIMER_STORAGE_KEY);
-      }
+      localStorage.setItem(ACTIVE_TIMERS_STORAGE_KEY, JSON.stringify(activeTimers)); // Changed
     }
-  }, [activeTimer, isLoaded]);
+  }, [activeTimers, isLoaded]);
 
   useEffect(() => {
     if (typeof window !== 'undefined' && isLoaded) {
@@ -81,7 +77,6 @@ export function useTaskManager() {
 
   const deleteCategory = useCallback((categoryId: string) => {
     setCategories(prev => prev.filter(cat => cat.id !== categoryId));
-    // Optionally, uncategorize tasks belonging to this category
     setTasks(prevTasks => 
       prevTasks.map(task => 
         task.categoryId === categoryId ? { ...task, categoryId: null } : task
@@ -109,48 +104,44 @@ export function useTaskManager() {
   const deleteTask = useCallback((taskId: string) => {
     setTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
     setTaskLogs(prevLogs => prevLogs.filter(log => log.taskId !== taskId));
-    if (activeTimer?.taskId === taskId) {
-      setActiveTimer(null);
-    }
-  }, [activeTimer]);
+    setActiveTimers(prevTimers => prevTimers.filter(timer => timer.taskId !== taskId)); // Stop if active
+  }, []);
 
-  const startTimer = useCallback((taskId: string) => {
-    if (activeTimer) {
-      const endTime = Date.now();
-      const duration = Math.round((endTime - activeTimer.startTime) / (1000 * 60));
-      const newLog: TaskLog = {
-        id: uuidv4(),
-        taskId: activeTimer.taskId,
-        startTime: activeTimer.startTime,
-        endTime,
-        duration,
-      };
-      setTaskLogs(prevLogs => [...prevLogs, newLog]);
-    }
-    
-    if (activeTimer?.taskId === taskId) {
-      setActiveTimer(null);
-    } else {
-      setActiveTimer({ taskId, startTime: Date.now() });
-    }
-  }, [activeTimer]);
+  const isTaskActive = useCallback((taskId: string) => {
+    return activeTimers.some(timer => timer.taskId === taskId);
+  }, [activeTimers]);
 
-  const stopTimer = useCallback(() => {
-    if (!activeTimer) return null;
+  const startTask = useCallback((taskId: string) => {
+    if (isTaskActive(taskId)) return; // Already active
+    setActiveTimers(prevTimers => [...prevTimers, { taskId, startTime: Date.now() }]);
+  }, [isTaskActive]);
+
+  const stopTask = useCallback((taskIdToStop: string) => {
+    const timerToStop = activeTimers.find(timer => timer.taskId === taskIdToStop);
+    if (!timerToStop) return null;
 
     const endTime = Date.now();
-    const duration = Math.round((endTime - activeTimer.startTime) / (1000 * 60));
+    const duration = Math.round((endTime - timerToStop.startTime) / (1000 * 60)); // duration in minutes
     const newLog: TaskLog = {
       id: uuidv4(),
-      taskId: activeTimer.taskId,
-      startTime: activeTimer.startTime,
+      taskId: timerToStop.taskId,
+      startTime: timerToStop.startTime,
       endTime,
       duration,
     };
     setTaskLogs(prevLogs => [...prevLogs, newLog]);
-    setActiveTimer(null);
+    setActiveTimers(prevTimers => prevTimers.filter(timer => timer.taskId !== taskIdToStop));
     return newLog;
-  }, [activeTimer]);
+  }, [activeTimers]);
+
+  const toggleTask = useCallback((taskId: string) => {
+    if (isTaskActive(taskId)) {
+      stopTask(taskId);
+    } else {
+      startTask(taskId);
+    }
+  }, [isTaskActive, startTask, stopTask]);
+
 
   const getTaskById = useCallback((taskId: string) => {
     return tasks.find(task => task.id === taskId);
@@ -196,13 +187,15 @@ export function useTaskManager() {
   return {
     tasks,
     taskLogs,
-    activeTimer,
+    activeTimers, // Changed from activeTimer
     categories,
     addTask,
     updateTask,
     deleteTask,
-    startTimer,
-    stopTimer,
+    startTask, // New
+    stopTask,  // New signature
+    toggleTask, // New
+    isTaskActive, // New
     getTaskById,
     getLogsForTask,
     getLogsForDay,
