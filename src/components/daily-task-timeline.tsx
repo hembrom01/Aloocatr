@@ -7,12 +7,13 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import type { Task, TaskLog } from '@/types';
 import { taskIcons, defaultTaskIcon } from '@/config/icons';
-import { format, isToday } from 'date-fns'; // Added isToday
+import { format, isToday } from 'date-fns'; 
+import { formatMinutesToHHMM } from '@/lib/utils'; // Added
 
 interface DailyTaskTimelineProps {
   tasks: Task[];
   taskLogs: TaskLog[];
-  currentDate: Date; // Prop name remains currentDate to match usage, but it's the selected date
+  currentDate: Date; 
 }
 
 export const DailyTaskTimeline: FC<DailyTaskTimelineProps> = ({ tasks, taskLogs, currentDate }) => {
@@ -60,7 +61,9 @@ export const DailyTaskTimeline: FC<DailyTaskTimelineProps> = ({ tasks, taskLogs,
                         {format(new Date(log.startTime), 'p')} - {format(new Date(log.endTime), 'p')}
                       </p>
                     </div>
-                    <p className="text-sm font-semibold text-primary whitespace-nowrap">{log.duration} min</p>
+                    <p className="text-sm font-semibold text-primary whitespace-nowrap">
+                      {formatMinutesToHHMM(log.duration)}
+                    </p>
                   </div>
                   {index < taskLogs.length - 1 && <Separator className="my-1" />}
                 </div>

@@ -4,27 +4,26 @@
 import Link from 'next/link';
 import { useTaskManager } from '@/hooks/use-task-manager';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertCircle, Zap, PlusCircle, TimerIcon } from 'lucide-react'; // Added TimerIcon
+import { AlertCircle, Zap, PlusCircle, TimerIcon } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { taskIcons, defaultTaskIcon } from '@/config/icons';
 import { cn } from '@/lib/utils';
-import { useEffect, useState } from 'react'; // Added useEffect, useState
+import { useEffect, useState } from 'react'; 
+import { formatSecondsToHHMMSS } from '@/lib/utils'; // Added
 
 // Component to display individual active task bar
 const ActiveTaskBar = ({ activeTimer, task, onStop }: { activeTimer: import('@/types').ActiveTimer; task: import('@/types').Task | undefined; onStop: () => void }) => {
-  const [elapsedTime, setElapsedTime] = useState('00:00');
+  const [elapsedTime, setElapsedTime] = useState('00:00:00'); // Changed default
 
   useEffect(() => {
     const updateDisplay = () => {
       const now = Date.now();
       const diffMs = now - activeTimer.startTime;
       const totalSeconds = Math.floor(diffMs / 1000);
-      const minutes = Math.floor(totalSeconds / 60);
-      const seconds = totalSeconds % 60;
-      setElapsedTime(`${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
+      setElapsedTime(formatSecondsToHHMMSS(totalSeconds)); // Used new formatter
     };
 
     updateDisplay(); // Initial display
@@ -69,9 +68,9 @@ export default function TrackerPage() {
     tasks, 
     activeTimers, 
     toggleTask,
-    stopTask, // Added stopTask
-    isTaskActive, // Added isTaskActive
-    getTaskById, // Added getTaskById
+    stopTask, 
+    isTaskActive, 
+    getTaskById, 
     isLoaded 
   } = useTaskManager();
   
@@ -135,7 +134,7 @@ export default function TrackerPage() {
                     <Button
                       variant="outline"
                       className={cn(
-                        "flex flex-col items-center justify-center p-2 h-24 w-24 shadow-sm hover:shadow-md transition-all transform hover:scale-105", // Increased size
+                        "flex flex-col items-center justify-center p-2 h-24 w-24 shadow-sm hover:shadow-md transition-all transform hover:scale-105",
                         isActive && "ring-2 ring-primary bg-primary/10 border-primary" 
                       )}
                       onClick={() => toggleTask(task.id)}
@@ -155,7 +154,7 @@ export default function TrackerPage() {
                 <Link href="/settings" passHref legacyBehavior>
                   <Button
                     variant="outline"
-                    className="flex flex-col items-center justify-center p-2 h-24 w-24 shadow-sm hover:shadow-md transition-all transform hover:scale-105" // Increased size
+                    className="flex flex-col items-center justify-center p-2 h-24 w-24 shadow-sm hover:shadow-md transition-all transform hover:scale-105"
                     aria-label="Add new task"
                   >
                     <PlusCircle className="h-8 w-8 mb-1 text-muted-foreground" /> 

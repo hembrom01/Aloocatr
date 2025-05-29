@@ -1,3 +1,4 @@
+
 "use client";
 
 import type { FC } from 'react';
@@ -6,6 +7,7 @@ import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import type { Task } from '@/types';
 import { taskIcons, defaultTaskIcon } from '@/config/icons';
+import { formatMinutesToHHMM } from '@/lib/utils'; // Added
 
 interface BudgetedTaskTrackerProps {
   tasks: Task[];
@@ -47,12 +49,14 @@ export const BudgetedTaskTracker: FC<BudgetedTaskTrackerProps> = ({ tasks, getTi
                       <span className="font-medium">{task.name}</span>
                     </div>
                     <span className="text-sm text-muted-foreground">
-                      {timeSpent} / {task.budgetedTime} min ({task.budgetBasis})
+                      {formatMinutesToHHMM(timeSpent)} / {formatMinutesToHHMM(task.budgetedTime)} ({task.budgetBasis})
                     </span>
                   </div>
                   <Progress value={progressPercentage} aria-label={`${task.name} progress`} className="h-3" />
                   {timeSpent > task.budgetedTime && (
-                     <p className="text-xs text-destructive mt-1">Over budget by {timeSpent - task.budgetedTime} min</p>
+                     <p className="text-xs text-destructive mt-1">
+                       Over budget by {formatMinutesToHHMM(timeSpent - task.budgetedTime)}
+                     </p>
                   )}
                 </div>
               );
