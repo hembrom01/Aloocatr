@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -8,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { taskIcons, defaultTaskIcon } from '@/config/icons';
-import { Edit2, PlusCircle } from 'lucide-react';
+import { Edit2, PlusCircle, Palette, UserCircle, Zap } from 'lucide-react'; // Added Palette, UserCircle
 
 export default function SettingsPage() {
   const { tasks, addTask, updateTask, deleteTask, isLoaded } = useTaskManager();
@@ -40,16 +41,16 @@ export default function SettingsPage() {
 
   if (!isLoaded) {
     return (
-      <div className="space-y-6">
-        <h1 className="text-3xl font-bold">Settings</h1>
-        <p>Loading settings...</p>
+       <div className="flex justify-center items-center min-h-screen">
+        <Zap className="h-12 w-12 text-primary animate-pulse" />
+        <p className="ml-4 text-xl font-semibold">Loading Settings...</p>
       </div>
     );
   }
 
   return (
     <div className="space-y-8">
-      <header>
+      <header className="mb-10">
         <h1 className="text-4xl font-bold tracking-tight text-foreground">Settings</h1>
         <p className="text-muted-foreground">Manage your tasks and application preferences.</p>
       </header>
@@ -113,20 +114,35 @@ export default function SettingsPage() {
         </Card>
       </section>
 
-      {/* Placeholder for other settings */}
       <section id="app-preferences">
         <Card className="shadow-lg">
           <CardHeader>
             <CardTitle className="text-2xl">App Preferences</CardTitle>
             <CardDescription>Customize your ChronoFlow experience.</CardDescription>
           </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground">Theme preferences are managed via the toggle in the sidebar.</p>
-            <p className="text-muted-foreground mt-2">Login/Account features coming soon!</p>
+          <CardContent className="space-y-4">
+             <div className="flex items-start p-3 bg-muted/30 rounded-md border">
+              <Palette className="h-5 w-5 mr-3 mt-1 text-muted-foreground flex-shrink-0" />
+              <div>
+                <h3 className="font-medium">Appearance</h3>
+                <p className="text-sm text-muted-foreground">
+                  Toggle between light and dark mode using the theme switcher in the bottom navigation bar.
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex items-start p-3 bg-muted/30 rounded-md border">
+               <UserCircle className="h-5 w-5 mr-3 mt-1 text-muted-foreground flex-shrink-0" />
+              <div>
+                <h3 className="font-medium">Account</h3>
+                <p className="text-sm text-muted-foreground">
+                  Login and account synchronization features are coming soon!
+                </p>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </section>
-
     </div>
   );
 }

@@ -3,12 +3,14 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Settings } from 'lucide-react';
+import { Home, Settings, ListChecks, Target, Zap } from 'lucide-react'; // Added Zap, ListChecks, Target
 import { ThemeToggle } from '@/components/theme-toggle';
 import { cn } from '@/lib/utils';
 
 const menuItems = [
-  { href: '/', label: 'Dashboard', icon: Home },
+  { href: '/', label: 'Launcher', icon: Zap },
+  { href: '/timeline', label: 'Timeline', icon: ListChecks },
+  { href: '/tracker', label: 'Tracker', icon: Target },
   { href: '/settings', label: 'Settings', icon: Settings },
 ];
 
@@ -23,7 +25,7 @@ export function BottomNavigation() {
             <a
               className={cn(
                 "flex flex-col items-center justify-center p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors w-20 h-full",
-                pathname === item.href && "text-primary"
+                (pathname === item.href || (item.href === "/" && pathname.startsWith("/#"))) && "text-primary" // Handle root path active state
               )}
               aria-current={pathname === item.href ? "page" : undefined}
             >
@@ -39,3 +41,4 @@ export function BottomNavigation() {
     </nav>
   );
 }
+
