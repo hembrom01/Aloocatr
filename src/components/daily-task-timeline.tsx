@@ -2,13 +2,14 @@
 "use client";
 
 import type { FC } from 'react';
+import { memo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import type { Task, TaskLog } from '@/types';
 import { taskIcons, defaultTaskIcon } from '@/config/icons';
 import { format, isToday } from 'date-fns'; 
-import { formatMinutesToFriendlyDuration } from '@/lib/utils'; // Updated import
+import { formatMinutesToFriendlyDuration } from '@/lib/utils'; 
 
 interface DailyTaskTimelineProps {
   tasks: Task[];
@@ -16,7 +17,7 @@ interface DailyTaskTimelineProps {
   currentDate: Date; 
 }
 
-export const DailyTaskTimeline: FC<DailyTaskTimelineProps> = ({ tasks, taskLogs, currentDate }) => {
+const DailyTaskTimelineComponent: FC<DailyTaskTimelineProps> = ({ tasks, taskLogs, currentDate }) => {
   const getTaskName = (taskId: string) => tasks.find(t => t.id === taskId)?.name || 'Unknown Task';
   const getTaskIcon = (taskId: string) => {
     const task = tasks.find(t => t.id === taskId);
@@ -62,7 +63,7 @@ export const DailyTaskTimeline: FC<DailyTaskTimelineProps> = ({ tasks, taskLogs,
                       </p>
                     </div>
                     <p className="text-sm font-semibold text-primary whitespace-nowrap">
-                      {formatMinutesToFriendlyDuration(log.duration)} {/* Updated format */}
+                      {formatMinutesToFriendlyDuration(log.duration)} 
                     </p>
                   </div>
                   {index < taskLogs.length - 1 && <Separator className="my-1" />}
@@ -75,3 +76,6 @@ export const DailyTaskTimeline: FC<DailyTaskTimelineProps> = ({ tasks, taskLogs,
     </Card>
   );
 };
+
+export const DailyTaskTimeline = memo(DailyTaskTimelineComponent);
+DailyTaskTimeline.displayName = 'DailyTaskTimeline';

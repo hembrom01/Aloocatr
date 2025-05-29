@@ -2,6 +2,7 @@
 "use client";
 
 import type { FC } from 'react';
+import { memo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -22,7 +23,7 @@ interface DateNavigatorProps {
   onDateChange: (newDate: Date) => void;
 }
 
-export const DateNavigator: FC<DateNavigatorProps> = ({ selectedDate, onDateChange }) => {
+const DateNavigatorComponent: FC<DateNavigatorProps> = ({ selectedDate, onDateChange }) => {
   const currentWeekStart = startOfWeek(selectedDate, { weekStartsOn: 1 }); // Monday
   const currentWeekEnd = endOfWeek(selectedDate, { weekStartsOn: 1 });
   const daysInWeek = eachDayOfInterval({ start: currentWeekStart, end: currentWeekEnd });
@@ -94,3 +95,6 @@ export const DateNavigator: FC<DateNavigatorProps> = ({ selectedDate, onDateChan
     </Card>
   );
 };
+
+export const DateNavigator = memo(DateNavigatorComponent);
+DateNavigator.displayName = 'DateNavigator';

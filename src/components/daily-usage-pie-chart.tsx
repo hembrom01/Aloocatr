@@ -2,7 +2,7 @@
 "use client";
 
 import type { FC } from 'react';
-import { useMemo } from 'react';
+import { useMemo, memo } from 'react';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import type { Task, TaskLog } from '@/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -31,7 +31,7 @@ const COLORS = [
 ];
 const UNTRACKED_COLOR = 'hsl(var(--muted))'; // Color for untracked time
 
-export const DailyUsagePieChart: FC<DailyUsagePieChartProps> = ({ tasks, taskLogs, selectedDate }) => {
+const DailyUsagePieChartComponent: FC<DailyUsagePieChartProps> = ({ tasks, taskLogs, selectedDate }) => {
   const dataForChart = useMemo(() => {
     const aggregatedData: { [key: string]: { value: number, isTask: boolean } } = {};
     let totalTrackedTime = 0;
@@ -82,8 +82,8 @@ export const DailyUsagePieChart: FC<DailyUsagePieChartProps> = ({ tasks, taskLog
       const data = payload[0].payload;
       const rawPercent = payload[0].percent;
       const percentage = (typeof rawPercent === 'number' && !isNaN(rawPercent))
-                         ? (rawPercent * 100).toFixed(1) // Changed to toFixed(1)
-                         : '0.0'; // Default to '0.0'
+                         ? (rawPercent * 100).toFixed(1) 
+                         : '0.0'; 
       return (
         <div className="p-2 bg-background border border-border rounded-md shadow-lg">
           <p className="font-semibold">{`${data.name}`}</p>
@@ -155,3 +155,5 @@ export const DailyUsagePieChart: FC<DailyUsagePieChartProps> = ({ tasks, taskLog
   );
 };
 
+export const DailyUsagePieChart = memo(DailyUsagePieChartComponent);
+DailyUsagePieChart.displayName = 'DailyUsagePieChart';

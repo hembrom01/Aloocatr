@@ -2,6 +2,7 @@
 "use client";
 
 import type { FC } from 'react';
+import { memo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -14,7 +15,7 @@ interface BudgetedTaskTrackerProps {
   getTimeSpent: (taskId: string, basis: 'weekly' | 'monthly') => number;
 }
 
-export const BudgetedTaskTracker: FC<BudgetedTaskTrackerProps> = ({ tasks, getTimeSpent }) => {
+const BudgetedTaskTrackerComponent: FC<BudgetedTaskTrackerProps> = ({ tasks, getTimeSpent }) => {
   if (!tasks.length) {
     return (
       <Card>
@@ -46,6 +47,7 @@ export const BudgetedTaskTracker: FC<BudgetedTaskTrackerProps> = ({ tasks, getTi
                 basisDisplay = ` (${task.budgetBasis})`;
               }
 
+
               return (
                 <div key={task.id} className="p-3 rounded-lg border hover:shadow-md transition-shadow">
                   <div className="flex items-center justify-between mb-2">
@@ -72,3 +74,6 @@ export const BudgetedTaskTracker: FC<BudgetedTaskTrackerProps> = ({ tasks, getTi
     </Card>
   );
 };
+
+export const BudgetedTaskTracker = memo(BudgetedTaskTrackerComponent);
+BudgetedTaskTracker.displayName = 'BudgetedTaskTracker';

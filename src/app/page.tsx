@@ -11,11 +11,13 @@ import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { taskIcons, defaultTaskIcon } from '@/config/icons';
 import { cn } from '@/lib/utils';
-import { useEffect, useState } from 'react'; 
+import { useEffect, useState, memo } from 'react'; 
 import { formatSecondsToHHMMSS } from '@/lib/utils';
+import type { ActiveTimer as ActiveTimerType, Task as TaskType } from '@/types';
+
 
 // Component to display individual active task bar
-const ActiveTaskBar = ({ activeTimer, task, onStop }: { activeTimer: import('@/types').ActiveTimer; task: import('@/types').Task | undefined; onStop: () => void }) => {
+const ActiveTaskBar = memo(({ activeTimer, task, onStop }: { activeTimer: ActiveTimerType; task: TaskType | undefined; onStop: () => void }) => {
   const [elapsedTime, setElapsedTime] = useState('00:00:00');
 
   useEffect(() => {
@@ -60,7 +62,8 @@ const ActiveTaskBar = ({ activeTimer, task, onStop }: { activeTimer: import('@/t
       </CardContent>
     </Card>
   );
-};
+});
+ActiveTaskBar.displayName = 'ActiveTaskBar';
 
 
 export default function TrackerPage() {
