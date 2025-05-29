@@ -1,10 +1,10 @@
+
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
-import { AppSidebar } from '@/components/app-sidebar';
-import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
+import { BottomNavigation } from '@/components/bottom-navigation';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -30,14 +30,12 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <SidebarProvider>
-            <AppSidebar />
-            <SidebarInset>
-              <main className="min-h-screen p-4 md:p-6">
-                {children}
-              </main>
-            </SidebarInset>
-          </SidebarProvider>
+          <div className="relative flex min-h-screen flex-col">
+            <main className="flex-1 p-4 pb-24 md:p-6 md:pb-24"> {/* Increased bottom padding for nav bar */}
+              {children}
+            </main>
+            <BottomNavigation />
+          </div>
           <Toaster />
         </ThemeProvider>
       </body>
