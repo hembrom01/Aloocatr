@@ -127,7 +127,8 @@ export default function TrackerPage() {
         )}
 
         <TooltipProvider>
-          <div className="grid grid-cols-4 gap-3 px-8"> {/* Changed from flex to grid, increased padding */}
+          {/* Main container for task buttons - Reverted to flex-wrap */}
+          <div className="flex flex-wrap justify-center items-start gap-3 px-6">
             {tasks.map((task) => {
               const IconComponent = taskIcons[task.icon] || taskIcons[defaultTaskIcon];
               const isActive = isTaskActive(task.id);
@@ -137,13 +138,15 @@ export default function TrackerPage() {
                     <Button
                       variant="outline"
                       className={cn(
-                        "flex flex-col items-center justify-center aspect-square p-2 shadow-sm hover:shadow-md transition-all transform hover:scale-105", // Added aspect-square, removed fixed h/w
+                        // Reverted to fixed h-20 w-20 and p-2
+                        "flex flex-col items-center justify-center h-20 w-20 p-2 shadow-sm hover:shadow-md transition-all transform hover:scale-105", 
                         isActive && "ring-2 ring-primary bg-primary/10 border-primary"
                       )}
                       onClick={() => toggleTask(task.id)}
                       aria-label={isActive ? `Stop ${task.name}` : `Start ${task.name}`}
                     >
                       <IconComponent className={cn("h-8 w-8", isActive ? "text-primary" : "text-muted-foreground")} />
+                      {/* Text styling for truncation */}
                       <span className="mt-1 text-[11px] text-center w-full whitespace-nowrap overflow-hidden text-ellipsis">
                         {task.name}
                       </span>
@@ -160,10 +163,12 @@ export default function TrackerPage() {
                 <Link href="/settings" passHref legacyBehavior>
                   <Button
                     variant="outline"
-                    className="flex flex-col items-center justify-center aspect-square p-2 shadow-sm hover:shadow-md transition-all transform hover:scale-105" // Added aspect-square, removed fixed h/w
+                    // Reverted to fixed h-20 w-20 and p-2
+                    className="flex flex-col items-center justify-center h-20 w-20 p-2 shadow-sm hover:shadow-md transition-all transform hover:scale-105" 
                     aria-label="Add new task"
                   >
                     <PlusCircle className="h-8 w-8 text-muted-foreground" />
+                     {/* Text styling for truncation */}
                      <span className="mt-1 text-[11px] text-center w-full whitespace-nowrap overflow-hidden text-ellipsis">
                         Add Task
                       </span>
@@ -180,4 +185,3 @@ export default function TrackerPage() {
     </div>
   );
 }
-
