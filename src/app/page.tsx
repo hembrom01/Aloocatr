@@ -11,7 +11,7 @@ import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { taskIcons, defaultTaskIcon } from '@/config/icons';
 import { cn } from '@/lib/utils';
-import { useEffect, useState, memo } from 'react'; 
+import { useEffect, useState, memo } from 'react';
 import { formatSecondsToHHMMSS } from '@/lib/utils';
 import type { ActiveTimer as ActiveTimerType, Task as TaskType } from '@/types';
 
@@ -39,7 +39,7 @@ const ActiveTaskBar = memo(({ activeTimer, task, onStop }: { activeTimer: Active
   const IconComponent = taskIcons[task.icon] || taskIcons[defaultTaskIcon];
 
   return (
-    <Card 
+    <Card
       className="w-full mx-auto mb-2 shadow-md border-primary bg-card cursor-pointer hover:bg-muted/50 transition-colors"
       onClick={onStop}
       role="button"
@@ -67,16 +67,16 @@ ActiveTaskBar.displayName = 'ActiveTaskBar';
 
 
 export default function TrackerPage() {
-  const { 
-    tasks, 
-    activeTimers, 
+  const {
+    tasks,
+    activeTimers,
     toggleTask,
-    stopTask, 
-    isTaskActive, 
-    getTaskById, 
-    isLoaded 
+    stopTask,
+    isTaskActive,
+    getTaskById,
+    isLoaded
   } = useTaskManager();
-  
+
   if (!isLoaded) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -94,11 +94,11 @@ export default function TrackerPage() {
           {activeTimers.map(timer => {
             const task = getTaskById(timer.taskId);
             return (
-              <ActiveTaskBar 
-                key={timer.taskId} 
-                activeTimer={timer} 
-                task={task} 
-                onStop={() => stopTask(timer.taskId)} 
+              <ActiveTaskBar
+                key={timer.taskId}
+                activeTimer={timer}
+                task={task}
+                onStop={() => stopTask(timer.taskId)}
               />
             );
           })}
@@ -109,7 +109,7 @@ export default function TrackerPage() {
         <div className="text-center mt-4">
           <p className="text-foreground">Click on a task below to start or stop tracking.</p>
         </div>
-        
+
         <Separator className="my-4" />
 
         {tasks.length === 0 && (
@@ -117,17 +117,17 @@ export default function TrackerPage() {
             <AlertCircle className="h-4 w-4 !text-primary" />
             <AlertTitle className="font-semibold text-primary">No Tasks Yet!</AlertTitle>
             <AlertDescription className="text-foreground">
-              You haven't added any tasks. Click the 
+              You haven't added any tasks. Click the
               <Button variant="link" asChild className="p-0 h-auto ml-1 mr-1 text-primary hover:underline">
                 <Link href="/settings">plus icon</Link>
-              </Button> 
+              </Button>
                or go to Tasks to add your first task.
             </AlertDescription>
           </Alert>
         )}
 
         <TooltipProvider>
-          <div className="flex flex-wrap justify-center items-center gap-2 px-6"> {/* Changed px-2 to px-6 */}
+          <div className="flex flex-wrap justify-center items-start gap-3 px-6"> {/* items-start for better text alignment if heights vary */}
             {tasks.map((task) => {
               const IconComponent = taskIcons[task.icon] || taskIcons[defaultTaskIcon];
               const isActive = isTaskActive(task.id);
@@ -137,13 +137,16 @@ export default function TrackerPage() {
                     <Button
                       variant="outline"
                       className={cn(
-                        "flex flex-col items-center justify-center h-14 w-14 shadow-sm hover:shadow-md transition-all transform hover:scale-105", 
-                        isActive && "ring-2 ring-primary bg-primary/10 border-primary" 
+                        "flex flex-col items-center justify-center h-20 w-20 p-2 shadow-sm hover:shadow-md transition-all transform hover:scale-105", // Adjusted height, kept width, added padding
+                        isActive && "ring-2 ring-primary bg-primary/10 border-primary"
                       )}
                       onClick={() => toggleTask(task.id)}
                       aria-label={isActive ? `Stop ${task.name}` : `Start ${task.name}`}
                     >
                       <IconComponent className={cn("h-8 w-8", isActive ? "text-primary" : "text-muted-foreground")} />
+                      <span className="mt-1 text-xs text-center truncate w-full"> {/* Task name */}
+                        {task.name}
+                      </span>
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
@@ -157,10 +160,13 @@ export default function TrackerPage() {
                 <Link href="/settings" passHref legacyBehavior>
                   <Button
                     variant="outline"
-                    className="flex flex-col items-center justify-center h-14 w-14 shadow-sm hover:shadow-md transition-all transform hover:scale-105"
+                    className="flex flex-col items-center justify-center h-20 w-20 p-2 shadow-sm hover:shadow-md transition-all transform hover:scale-105" // Consistent size and padding
                     aria-label="Add new task"
                   >
                     <PlusCircle className="h-8 w-8 text-muted-foreground" />
+                     <span className="mt-1 text-xs text-center truncate w-full"> {/* "Add Task" label */}
+                        Add Task
+                      </span>
                   </Button>
                 </Link>
               </TooltipTrigger>
@@ -174,3 +180,5 @@ export default function TrackerPage() {
     </div>
   );
 }
+
+    
