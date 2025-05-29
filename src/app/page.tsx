@@ -127,7 +127,7 @@ export default function TrackerPage() {
         )}
 
         <TooltipProvider>
-          <div className="flex flex-wrap justify-center items-center gap-3 px-2">
+          <div className="flex flex-wrap justify-center items-center gap-3 px-2"> {/* Added px-2 for horizontal padding */}
             {tasks.map((task) => {
               const IconComponent = taskIcons[task.icon] || taskIcons[defaultTaskIcon];
               const isActive = isTaskActive(task.id);
@@ -137,13 +137,13 @@ export default function TrackerPage() {
                     <Button
                       variant="outline"
                       className={cn(
-                        "flex flex-col items-center justify-center h-24 w-24 shadow-sm hover:shadow-md transition-all transform hover:scale-105", // Removed p-2
+                        "flex flex-col items-center justify-center h-20 w-20 shadow-sm hover:shadow-md transition-all transform hover:scale-105", // Changed size to h-20 w-20
                         isActive && "ring-2 ring-primary bg-primary/10 border-primary" 
                       )}
                       onClick={() => toggleTask(task.id)}
                       aria-label={isActive ? `Stop ${task.name}` : `Start ${task.name}`}
                     >
-                      <IconComponent className={cn("h-[90px] w-[90px]", isActive ? "text-primary" : "text-muted-foreground")} /> 
+                      <IconComponent className={cn("h-12 w-12", isActive ? "text-primary" : "text-muted-foreground")} /> {/* Changed icon size to h-12 w-12 */}
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
@@ -157,10 +157,10 @@ export default function TrackerPage() {
                 <Link href="/settings" passHref legacyBehavior>
                   <Button
                     variant="outline"
-                    className="flex flex-col items-center justify-center h-24 w-24 shadow-sm hover:shadow-md transition-all transform hover:scale-105" // Removed p-2
+                    className="flex flex-col items-center justify-center h-20 w-20 shadow-sm hover:shadow-md transition-all transform hover:scale-105" // Changed size to h-20 w-20
                     aria-label="Add new task"
                   >
-                    <PlusCircle className="h-[90px] w-[90px] text-muted-foreground" /> 
+                    <PlusCircle className="h-12 w-12 text-muted-foreground" /> {/* Changed icon size to h-12 w-12 */}
                   </Button>
                 </Link>
               </TooltipTrigger>
