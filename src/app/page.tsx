@@ -137,14 +137,14 @@ export default function TrackerPage() {
                     <Button
                       variant="outline"
                       className={cn(
-                        "flex flex-col items-center justify-center h-20 w-20 p-2 shadow-sm hover:shadow-md transition-all transform hover:scale-105", // Adjusted height, kept width, added padding
+                        "flex flex-col items-center justify-center h-20 w-20 p-2 shadow-sm hover:shadow-md transition-all transform hover:scale-105", 
                         isActive && "ring-2 ring-primary bg-primary/10 border-primary"
                       )}
                       onClick={() => toggleTask(task.id)}
                       aria-label={isActive ? `Stop ${task.name}` : `Start ${task.name}`}
                     >
                       <IconComponent className={cn("h-8 w-8", isActive ? "text-primary" : "text-muted-foreground")} />
-                      <span className="mt-1 text-xs text-center truncate w-full"> {/* Task name */}
+                      <span className="mt-1 text-xs text-center w-full"> {/* Removed truncate */}
                         {task.name}
                       </span>
                     </Button>
@@ -160,11 +160,11 @@ export default function TrackerPage() {
                 <Link href="/settings" passHref legacyBehavior>
                   <Button
                     variant="outline"
-                    className="flex flex-col items-center justify-center h-20 w-20 p-2 shadow-sm hover:shadow-md transition-all transform hover:scale-105" // Consistent size and padding
+                    className="flex flex-col items-center justify-center h-20 w-20 p-2 shadow-sm hover:shadow-md transition-all transform hover:scale-105" 
                     aria-label="Add new task"
                   >
                     <PlusCircle className="h-8 w-8 text-muted-foreground" />
-                     <span className="mt-1 text-xs text-center truncate w-full"> {/* "Add Task" label */}
+                     <span className="mt-1 text-xs text-center w-full"> {/* Removed truncate */}
                         Add Task
                       </span>
                   </Button>
