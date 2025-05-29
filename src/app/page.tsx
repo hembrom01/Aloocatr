@@ -88,7 +88,7 @@ export default function TrackerPage() {
 
   return (
     <div className="animate-page-content-appear">
-      {/* Active Timer Display Bars - MOVED TO TOP & MODIFIED */}
+      {/* Active Timer Display Bars */}
       {activeTimers.length > 0 && (
         <div className="w-full max-w-lg mx-auto mb-6 space-y-2">
           {activeTimers.map(timer => {
@@ -127,8 +127,7 @@ export default function TrackerPage() {
         )}
 
         <TooltipProvider>
-          {/* Main container for task buttons - Using Grid for 4 columns */}
-          <div className="grid grid-cols-4 gap-1 px-6">
+          <div className="flex flex-wrap justify-center items-center gap-3 px-6">
             {tasks.map((task) => {
               const IconComponent = taskIcons[task.icon] || taskIcons[defaultTaskIcon];
               const isActive = isTaskActive(task.id);
@@ -138,20 +137,14 @@ export default function TrackerPage() {
                     <Button
                       variant="outline"
                       className={cn(
-                        "aspect-square p-2 flex flex-col items-center justify-start overflow-hidden",
+                        "h-24 w-24 p-2 flex flex-col items-center justify-center overflow-hidden",
                         "shadow-sm hover:shadow-md transition-all transform hover:scale-105",
                         isActive && "ring-2 ring-primary bg-primary/10 border-primary"
                       )}
                       onClick={() => toggleTask(task.id)}
                       aria-label={isActive ? `Stop ${task.name}` : `Start ${task.name}`}
                     >
-                      <IconComponent className={cn("h-8 w-8", isActive ? "text-primary" : "text-muted-foreground")} />
-                      <span className={cn(
-                        "mt-1 text-[10px] text-center w-full", 
-                        isActive ? "text-primary" : "text-foreground"
-                        )}>
-                        {task.name}
-                      </span>
+                      <IconComponent className={cn("h-10 w-10", isActive ? "text-primary" : "text-muted-foreground")} />
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
@@ -165,13 +158,10 @@ export default function TrackerPage() {
                 <Link href="/settings" passHref legacyBehavior>
                   <Button
                     variant="outline"
-                    className="aspect-square p-2 flex flex-col items-center justify-start overflow-hidden shadow-sm hover:shadow-md transition-all transform hover:scale-105"
+                    className="h-24 w-24 p-2 flex flex-col items-center justify-center overflow-hidden shadow-sm hover:shadow-md transition-all transform hover:scale-105"
                     aria-label="Add new task"
                   >
-                    <PlusCircle className="h-8 w-8 text-muted-foreground" />
-                     <span className="mt-1 text-[10px] text-center w-full text-foreground">
-                        Add Task
-                      </span>
+                    <PlusCircle className="h-10 w-10 text-muted-foreground" />
                   </Button>
                 </Link>
               </TooltipTrigger>
