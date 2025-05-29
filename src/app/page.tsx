@@ -121,7 +121,7 @@ export default function TrackerPage() {
               <Button variant="link" asChild className="p-0 h-auto ml-1 mr-1 text-primary hover:underline">
                 <Link href="/settings">plus icon</Link>
               </Button> 
-               or go to Settings to add your first task.
+               or go to Tasks to add your first task.
             </AlertDescription>
           </Alert>
         )}
@@ -143,7 +143,7 @@ export default function TrackerPage() {
                       onClick={() => toggleTask(task.id)}
                       aria-label={isActive ? `Stop ${task.name}` : `Start ${task.name}`}
                     >
-                      <IconComponent className={cn("h-10 w-10", isActive ? "text-primary" : "text-muted-foreground")} /> 
+                      <IconComponent className={cn("h-[72px] w-[72px]", isActive ? "text-primary" : "text-muted-foreground")} /> 
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
@@ -160,13 +160,12 @@ export default function TrackerPage() {
                     className="flex flex-col items-center justify-center p-2 h-24 w-24 shadow-sm hover:shadow-md transition-all transform hover:scale-105"
                     aria-label="Add new task"
                   >
-                    <PlusCircle className="h-8 w-8 mb-1 text-muted-foreground" /> 
-                    <span className="text-xs text-muted-foreground">Add Task</span>
+                    <PlusCircle className="h-[72px] w-[72px] text-muted-foreground" /> 
                   </Button>
                 </Link>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Add a new task (Go to Settings)</p>
+                <p>Add a new task (Go to Tasks)</p>
               </TooltipContent>
             </Tooltip>
           </div>
@@ -175,3 +174,4 @@ export default function TrackerPage() {
     </div>
   );
 }
+
