@@ -9,7 +9,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { taskIcons, defaultTaskIcon } from '@/config/icons';
-import { Edit2, PlusCircle, Palette, UserCircle, Zap } from 'lucide-react'; // Added Palette, UserCircle
+import { Edit2, PlusCircle, Palette, UserCircle, Zap, Moon, Sun } from 'lucide-react';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 export default function SettingsPage() {
   const { tasks, addTask, updateTask, deleteTask, isLoaded } = useTaskManager();
@@ -121,14 +122,17 @@ export default function SettingsPage() {
             <CardDescription>Customize your ChronoFlow experience.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-             <div className="flex items-start p-3 bg-muted/30 rounded-md border">
-              <Palette className="h-5 w-5 mr-3 mt-1 text-muted-foreground flex-shrink-0" />
-              <div>
-                <h3 className="font-medium">Appearance</h3>
-                <p className="text-sm text-muted-foreground">
-                  Toggle between light and dark mode using the theme switcher in the bottom navigation bar.
-                </p>
+             <div className="flex items-center justify-between p-3 bg-muted/30 rounded-md border">
+              <div className="flex items-center">
+                <Palette className="h-5 w-5 mr-3 mt-1 text-muted-foreground flex-shrink-0" />
+                <div>
+                  <h3 className="font-medium">Appearance</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Toggle between light and dark mode.
+                  </p>
+                </div>
               </div>
+              <ThemeToggle />
             </div>
             
             <div className="flex items-start p-3 bg-muted/30 rounded-md border">
