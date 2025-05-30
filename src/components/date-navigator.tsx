@@ -4,7 +4,6 @@
 import type { FC } from 'react';
 import { memo } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import {
   format,
@@ -40,59 +39,53 @@ const DateNavigatorComponent: FC<DateNavigatorProps> = ({ selectedDate, onDateCh
     onDateChange(new Date());
   };
 
-  const formattedWeekRange = `${format(currentWeekStart, 'MMM d')} - ${format(currentWeekEnd, 'MMM d, yyyy')}`;
-
   const today = new Date();
   const startOfActualCurrentWeek = startOfWeek(today, { weekStartsOn: 1 });
   const endOfActualCurrentWeek = endOfWeek(today, { weekStartsOn: 1 });
   const isViewingCurrentActualWeek = selectedDate >= startOfActualCurrentWeek && selectedDate <= endOfActualCurrentWeek;
 
   return (
-    <Card className="mb-6 shadow-md">
-      <CardContent className="p-3 sm:p-4 space-y-3">
-        <div className="flex items-center justify-between">
-          <Button variant="outline" size="icon" onClick={handlePreviousWeek} aria-label="Previous week">
-            <ChevronLeft className="h-5 w-5" />
-          </Button>
-          <h3 className="text-sm sm:text-base font-semibold text-foreground text-center tabular-nums">
-            {formattedWeekRange}
-          </h3>
-          <Button variant="outline" size="icon" onClick={handleNextWeek} aria-label="Next week">
-            <ChevronRight className="h-5 w-5" />
-          </Button>
-        </div>
+    <div className="mb-6 space-y-3">
+      <div className="flex items-center justify-between">
+        <Button variant="outline" size="icon" onClick={handlePreviousWeek} aria-label="Previous week">
+          <ChevronLeft className="h-5 w-5" />
+        </Button>
+        {/* Week range heading removed as per request */}
+        <Button variant="outline" size="icon" onClick={handleNextWeek} aria-label="Next week">
+          <ChevronRight className="h-5 w-5" />
+        </Button>
+      </div>
 
-        <div className="grid grid-cols-7 gap-1 sm:gap-2">
-          {daysInWeek.map((day) => {
-            const isSelected = isSameDay(day, selectedDate);
-            const isCurrentDayToday = dateFnsIsToday(day);
-            return (
-              <Button
-                key={day.toISOString()}
-                variant={isSelected ? 'default' : isCurrentDayToday ? 'secondary' : 'ghost'}
-                className={cn(
-                  "p-1 sm:p-2 h-auto flex flex-col items-center justify-center rounded-md",
-                  isSelected && "ring-2 ring-primary shadow-lg",
-                  isCurrentDayToday && !isSelected && "border border-primary/70"
-                )}
-                onClick={() => onDateChange(day)}
-              >
-                <span className="text-xs font-medium">{format(day, 'EEE')}</span>
-                <span className="text-sm sm:text-base font-bold">{format(day, 'd')}</span>
-              </Button>
-            );
-          })}
-        </div>
-
-        {!isViewingCurrentActualWeek && (
-          <div className="flex justify-center pt-1">
-            <Button variant="link" onClick={handleGoToCurrentWeek} className="text-primary hover:underline h-auto p-1 text-sm">
-              Go to Current Week
+      <div className="grid grid-cols-7 gap-1 sm:gap-2">
+        {daysInWeek.map((day) => {
+          const isSelected = isSameDay(day, selectedDate);
+          const isCurrentDayToday = dateFnsIsToday(day);
+          return (
+            <Button
+              key={day.toISOString()}
+              variant={isSelected ? 'default' : isCurrentDayToday ? 'secondary' : 'ghost'}
+              className={cn(
+                "p-1 sm:p-2 h-auto flex flex-col items-center justify-center rounded-md text-sm", // Added text-sm
+                isSelected && "ring-2 ring-primary shadow-lg",
+                isCurrentDayToday && !isSelected && "border border-primary/70"
+              )}
+              onClick={() => onDateChange(day)}
+            >
+              <span className="text-xs font-medium">{format(day, 'EEE')}</span>
+              <span className="text-sm font-bold">{format(day, 'd')}</span>
             </Button>
-          </div>
-        )}
-      </CardContent>
-    </Card>
+          );
+        })}
+      </div>
+
+      {!isViewingCurrentActualWeek && (
+        <div className="flex justify-center pt-1">
+          <Button variant="link" onClick={handleGoToCurrentWeek} className="text-primary hover:underline h-auto p-1 text-sm">
+            Go to Current Week
+          </Button>
+        </div>
+      )}
+    </div>
   );
 };
 
