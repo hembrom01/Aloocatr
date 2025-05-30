@@ -75,9 +75,6 @@ export default function TimelinePage() {
         <h1 className="text-xl font-semibold tracking-tight text-foreground">
           Timeline for {selectedDate ? format(selectedDate, 'MMMM d, yyyy') : 'Loading...'}
         </h1>
-        <p className="text-xs text-muted-foreground">
-          {selectedDate ? `A chronological view of your tasks and productivity for ${format(selectedDate, 'PPP')}.` : 'Loading date...'}
-        </p>
       </header>
       
       {selectedDate && <DateNavigator selectedDate={selectedDate} onDateChange={setSelectedDate} />}
