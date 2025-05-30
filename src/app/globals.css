@@ -121,7 +121,7 @@ body {
   /* Use CSS variables for dynamic properties from JS */
   width: 0; /* Start with no width, JS will animate or a class will set it */
   animation:
-    typing var(--typewriter-duration, 2s) steps(var(--char-count, 10), end) forwards,
+    typing var(--typewriter-duration, 2s) linear forwards, /* CHANGED from steps() to linear */
     blink-caret .75s step-end infinite;
   animation-delay: 0.3s, 0.3s; /* Delay start of typing and blinking */
 }

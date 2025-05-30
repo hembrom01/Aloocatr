@@ -14,9 +14,8 @@ interface AppLoadingScreenProps {
 export const AppLoadingScreen: FC<AppLoadingScreenProps> = ({ isAppActuallyLoaded, onLoadingFinished }) => {
   const [phase, setPhase] = useState<'typing' | 'fadingLoader' | 'fadingScreen' | 'finished'>('typing');
   const appName = "Allocatr";
-  // Adjusted typewriter duration for better feel
-  const typewriterCharDuration = 100; // ms per character
-  const typewriterTotalDuration = appName.length * typewriterCharDuration;
+  // Adjusted typewriter duration for better feel - this will be a smooth reveal
+  const typewriterTotalDuration = 1500; // 1.5 seconds for a smooth reveal
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -76,7 +75,7 @@ export const AppLoadingScreen: FC<AppLoadingScreenProps> = ({ isAppActuallyLoade
             phase !== 'typing' && 'typewriter-text-done' // Class to remove border after typing
           )}
           style={{
-            '--char-count': appName.length,
+            // '--char-count' is no longer needed for linear animation
             '--typewriter-duration': `${typewriterTotalDuration / 1000}s`,
           } as React.CSSProperties}
         >
