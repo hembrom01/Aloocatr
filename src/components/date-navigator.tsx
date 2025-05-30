@@ -43,6 +43,8 @@ const DateNavigatorComponent: FC<DateNavigatorProps> = ({ selectedDate, onDateCh
   const startOfActualCurrentWeek = startOfWeek(today, { weekStartsOn: 1 });
   const endOfActualCurrentWeek = endOfWeek(today, { weekStartsOn: 1 });
   const isViewingCurrentActualWeek = selectedDate >= startOfActualCurrentWeek && selectedDate <= endOfActualCurrentWeek;
+  
+  const formattedWeekRange = `${format(currentWeekStart, 'MMM d')} - ${format(currentWeekEnd, 'MMM d, yyyy')}`;
 
   return (
     <div className="mb-6 space-y-3">
@@ -50,7 +52,9 @@ const DateNavigatorComponent: FC<DateNavigatorProps> = ({ selectedDate, onDateCh
         <Button variant="outline" size="icon" onClick={handlePreviousWeek} aria-label="Previous week">
           <ChevronLeft className="h-5 w-5" />
         </Button>
-        {/* Week range heading removed as per request */}
+        <div className="text-center">
+           <h3 className="text-sm font-semibold text-foreground">{formattedWeekRange}</h3>
+        </div>
         <Button variant="outline" size="icon" onClick={handleNextWeek} aria-label="Next week">
           <ChevronRight className="h-5 w-5" />
         </Button>
@@ -65,7 +69,7 @@ const DateNavigatorComponent: FC<DateNavigatorProps> = ({ selectedDate, onDateCh
               key={day.toISOString()}
               variant={isSelected ? 'default' : isCurrentDayToday ? 'secondary' : 'ghost'}
               className={cn(
-                "p-1 sm:p-2 h-auto flex flex-col items-center justify-center rounded-md text-sm", // Added text-sm
+                "p-1 sm:p-2 h-auto flex flex-col items-center justify-center rounded-md text-sm", 
                 isSelected && "ring-2 ring-primary shadow-lg",
                 isCurrentDayToday && !isSelected && "border border-primary/70"
               )}
