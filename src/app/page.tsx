@@ -145,7 +145,7 @@ export default function TrackerPage() {
                       aria-label={isActive ? `Stop ${task.name}` : `Start ${task.name}`}
                     >
                       <IconComponent className={cn("h-10 w-10", isActive ? "text-primary" : "text-muted-foreground")} />
-                      <span className={cn("mt-1 text-[11px] text-center w-full", isActive ? "text-primary" : "text-muted-foreground")}>
+                      <span className={cn("mt-1 text-[11px] text-center w-full leading-tight", isActive ? "text-primary" : "text-muted-foreground")}>
                         {task.name}
                       </span>
                     </Button>
@@ -165,7 +165,7 @@ export default function TrackerPage() {
                     aria-label="Add new task"
                   >
                     <PlusCircle className="h-10 w-10 text-muted-foreground" />
-                     <span className="mt-1 text-[11px] text-center w-full text-muted-foreground">
+                     <span className="mt-1 text-[11px] text-center w-full leading-tight text-muted-foreground">
                         Add Task
                       </span>
                   </Button>
