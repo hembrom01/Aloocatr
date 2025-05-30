@@ -39,7 +39,6 @@ export default function ProgressPage() {
   const renderChart = () => {
     if (tasksWithBudgets.length === 0) {
       return (
-        // The charts themselves are Cards, so this placeholder should also be.
         <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
           <h3 className="text-lg font-semibold text-center">Task Progress Visuals</h3>
           <p className="text-sm text-muted-foreground text-center py-10">No tasks with budgets to display. Add budgets to your tasks in the Tasks section.</p>
@@ -78,7 +77,7 @@ export default function ProgressPage() {
         </Select>
       </div>
       
-      <div className="mt-4 mb-8"> {/* Chart rendering section */}
+      <div className="mt-4 mb-8">
         {renderChart()}
       </div>
 
@@ -91,3 +90,4 @@ export default function ProgressPage() {
     </div>
   );
 }
+

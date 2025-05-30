@@ -5,7 +5,6 @@ import type { FC } from 'react';
 import { useMemo, memo } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import type { Task } from '@/types';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { formatMinutesToFriendlyDuration } from '@/lib/utils';
 
 interface BudgetComparisonBarChartProps {
@@ -45,47 +44,45 @@ const BudgetComparisonBarChartComponent: FC<BudgetComparisonBarChartProps> = ({ 
   };
 
   return (
-    <Card className="shadow-md">
-      <CardHeader>
-        <CardTitle>Budget vs. Actual Time</CardTitle>
-        <CardDescription>Comparison of your budgeted tasks based on their individual budget cycles (daily, weekly, monthly).</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <ResponsiveContainer width="100%" height={350}>
-          <BarChart 
-            data={chartData} 
-            margin={{ top: 5, right: 0, left: -25, bottom: 5 }}
-            barGap={4} 
-            barCategoryGap="20%" 
-          >
-            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-            <XAxis 
-              dataKey="name" 
-              stroke="hsl(var(--foreground))" 
-              fontSize={10} 
-              tickLine={false} 
-              axisLine={false}
-              interval={0} 
-            />
-            <YAxis 
-              stroke="hsl(var(--foreground))" 
-              fontSize={10} 
-              tickLine={false} 
-              axisLine={false}
-              tickFormatter={(value) => formatMinutesToFriendlyDuration(value)}
-              width={80} 
-            />
-            <Tooltip content={<CustomTooltip />} cursor={{ fill: 'hsl(var(--muted))' }} />
-            <Legend 
-              wrapperStyle={{paddingTop: '20px'}} 
-              formatter={(value) => <span style={{ color: 'hsl(var(--foreground))', fontSize: '10px' }}>{value}</span>}
-            />
-            <Bar dataKey="Budgeted" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} />
-            <Bar dataKey="Actual" fill="hsl(var(--chart-2))" radius={[4, 4, 0, 0]} />
-          </BarChart>
-        </ResponsiveContainer>
-      </CardContent>
-    </Card>
+    <div className="w-full">
+      <div className="mb-4 text-center">
+        <h3 className="text-lg font-semibold text-foreground">Budget vs. Actual Time</h3>
+        <p className="text-xs text-muted-foreground">Comparison of your budgeted tasks based on their individual budget cycles.</p>
+      </div>
+      <ResponsiveContainer width="100%" height={350}>
+        <BarChart 
+          data={chartData} 
+          margin={{ top: 5, right: 0, left: -25, bottom: 5 }}
+          barGap={4} 
+          barCategoryGap="20%" 
+        >
+          <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+          <XAxis 
+            dataKey="name" 
+            stroke="hsl(var(--foreground))" 
+            fontSize={10} 
+            tickLine={false} 
+            axisLine={false}
+            interval={0} 
+          />
+          <YAxis 
+            stroke="hsl(var(--foreground))" 
+            fontSize={10} 
+            tickLine={false} 
+            axisLine={false}
+            tickFormatter={(value) => formatMinutesToFriendlyDuration(value)}
+            width={80} 
+          />
+          <Tooltip content={<CustomTooltip />} cursor={{ fill: 'hsl(var(--muted))' }} />
+          <Legend 
+            wrapperStyle={{paddingTop: '20px'}} 
+            formatter={(value) => <span style={{ color: 'hsl(var(--foreground))', fontSize: '10px' }}>{value}</span>}
+          />
+          <Bar dataKey="Budgeted" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} />
+          <Bar dataKey="Actual" fill="hsl(var(--chart-2))" radius={[4, 4, 0, 0]} />
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
   );
 };
 

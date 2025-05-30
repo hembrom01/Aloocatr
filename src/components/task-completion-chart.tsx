@@ -5,7 +5,6 @@ import type { FC } from 'react';
 import { useMemo, memo } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList } from 'recharts';
 import type { Task } from '@/types';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { formatMinutesToFriendlyDuration } from '@/lib/utils';
 
 interface TaskCompletionChartProps {
@@ -49,52 +48,50 @@ const TaskCompletionChartComponent: FC<TaskCompletionChartProps> = ({ tasks, get
   };
   
   return (
-    <Card className="shadow-md">
-      <CardHeader>
-        <CardTitle>Task Completion Percentage</CardTitle>
-        <CardDescription>How much of each task's budget has been utilized (capped at 100%).</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <ResponsiveContainer width="100%" height={350}>
-          <BarChart
-            data={chartData}
-            layout="vertical"
-            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-          >
-            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-            <XAxis 
-              type="number" 
-              domain={[0, 100]} 
-              stroke="hsl(var(--foreground))" 
+    <div className="w-full">
+      <div className="mb-4 text-center">
+        <h3 className="text-lg font-semibold text-foreground">Task Completion Percentage</h3>
+        <p className="text-xs text-muted-foreground">How much of each task's budget has been utilized (capped at 100%).</p>
+      </div>
+      <ResponsiveContainer width="100%" height={350}>
+        <BarChart
+          data={chartData}
+          layout="vertical"
+          margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+        >
+          <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+          <XAxis 
+            type="number" 
+            domain={[0, 100]} 
+            stroke="hsl(var(--foreground))" 
+            fontSize={10}
+            tickFormatter={(value) => `${value}%`}
+          />
+          <YAxis 
+            type="category" 
+            dataKey="name" 
+            stroke="hsl(var(--foreground))" 
+            fontSize={10}
+            width={100} 
+            interval={0}
+          />
+          <Tooltip content={<CustomTooltip />} cursor={{ fill: 'hsl(var(--muted))' }}/>
+          <Legend 
+            wrapperStyle={{paddingTop: '20px'}} 
+            formatter={(value) => <span style={{ color: 'hsl(var(--foreground))', fontSize: '10px' }}>{value}</span>}
+          />
+          <Bar dataKey="completion" name="Completion %" fill="hsl(var(--chart-3))" radius={[0, 4, 4, 0]}>
+            <LabelList 
+              dataKey="completion" 
+              position="right" 
+              formatter={(value: number) => `${value.toFixed(0)}%`} 
               fontSize={10}
-              tickFormatter={(value) => `${value}%`}
+              fill="hsl(var(--foreground))"
             />
-            <YAxis 
-              type="category" 
-              dataKey="name" 
-              stroke="hsl(var(--foreground))" 
-              fontSize={10}
-              width={100} 
-              interval={0}
-            />
-            <Tooltip content={<CustomTooltip />} cursor={{ fill: 'hsl(var(--muted))' }}/>
-            <Legend 
-              wrapperStyle={{paddingTop: '20px'}} 
-              formatter={(value) => <span style={{ color: 'hsl(var(--foreground))', fontSize: '10px' }}>{value}</span>}
-            />
-            <Bar dataKey="completion" name="Completion %" fill="hsl(var(--chart-3))" radius={[0, 4, 4, 0]}>
-              <LabelList 
-                dataKey="completion" 
-                position="right" 
-                formatter={(value: number) => `${value.toFixed(0)}%`} 
-                fontSize={10}
-                fill="hsl(var(--foreground))"
-              />
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
-      </CardContent>
-    </Card>
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
   );
 };
 
