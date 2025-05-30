@@ -9,10 +9,9 @@ import { format, startOfWeek, endOfWeek } from 'date-fns';
 import { DailyUsagePieChart } from '@/components/daily-usage-pie-chart';
 import { ProductivityTrendChart } from '@/components/productivity-trend-chart';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { AppLoadingScreen } from '@/components/app-loading-screen';
-import { Separator } from '@/components/ui/separator'; // Added import
+import { Separator } from '@/components/ui/separator';
 
 type ChartType = 'dailyBreakdown' | 'weeklyProductivity';
 
@@ -83,30 +82,26 @@ export default function TimelinePage() {
       
       {selectedDate && <DateNavigator selectedDate={selectedDate} onDateChange={setSelectedDate} />}
       
-      <Card className="shadow-md mb-6">
-        <CardContent className="p-4 space-y-4 text-sm">
-          <div>
-            <Label htmlFor="chartTypeSelect" className="text-xs font-medium text-muted-foreground">
-              Select Chart View:
-            </Label>
-            <Select value={selectedChartType} onValueChange={(value) => setSelectedChartType(value as ChartType)}>
-              <SelectTrigger id="chartTypeSelect" className="w-full sm:w-[280px] mt-1 text-sm">
-                <SelectValue placeholder="Select chart type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="dailyBreakdown" className="text-sm">Daily Time Breakdown (Pie Chart)</SelectItem>
-                <SelectItem value="weeklyProductivity" className="text-sm">Weekly Productivity (Line Chart)</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="my-6 flex flex-col items-center space-y-2">
+        <Label htmlFor="chartTypeSelect" className="text-xs font-medium text-muted-foreground">
+          Select Chart View:
+        </Label>
+        <Select value={selectedChartType} onValueChange={(value) => setSelectedChartType(value as ChartType)}>
+          <SelectTrigger id="chartTypeSelect" className="w-[280px] text-sm">
+            <SelectValue placeholder="Select chart type" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="dailyBreakdown" className="text-sm">Daily Time Breakdown (Pie Chart)</SelectItem>
+            <SelectItem value="weeklyProductivity" className="text-sm">Weekly Productivity (Line Chart)</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
           
       <div className="mt-4 mb-8"> {/* Chart rendering section */}
         {selectedDate && renderChart()}
       </div>
 
-      <Separator className="my-6" /> {/* Added Separator */}
+      <Separator className="my-6" />
 
       {/* Daily Task Timeline rendered directly, not in a card */}
       <section aria-labelledby="daily-task-timeline-title" className="mt-8">
