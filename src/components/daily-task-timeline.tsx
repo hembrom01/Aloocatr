@@ -31,11 +31,11 @@ const DailyTaskTimelineComponent: FC<DailyTaskTimelineProps> = ({ tasks, taskLog
     return (
       <Card>
         <CardHeader>
-          <CardTitle>{timelineTitle}</CardTitle>
-          <CardDescription>{timelineDescription}</CardDescription>
+          <CardTitle className="text-2xl">{timelineTitle}</CardTitle>
+          <CardDescription className="text-sm">{timelineDescription}</CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground">No tasks logged for {isToday(currentDate) ? 'today' : format(currentDate, 'MMMM d')} yet. Start a timer to see your progress!</p>
+          <p className="text-base text-muted-foreground">No tasks logged for {isToday(currentDate) ? 'today' : format(currentDate, 'MMMM d')} yet. Start a timer to see your progress!</p>
         </CardContent>
       </Card>
     );
@@ -44,8 +44,8 @@ const DailyTaskTimelineComponent: FC<DailyTaskTimelineProps> = ({ tasks, taskLog
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{timelineTitle}</CardTitle>
-        <CardDescription>{timelineDescription}</CardDescription>
+        <CardTitle className="text-2xl">{timelineTitle}</CardTitle>
+        <CardDescription className="text-sm">{timelineDescription}</CardDescription>
       </CardHeader>
       <CardContent>
         <ScrollArea className="h-[300px] pr-4">
@@ -57,7 +57,7 @@ const DailyTaskTimelineComponent: FC<DailyTaskTimelineProps> = ({ tasks, taskLog
                   <div className="flex items-center gap-4 p-2 rounded-lg hover:bg-muted/50 transition-colors">
                     <IconComponent className="h-6 w-6 text-primary flex-shrink-0" />
                     <div className="flex-grow">
-                      <p className="font-medium">{getTaskName(log.taskId)}</p>
+                      <p className="text-base font-medium">{getTaskName(log.taskId)}</p>
                       <p className="text-sm text-muted-foreground">
                         {format(new Date(log.startTime), 'p')} - {format(new Date(log.endTime), 'p')}
                       </p>

@@ -44,14 +44,11 @@ const BudgetComparisonBarChartComponent: FC<BudgetComparisonBarChartProps> = ({ 
     return null;
   };
 
-  // Note: The "No tasks with budgets to display" message is now handled in TrackerPage.tsx
-  // This component assumes it receives tasks with budgets. If tasks array is empty, Recharts handles it.
-
   return (
     <Card className="shadow-md">
       <CardHeader>
-        <CardTitle>Budget vs. Actual Time</CardTitle>
-        <CardDescription>Comparison of your budgeted tasks based on their individual budget cycles (daily, weekly, monthly).</CardDescription>
+        <CardTitle className="text-2xl">Budget vs. Actual Time</CardTitle>
+        <CardDescription className="text-sm">Comparison of your budgeted tasks based on their individual budget cycles (daily, weekly, monthly).</CardDescription>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={350}>

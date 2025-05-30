@@ -28,8 +28,8 @@ const ProductivityTrendChartComponent: FC<ProductivityTrendChartProps> = ({ data
     if (active && payload && payload.length) {
       return (
         <div className="p-2 bg-background border border-border rounded-md shadow-lg">
-          <p className="font-semibold">{`${label}`}</p>
-          <p className="text-sm text-muted-foreground">{`Time: ${formatMinutesToFriendlyDuration(payload[0].value)}`}</p>
+          <p className="font-semibold text-sm">{`${label}`}</p>
+          <p className="text-xs text-muted-foreground">{`Time: ${formatMinutesToFriendlyDuration(payload[0].value)}`}</p>
         </div>
       );
     }
@@ -40,11 +40,11 @@ const ProductivityTrendChartComponent: FC<ProductivityTrendChartProps> = ({ data
     return (
       <Card className="shadow-md">
         <CardHeader>
-          <CardTitle>{title}</CardTitle>
-          <CardDescription>{description}</CardDescription>
+          <CardTitle className="text-2xl">{title}</CardTitle>
+          <CardDescription className="text-sm">{description}</CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground text-center py-10">No productivity data to display for this period.</p>
+          <p className="text-base text-muted-foreground text-center py-10">No productivity data to display for this period.</p>
         </CardContent>
       </Card>
     );
@@ -53,8 +53,8 @@ const ProductivityTrendChartComponent: FC<ProductivityTrendChartProps> = ({ data
   return (
     <Card className="shadow-md">
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
+        <CardTitle className="text-2xl">{title}</CardTitle>
+        <CardDescription className="text-sm">{description}</CardDescription>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={350}>
@@ -76,7 +76,7 @@ const ProductivityTrendChartComponent: FC<ProductivityTrendChartProps> = ({ data
               domain={['auto', 'auto']}
             />
             <Tooltip content={<CustomTooltip />} cursor={{ fill: 'hsl(var(--muted))' }}/>
-            <Legend wrapperStyle={{paddingTop: '20px'}} formatter={(value) => <span style={{ color: 'hsl(var(--foreground))' }}>{value}</span>} />
+            <Legend wrapperStyle={{paddingTop: '20px'}} formatter={(value) => <span style={{ color: 'hsl(var(--foreground))', fontSize: '12px' }}>{value}</span>} />
             <Line 
               type="monotone" 
               dataKey="Tracked Time" 

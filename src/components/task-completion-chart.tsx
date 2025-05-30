@@ -48,14 +48,11 @@ const TaskCompletionChartComponent: FC<TaskCompletionChartProps> = ({ tasks, get
     return null;
   };
   
-  // Note: The "No tasks with budgets to display" message is handled in TrackerPage.tsx
-  // This component assumes it receives tasks. If tasks array is empty, Recharts handles it.
-
   return (
     <Card className="shadow-md">
       <CardHeader>
-        <CardTitle>Task Completion Percentage</CardTitle>
-        <CardDescription>How much of each task's budget has been utilized (capped at 100%).</CardDescription>
+        <CardTitle className="text-2xl">Task Completion Percentage</CardTitle>
+        <CardDescription className="text-sm">How much of each task's budget has been utilized (capped at 100%).</CardDescription>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={350}>

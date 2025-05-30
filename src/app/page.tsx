@@ -51,13 +51,13 @@ const ActiveTaskBar = memo(({ activeTimer, task, onStop }: { activeTimer: Active
         <div className="flex items-center">
           <IconComponent className="h-6 w-6 mr-3 text-primary" />
           <div>
-            <p className="text-md font-semibold text-foreground">{task.name}</p>
+            <p className="text-base font-semibold text-foreground">{task.name}</p>
             <p className="text-xs text-muted-foreground">Running...</p>
           </div>
         </div>
         <div className="flex items-center">
           <TimerIcon className="h-5 w-5 mr-2 text-primary" />
-          <p className="text-lg font-mono text-primary">{elapsedTime}</p>
+          <p className="text-base font-mono text-primary">{elapsedTime}</p>
         </div>
       </CardContent>
     </Card>
@@ -107,7 +107,7 @@ export default function TrackerPage() {
 
       <div className="space-y-6">
         <div className="text-center mt-4">
-          <p className="text-foreground">Click on a task below to start or stop tracking.</p>
+          <p className="text-base text-foreground">Click on a task below to start or stop tracking.</p>
         </div>
 
         <Separator className="my-4" />
@@ -181,4 +181,3 @@ export default function TrackerPage() {
     </div>
   );
 }
-

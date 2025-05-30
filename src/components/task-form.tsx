@@ -15,7 +15,7 @@ import { taskIconsLookup, defaultTaskIcon } from '@/config/icons';
 import { AiTimeSuggester } from './ai-time-suggester';
 import { useToast } from '@/hooks/use-toast';
 import { Trash2, ChevronDown, Calendar as CalendarIcon } from 'lucide-react';
-import { DialogFooter as ShadDialogFooter } from '@/components/ui/dialog';
+import { DialogFooter as ShadDialogFooter } from '@/components/ui/dialog'; // Renamed to avoid conflict
 import { IconPicker } from './icon-picker';
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
@@ -153,7 +153,7 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
         form.setValue('targetDurationDays', 0);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [task, form.reset]); // form.reset added to dependencies
+  }, [task, form.reset]); 
   
   const watchedBudgetTimeValue = form.watch("budgetTimeValue");
   const watchedBudgetTimeUnit = form.watch("budgetTimeUnit");
@@ -290,7 +290,7 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
             <Button 
               variant="outline" 
               type="button" 
-              className="w-full justify-start text-left font-normal"
+              className="w-full justify-start text-left font-normal text-sm"
               onClick={() => setIsIconPickerOpen(true)}
             >
               <SelectedIconComponent className="mr-2 h-5 w-5" />
@@ -317,14 +317,14 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
                   value={field.value || "null"}
                 >
                   <FormControl>
-                    <SelectTrigger>
+                    <SelectTrigger className="text-sm">
                       <SelectValue placeholder="Select a category" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="null">Uncategorized</SelectItem>
+                    <SelectItem value="null" className="text-sm">Uncategorized</SelectItem>
                     {categories.map(category => (
-                      <SelectItem key={category.id} value={category.id}>
+                      <SelectItem key={category.id} value={category.id} className="text-sm">
                         {category.name}
                       </SelectItem>
                     ))}
@@ -357,13 +357,13 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
                   <FormItem className="w-[110px]">
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="text-sm">
                           <SelectValue placeholder="Unit" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="minutes">Minutes</SelectItem>
-                        <SelectItem value="hours">Hours</SelectItem>
+                        <SelectItem value="minutes" className="text-sm">Minutes</SelectItem>
+                        <SelectItem value="hours" className="text-sm">Hours</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -389,14 +389,14 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
                 <FormLabel>Budget Basis</FormLabel>
                 <Select onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
                   <FormControl>
-                    <SelectTrigger>
+                    <SelectTrigger className="text-sm">
                       <SelectValue placeholder="Select budget basis" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="daily">Daily</SelectItem>
-                    <SelectItem value="weekly">Weekly</SelectItem>
-                    <SelectItem value="monthly">Monthly</SelectItem>
+                    <SelectItem value="daily" className="text-sm">Daily</SelectItem>
+                    <SelectItem value="weekly" className="text-sm">Weekly</SelectItem>
+                    <SelectItem value="monthly" className="text-sm">Monthly</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -409,13 +409,13 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
               <FormLabel>Target Duration</FormLabel>
               <Select onValueChange={handleDurationPresetChange} value={selectedDurationPreset}>
                 <FormControl>
-                  <SelectTrigger>
+                  <SelectTrigger className="text-sm">
                     <SelectValue placeholder="Select a duration preset" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
                   {durationPresets.map(preset => (
-                     <SelectItem key={preset.value} value={preset.value}>{preset.label}</SelectItem>
+                     <SelectItem key={preset.value} value={preset.value} className="text-sm">{preset.label}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -427,7 +427,7 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
                   <Button
                     variant={"outline"}
                     className={cn(
-                      "w-full justify-start text-left font-normal mt-2",
+                      "w-full justify-start text-left font-normal mt-2 text-sm",
                       !customDateRange && "text-muted-foreground"
                     )}
                   >

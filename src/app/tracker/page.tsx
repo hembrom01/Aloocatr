@@ -43,7 +43,7 @@ export default function TrackerPage() {
             <CardTitle>Task Progress Visuals</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-muted-foreground text-center py-10">No tasks with budgets to display. Add budgets to your tasks in the Tasks section.</p>
+            <p className="text-base text-muted-foreground text-center py-10">No tasks with budgets to display. Add budgets to your tasks in the Tasks section.</p>
           </CardContent>
         </Card>
       );
@@ -62,8 +62,8 @@ export default function TrackerPage() {
   return (
     <div className="space-y-8 animate-page-content-appear pb-16">
       <header className="mb-6">
-        <h1 className="text-4xl font-bold tracking-tight text-foreground">Task Progress</h1>
-        <p className="text-muted-foreground">Monitor your time spent against your budgeted tasks.</p>
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">Task Progress</h1>
+        <p className="text-base text-muted-foreground">Monitor your time spent against your budgeted tasks.</p>
       </header>
 
       <Card className="shadow-md">
@@ -73,12 +73,12 @@ export default function TrackerPage() {
               Select Visual:
             </label>
             <Select value={selectedChartType} onValueChange={(value) => setSelectedChartType(value as ProgressChartType)}>
-              <SelectTrigger id="progressChartTypeSelect" className="w-full sm:w-[280px] mt-1">
+              <SelectTrigger id="progressChartTypeSelect" className="w-full sm:w-[280px] mt-1 text-sm">
                 <SelectValue placeholder="Select visual type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="budgetComparison">Budget vs. Actual Time</SelectItem>
-                <SelectItem value="taskCompletion">Task Completion Percentage</SelectItem>
+                <SelectItem value="budgetComparison" className="text-sm">Budget vs. Actual Time</SelectItem>
+                <SelectItem value="taskCompletion" className="text-sm">Task Completion Percentage</SelectItem>
               </SelectContent>
             </Select>
           </div>

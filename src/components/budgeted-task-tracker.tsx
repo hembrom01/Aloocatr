@@ -33,10 +33,10 @@ const BudgetedTaskTrackerComponent: FC<BudgetedTaskTrackerProps> = ({ tasks, get
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Budgeted Task Tracker</CardTitle>
+          <CardTitle className="text-2xl">Budgeted Task Tracker</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground">No active budgeted tasks. Add tasks in Settings or check if existing tasks have expired.</p>
+          <p className="text-base text-muted-foreground">No active budgeted tasks. Add tasks in Settings or check if existing tasks have expired.</p>
         </CardContent>
       </Card>
     );
@@ -45,7 +45,7 @@ const BudgetedTaskTrackerComponent: FC<BudgetedTaskTrackerProps> = ({ tasks, get
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Budgeted Task Tracker</CardTitle>
+        <CardTitle className="text-2xl">Budgeted Task Tracker</CardTitle>
       </CardHeader>
       <CardContent>
         <ScrollArea className="h-[300px] pr-4">
@@ -66,7 +66,7 @@ const BudgetedTaskTrackerComponent: FC<BudgetedTaskTrackerProps> = ({ tasks, get
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
                       <IconComponent className="h-5 w-5 text-primary" />
-                      <span className="font-medium">{task.name}</span>
+                      <span className="text-base font-medium">{task.name}</span>
                     </div>
                     <span className="text-sm text-muted-foreground">
                       {formatMinutesToFriendlyDuration(timeSpent)} / {formatMinutesToFriendlyDuration(task.budgetedTime)}{basisDisplay}
@@ -95,5 +95,3 @@ const BudgetedTaskTrackerComponent: FC<BudgetedTaskTrackerProps> = ({ tasks, get
 
 export const BudgetedTaskTracker = memo(BudgetedTaskTrackerComponent);
 BudgetedTaskTracker.displayName = 'BudgetedTaskTracker';
-
-    

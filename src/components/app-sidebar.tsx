@@ -67,10 +67,10 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader className="p-4 text-sm">
+      <SidebarHeader className="p-4">
         <div className="flex flex-col items-center group-data-[collapsible=icon]:hidden">
           <Settings2 className="h-7 w-7 text-primary mb-1" />
-          <h2 className="text-lg font-semibold text-foreground">{appName}</h2>
+          <h2 className="text-xl font-semibold text-foreground">{appName}</h2>
           <p className="text-xs text-muted-foreground">{appVersion}</p>
         </div>
         <div className="hidden group-data-[collapsible=icon]:flex group-data-[collapsible=icon]:flex-col group-data-[collapsible=icon]:items-center">
@@ -80,14 +80,14 @@ export function AppSidebar() {
 
       <Separator className="my-1 bg-sidebar-border group-data-[collapsible=icon]:mx-1" />
 
-      <SidebarContent className="p-2 text-sm">
+      <SidebarContent className="p-2">
         <SidebarGroup>
           {mainMenuItems.map((item) => (
             <SidebarMenuItem key={item.href}>
               <SidebarMenuButton
                 asChild
                 tooltip={item.label}
-                className="group-data-[collapsible=icon]:justify-center"
+                className="group-data-[collapsible=icon]:justify-center text-sm"
                 data-active={pathname === item.href}
                 onClick={handleMobileNavClick}
               >
@@ -103,7 +103,7 @@ export function AppSidebar() {
         <Separator className="my-2 bg-sidebar-border group-data-[collapsible=icon]:mx-1" />
         
         <SidebarGroup>
-          <SidebarGroupLabel className="flex items-center gap-2 group-data-[collapsible=icon]:justify-center">
+          <SidebarGroupLabel className="flex items-center gap-2 group-data-[collapsible=icon]:justify-center text-xs">
             <DatabaseZap className="h-4 w-4" />
             <span className="group-data-[collapsible=icon]:hidden">Data</span>
           </SidebarGroupLabel>
@@ -112,9 +112,7 @@ export function AppSidebar() {
               <SidebarMenuButton
                 asChild
                 tooltip={item.tooltip}
-                className="group-data-[collapsible=icon]:justify-center"
-                // For data management, active state might not apply if they all point to the same page
-                // Or, it could be set if pathname === item.href and a query/hash matches
+                className="group-data-[collapsible=icon]:justify-center text-sm"
                 data-active={pathname === item.href && item.href.includes(pathname)} 
                 onClick={handleMobileNavClick}
               >
@@ -130,7 +128,7 @@ export function AppSidebar() {
         <Separator className="my-2 bg-sidebar-border group-data-[collapsible=icon]:mx-1" />
 
          <SidebarGroup>
-          <SidebarGroupLabel className="flex items-center gap-2 group-data-[collapsible=icon]:justify-center">
+          <SidebarGroupLabel className="flex items-center gap-2 group-data-[collapsible=icon]:justify-center text-xs">
             <Info className="h-4 w-4" />
             <span className="group-data-[collapsible=icon]:hidden">More</span>
           </SidebarGroupLabel>
@@ -138,8 +136,8 @@ export function AppSidebar() {
             <SidebarMenuItem key={item.label}>
                 <SidebarMenuButton 
                   tooltip={item.tooltip} 
-                  className="group-data-[collapsible=icon]:justify-center"
-                  onClick={handleMobileNavClick} // Assuming these might become links
+                  className="group-data-[collapsible=icon]:justify-center text-sm"
+                  onClick={handleMobileNavClick} 
                 >
                 <item.icon className="h-4 w-4" />
                 <span className="group-data-[collapsible=icon]:hidden">{item.label}</span>

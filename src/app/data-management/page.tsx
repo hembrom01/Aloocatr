@@ -19,8 +19,8 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useToast } from '@/hooks/use-toast';
-import { Label } from '@/components/ui/label'; // Added import
-import { Input } from '@/components/ui/input'; // Added import
+import { Label } from '@/components/ui/label'; 
+import { Input } from '@/components/ui/input'; 
 
 
 export default function DataManagementPage() {
@@ -53,7 +53,7 @@ export default function DataManagementPage() {
           </Button>
           <div>
             <h1 className="text-3xl font-bold tracking-tight text-foreground">Data Management</h1>
-            <p className="text-sm text-muted-foreground">Manage your application data.</p>
+            <p className="text-base text-muted-foreground">Manage your application data.</p>
           </div>
         </div>
       </header>
@@ -64,14 +64,14 @@ export default function DataManagementPage() {
             <DownloadCloud className="h-6 w-6 text-primary" />
             <CardTitle className="text-2xl">Export Record</CardTitle>
           </div>
-          <CardDescription>Download your task records and logs as a CSV or JSON file.</CardDescription>
+          <CardDescription className="text-sm">Download your task records and logs as a CSV or JSON file.</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={() => handlePlaceholderAction('CSV Export')}>
+            <Button variant="outline" onClick={() => handlePlaceholderAction('CSV Export')} className="text-sm">
               Export as CSV
             </Button>
-            <Button variant="outline" onClick={() => handlePlaceholderAction('JSON Export')}>
+            <Button variant="outline" onClick={() => handlePlaceholderAction('JSON Export')} className="text-sm">
               Export as JSON
             </Button>
           </div>
@@ -86,16 +86,16 @@ export default function DataManagementPage() {
             <UploadCloud className="h-6 w-6 text-primary" />
             <CardTitle className="text-2xl">Backup & Restore</CardTitle>
           </div>
-          <CardDescription>Backup your current data or restore from a previous backup file.</CardDescription>
+          <CardDescription className="text-sm">Backup your current data or restore from a previous backup file.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
-          <Button onClick={() => handlePlaceholderAction('Backup Data')}>
+          <Button onClick={() => handlePlaceholderAction('Backup Data')} className="text-sm">
             Backup Data
           </Button>
           <div>
             <Label htmlFor="restoreFile" className="text-sm font-medium">Restore from Backup</Label>
-            <Input id="restoreFile" type="file" className="mt-1" disabled />
-            <Button variant="secondary" className="mt-2" onClick={() => handlePlaceholderAction('Restore Data')} disabled>
+            <Input id="restoreFile" type="file" className="mt-1 text-sm" disabled />
+            <Button variant="secondary" className="mt-2 text-sm" onClick={() => handlePlaceholderAction('Restore Data')} disabled>
               Restore Data
             </Button>
             <p className="text-xs text-muted-foreground mt-1">(Restore functionality is a placeholder)</p>
@@ -111,24 +111,24 @@ export default function DataManagementPage() {
             <Trash2 className="h-6 w-6 text-destructive" />
             <CardTitle className="text-2xl text-destructive">Delete & Reset</CardTitle>
           </div>
-          <CardDescription>Permanently delete all your tasks, categories, and logs. This action cannot be undone.</CardDescription>
+          <CardDescription className="text-sm">Permanently delete all your tasks, categories, and logs. This action cannot be undone.</CardDescription>
         </CardHeader>
         <CardContent>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="destructive">Delete All Data & Reset App</Button>
+              <Button variant="destructive" className="text-sm">Delete All Data & Reset App</Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                <AlertDialogDescription>
+                <AlertDialogTitle className="text-lg">Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription className="text-sm">
                   This action cannot be undone. This will permanently delete all your
                   ChronoFlow data, including tasks, categories, and time logs from your browser.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={handleDeleteAndReset}>
+                <AlertDialogCancel className="text-sm">Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={handleDeleteAndReset} className="text-sm">
                   Yes, delete everything
                 </AlertDialogAction>
               </AlertDialogFooter>

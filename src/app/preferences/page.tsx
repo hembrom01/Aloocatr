@@ -26,7 +26,7 @@ export default function PreferencesPage() {
           </Button>
           <div>
             <h1 className="text-3xl font-bold tracking-tight text-foreground">Preferences</h1>
-            <p className="text-sm text-muted-foreground">Customize your application experience.</p>
+            <p className="text-base text-muted-foreground">Customize your application experience.</p>
           </div>
         </div>
       </header>
@@ -38,7 +38,7 @@ export default function PreferencesPage() {
               <Palette className="h-6 w-6 text-primary" />
               <CardTitle className="text-2xl">Appearance</CardTitle>
             </div>
-            <CardDescription>Adjust how the application looks and feels.</CardDescription>
+            <CardDescription className="text-sm">Adjust how the application looks and feels.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex items-center justify-between p-3 bg-muted/30 rounded-md border">
@@ -48,10 +48,10 @@ export default function PreferencesPage() {
             <div className="p-3 bg-muted/30 rounded-md border space-y-3">
               <div className="flex items-center gap-2 mb-2">
                  <Globe className="h-5 w-5 text-muted-foreground" />
-                 <h4 className="font-medium text-md">Regional Settings</h4>
+                 <h4 className="font-medium text-base">Regional Settings</h4>
               </div>
               <div>
-                <Label htmlFor="country-select-prefs" className="text-xs text-muted-foreground mb-1 block">Country</Label>
+                <Label htmlFor="country-select-prefs" className="text-sm text-muted-foreground mb-1 block">Country</Label>
                 <Select defaultValue="us">
                   <SelectTrigger id="country-select-prefs" className="h-9 text-sm bg-background border-input focus:ring-ring">
                     <SelectValue placeholder="Select country" />
@@ -65,7 +65,7 @@ export default function PreferencesPage() {
                 </Select>
               </div>
               <div>
-                <Label htmlFor="language-select-prefs" className="text-xs text-muted-foreground mb-1 block">Language</Label>
+                <Label htmlFor="language-select-prefs" className="text-sm text-muted-foreground mb-1 block">Language</Label>
                 <Select defaultValue="en">
                   <SelectTrigger id="language-select-prefs" className="h-9 text-sm bg-background border-input focus:ring-ring">
                     <SelectValue placeholder="Select language" />
@@ -91,7 +91,7 @@ export default function PreferencesPage() {
               <Bell className="h-6 w-6 text-primary" />
               <CardTitle className="text-2xl">Notifications</CardTitle>
             </div>
-            <CardDescription>Manage your notification preferences.</CardDescription>
+            <CardDescription className="text-sm">Manage your notification preferences.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between p-3 bg-muted/30 rounded-md border">
@@ -112,10 +112,10 @@ export default function PreferencesPage() {
               <FileText className="h-6 w-6 text-primary" />
               <CardTitle className="text-2xl">Legal & Privacy</CardTitle>
             </div>
-             <CardDescription>Review our policies.</CardDescription>
+             <CardDescription className="text-sm">Review our policies.</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button variant="link" asChild className="p-0 h-auto">
+            <Button variant="link" asChild className="p-0 h-auto text-sm">
                 <Link href="#privacy-policy">
                 View Privacy Policy
                 </Link>

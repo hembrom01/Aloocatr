@@ -101,8 +101,8 @@ export default function TasksPage() {
   return (
     <div className="space-y-8 pb-24 animate-page-content-appear">
       <header className="mb-10">
-        <h1 className="text-4xl font-bold tracking-tight text-foreground">Tasks</h1>
-        <p className="text-muted-foreground">Manage your tasks, categories, and application preferences via the sidebar.</p>
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">Tasks</h1>
+        <p className="text-base text-muted-foreground">Manage your tasks, categories, and application preferences via the sidebar.</p>
       </header>
 
       <Dialog open={showTaskFormDialog} onOpenChange={setShowTaskFormDialog}>
@@ -123,14 +123,14 @@ export default function TasksPage() {
         <Card className="shadow-lg">
           <CardHeader>
             <CardTitle className="text-2xl">Manage Categories & Tasks</CardTitle>
-            <CardDescription>Organize your tasks by categories, or manage them individually.</CardDescription>
+            <CardDescription className="text-sm">Organize your tasks by categories, or manage them individually.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <ScrollArea className="h-[400px] pr-3">
               {categories.map(category => (
                 <div key={category.id} className="mb-6">
                   <div className="flex justify-between items-center mb-2 p-2 bg-muted/20 rounded-t-md">
-                    <h3 className="text-xl font-semibold text-primary">{category.name}</h3>
+                    <h3 className="text-lg font-semibold text-primary">{category.name}</h3>
                     <Button variant="ghost" size="icon" onClick={() => handleDeleteCategoryWithConfirmation(category.id)} aria-label="Delete category">
                       <Trash2 className="h-4 w-4 text-destructive" />
                     </Button>
@@ -143,7 +143,7 @@ export default function TasksPage() {
                           <div className="flex items-center gap-3">
                             <IconComponent className="h-6 w-6 text-primary" />
                             <div>
-                              <span className="font-medium">{task.name}</span>
+                              <span className="text-base font-medium">{task.name}</span>
                               <p className="text-xs text-muted-foreground">
                                 {task.budgetedTime} min / {task.budgetBasis}
                                 {task.targetDurationDays ? ` for ${task.targetDurationDays} days` : ''}
@@ -165,7 +165,7 @@ export default function TasksPage() {
               
               {uncategorizedTasks.length > 0 && (
                 <div className="mb-6">
-                  <h3 className="text-xl font-semibold text-primary mb-2 p-2 bg-muted/20 rounded-t-md">Uncategorized Tasks</h3>
+                  <h3 className="text-lg font-semibold text-primary mb-2 p-2 bg-muted/20 rounded-t-md">Uncategorized Tasks</h3>
                   <ul className="space-y-3 pl-2">
                     {uncategorizedTasks.map(task => {
                       const IconComponent = taskIconsLookup[task.icon] || taskIconsLookup[defaultTaskIcon];
@@ -174,7 +174,7 @@ export default function TasksPage() {
                           <div className="flex items-center gap-3">
                             <IconComponent className="h-6 w-6 text-primary" />
                             <div>
-                              <span className="font-medium">{task.name}</span>
+                              <span className="text-base font-medium">{task.name}</span>
                               <p className="text-xs text-muted-foreground">
                                 {task.budgetedTime} min / {task.budgetBasis}
                                 {task.targetDurationDays ? ` for ${task.targetDurationDays} days` : ''}
@@ -192,7 +192,7 @@ export default function TasksPage() {
               )}
 
              {categories.length === 0 && uncategorizedTasks.length === 0 && (
-                <p className="text-muted-foreground text-center py-4">
+                <p className="text-sm text-muted-foreground text-center py-4">
                   No categories or tasks found. Add a category or use the <Plus className="inline h-4 w-4"/> button to add a task.
                 </p>
              )}
@@ -202,26 +202,27 @@ export default function TasksPage() {
             
             <Dialog open={isAddCategoryDialogOpen} onOpenChange={setIsAddCategoryDialogOpen}>
               <DialogTrigger asChild>
-                <Button variant="outline" className="w-full">
+                <Button variant="outline" className="w-full text-sm">
                   <FolderPlus className="mr-2 h-5 w-5" /> Add New Category
                 </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Add New Category</DialogTitle>
+                  <DialogTitle className="text-lg">Add New Category</DialogTitle>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
                   <Input 
                     placeholder="Category Name (e.g., Hobbies, Work)" 
                     value={newCategoryName}
                     onChange={(e) => setNewCategoryName(e.target.value)} 
+                    className="text-sm"
                   />
                 </div>
                 <DialogFooter>
                   <DialogClose asChild>
-                    <Button variant="ghost">Cancel</Button>
+                    <Button variant="ghost" size="sm">Cancel</Button>
                   </DialogClose>
-                  <Button onClick={handleAddCategory}>Add Category</Button>
+                  <Button onClick={handleAddCategory} size="sm">Add Category</Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>
@@ -234,14 +235,14 @@ export default function TasksPage() {
         <Card className="shadow-lg">
           <CardHeader>
             <CardTitle className="text-2xl">App Preferences</CardTitle>
-            <CardDescription>Customize your ChronoFlow experience. Main preferences are now in the sidebar.</CardDescription>
+            <CardDescription className="text-sm">Customize your ChronoFlow experience. Main preferences are now in the sidebar.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {/* ThemeToggle removed from here */}
             <div className="flex items-start p-3 bg-muted/30 rounded-md border">
                <UserCircle className="h-5 w-5 mr-3 mt-1 text-muted-foreground flex-shrink-0" />
               <div>
-                <h3 className="font-medium">Account</h3>
+                <h3 className="text-base font-medium">Account</h3>
                 <p className="text-sm text-muted-foreground">
                   Login and account synchronization features are coming soon!
                 </p>
@@ -250,7 +251,7 @@ export default function TasksPage() {
              <div className="flex items-start p-3 bg-muted/30 rounded-md border">
                <AppSettingsIcon className="h-5 w-5 mr-3 mt-1 text-muted-foreground flex-shrink-0" />
               <div>
-                <h3 className="font-medium">More Settings</h3>
+                <h3 className="text-base font-medium">More Settings</h3>
                 <p className="text-sm text-muted-foreground">
                   Advanced application settings will be available here. Check the sidebar for common preferences.
                 </p>

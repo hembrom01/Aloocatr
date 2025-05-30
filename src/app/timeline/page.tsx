@@ -72,10 +72,10 @@ export default function TimelinePage() {
   return (
     <div className="animate-page-content-appear space-y-8 pb-16">
       <header className="mb-6">
-        <h1 className="text-4xl font-bold tracking-tight text-foreground">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">
           Timeline for {format(selectedDate, 'MMMM d')}
         </h1>
-        <p className="text-muted-foreground">
+        <p className="text-base text-muted-foreground">
           A chronological view of your tasks and productivity for {format(selectedDate, 'PPP')}.
         </p>
       </header>
@@ -89,12 +89,12 @@ export default function TimelinePage() {
               Select Chart View:
             </label>
             <Select value={selectedChartType} onValueChange={(value) => setSelectedChartType(value as ChartType)}>
-              <SelectTrigger id="chartTypeSelect" className="w-full sm:w-[280px] mt-1">
+              <SelectTrigger id="chartTypeSelect" className="w-full sm:w-[280px] mt-1 text-sm">
                 <SelectValue placeholder="Select chart type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="dailyBreakdown">Daily Time Breakdown (Pie Chart)</SelectItem>
-                <SelectItem value="weeklyProductivity">Weekly Productivity (Line Chart)</SelectItem>
+                <SelectItem value="dailyBreakdown" className="text-sm">Daily Time Breakdown (Pie Chart)</SelectItem>
+                <SelectItem value="weeklyProductivity" className="text-sm">Weekly Productivity (Line Chart)</SelectItem>
               </SelectContent>
             </Select>
           </div>
