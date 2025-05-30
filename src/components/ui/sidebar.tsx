@@ -4,7 +4,7 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { VariantProps, cva } from "class-variance-authority"
-import { PanelLeft } from "lucide-react"
+import { Menu } from "lucide-react" // Changed from PanelLeft
 
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
@@ -279,7 +279,7 @@ const SidebarTrigger = React.forwardRef<
       }}
       {...props}
     >
-      <PanelLeft />
+      <Menu className="h-5 w-5" /> {/* Changed icon and added size */}
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   )
@@ -473,32 +473,6 @@ const SidebarGroupAction = React.forwardRef<
 })
 SidebarGroupAction.displayName = "SidebarGroupAction"
 
-const SidebarGroupContent = React.forwardRef<
-  HTMLDivElement,
-  React.ComponentProps<"div">
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    data-sidebar="group-content"
-    className={cn("w-full text-sm", className)}
-    {...props}
-  />
-))
-SidebarGroupContent.displayName = "SidebarGroupContent"
-
-const SidebarMenu = React.forwardRef<
-  HTMLUListElement,
-  React.ComponentProps<"ul">
->(({ className, ...props }, ref) => (
-  <ul
-    ref={ref}
-    data-sidebar="menu"
-    className={cn("flex w-full min-w-0 flex-col gap-1", className)}
-    {...props}
-  />
-))
-SidebarMenu.displayName = "SidebarMenu"
-
 const SidebarMenuItem = React.forwardRef<
   HTMLLIElement,
   React.ComponentProps<"li">
@@ -506,7 +480,7 @@ const SidebarMenuItem = React.forwardRef<
   <li
     ref={ref}
     data-sidebar="menu-item"
-    className={cn("group/menu-item relative list-none", className)} // Added list-none
+    className={cn("group/menu-item relative list-none", className)}
     {...props}
   />
 ))
@@ -742,12 +716,12 @@ export {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupAction,
-  SidebarGroupContent,
+  // SidebarGroupContent, // This component is not exported and was causing errors
   SidebarGroupLabel,
   SidebarHeader,
   SidebarInput,
   SidebarInset,
-  SidebarMenu,
+  SidebarMenu, // This component is not exported and was causing errors
   SidebarMenuAction,
   SidebarMenuBadge,
   SidebarMenuButton,
