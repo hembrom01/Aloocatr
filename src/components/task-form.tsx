@@ -169,9 +169,6 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
         const days = differenceInCalendarDays(customDateRange.to, customDateRange.from) + 1;
         form.setValue('targetDurationDays', days > 0 ? days : 0, { shouldValidate: true });
       } else {
-        // If no custom range is picked yet, but "custom_range" is selected,
-        // reset targetDurationDays to 0 or an appropriate default.
-        // This prevents carrying over a value from a previous preset.
         form.setValue('targetDurationDays', 0, { shouldValidate: true });
       }
     }
@@ -242,16 +239,15 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
   
   const handleDurationPresetChange = (value: string) => {
     setSelectedDurationPreset(value);
-    form.setValue('targetDurationDays', 0, { shouldValidate: true }); // Reset target days, custom range will override if picked
-    if (value !== "custom_range") { // Clear custom range if not custom
+    form.setValue('targetDurationDays', 0, { shouldValidate: true }); 
+    if (value !== "custom_range") { 
         setCustomDateRange(undefined);
     }
-
 
     if (value === "5_daily") {
       form.setValue('targetDurationDays', 5, { shouldValidate: true });
       form.setValue('budgetBasis', 'daily', { shouldValidate: true });
-    } else if (value !== "custom_range") { // For direct day presets
+    } else if (value !== "custom_range") { 
       const days = parseInt(value, 10);
       if (!isNaN(days)) {
         form.setValue('targetDurationDays', days, { shouldValidate: true });
@@ -339,9 +335,9 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
             )}
           />
 
-          <div className="space-y-2"> {/* Container for label + input row */}
+          <div className="space-y-2">
             <FormLabel>Budgeted Time</FormLabel>
-            <div className="flex items-start gap-2"> {/* Input row */}
+            <div className="flex items-start gap-2">
               <FormField
                 control={form.control}
                 name="budgetTimeValue"
@@ -370,13 +366,13 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
                         <SelectItem value="hours">Hours</SelectItem>
                       </SelectContent>
                     </Select>
-                    {/* FormMessage for budgetTimeUnit can be added here if needed */}
+                    <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
           </div>
-          <div className="flex justify-end -mt-2"> {/* Keep AI Suggester placement */}
+          <div className="flex justify-end -mt-2">
              <AiTimeSuggester 
                 taskName={form.getValues('name') || 'this task'}
                 currentTimeAllocation={currentTimeAllocationForAI}
@@ -431,7 +427,7 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
                   <Button
                     variant={"outline"}
                     className={cn(
-                      "w-full justify-start text-left font-normal mt-2", // Added mt-2
+                      "w-full justify-start text-left font-normal mt-2",
                       !customDateRange && "text-muted-foreground"
                     )}
                   >
@@ -457,7 +453,7 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
                     defaultMonth={customDateRange?.from}
                     selected={customDateRange}
                     onSelect={setCustomDateRange}
-                    numberOfMonths={1} // Keep to 1 month for smaller popover
+                    numberOfMonths={1}
                   />
                 </PopoverContent>
               </Popover>
@@ -466,7 +462,7 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
                 control={form.control}
                 name="targetDurationDays" 
                 render={({ field }) => (
-                  <FormItem className="hidden"> {/* This field is hidden but its value is managed */}
+                  <FormItem className="hidden"> 
                     <FormControl>
                       <Input type="number" {...field} 
                         value={field.value === null || field.value === undefined ? '' : field.value}
@@ -484,7 +480,7 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
             For "Custom Date Range", the task is active for the selected period.
           </p>
           
-          <ShadDialogFooter className="mt-6"> {/* Reduced top margin for footer */}
+          <ShadDialogFooter className="mt-6 flex flex-row justify-end gap-2 w-full">
             <Button variant="destructive" type="button" onClick={onClose} size="sm">
               Close
             </Button>
