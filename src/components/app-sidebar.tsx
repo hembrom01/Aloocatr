@@ -11,10 +11,10 @@ import {
   SidebarGroupLabel,
   SidebarMenuItem,
   SidebarMenuButton,
-  useSidebar, // Import useSidebar
+  useSidebar,
 } from '@/components/ui/sidebar';
 import { Separator } from '@/components/ui/separator';
-import { Shield, DatabaseZap, Settings2, Info, LogOut } from 'lucide-react'; // Removed unused icons
+import { Shield, Settings2, Info, LogOut, DownloadCloud, UploadCloud, Trash2, DatabaseZap } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -23,7 +23,7 @@ export function AppSidebar() {
   const appName = "ChronoFlow";
   const appVersion = "v1.0.0 - Free";
   const pathname = usePathname();
-  const { isMobile, setOpenMobile } = useSidebar(); // Get isMobile and setOpenMobile
+  const { isMobile, setOpenMobile } = useSidebar();
 
   const handleMobileNavClick = () => {
     if (isMobile) {
@@ -31,19 +31,35 @@ export function AppSidebar() {
     }
   };
 
-  const menuItems = [
+  const mainMenuItems = [
     {
       label: "Preferences",
       href: "/preferences",
       icon: Shield,
     },
-    {
-      label: "Data Management",
-      href: "/data-management",
-      icon: DatabaseZap,
-    },
   ];
 
+  const dataManagementItems = [
+    {
+      label: "Export Record",
+      href: "/data-management",
+      icon: DownloadCloud,
+      tooltip: "Export your task records"
+    },
+    {
+      label: "Backup & Restore",
+      href: "/data-management",
+      icon: UploadCloud,
+      tooltip: "Backup or restore data"
+    },
+    {
+      label: "Delete & Reset",
+      href: "/data-management",
+      icon: Trash2,
+      tooltip: "Delete all application data"
+    },
+  ];
+  
   const moreItems = [
     { label: "Feature X", icon: Settings2, tooltip: "Placeholder Feature X" },
     { label: "Feature Y", icon: Settings2, tooltip: "Placeholder Feature Y" },
@@ -66,14 +82,41 @@ export function AppSidebar() {
 
       <SidebarContent className="p-2 text-sm">
         <SidebarGroup>
-          {menuItems.map((item) => (
+          {mainMenuItems.map((item) => (
             <SidebarMenuItem key={item.href}>
               <SidebarMenuButton
                 asChild
                 tooltip={item.label}
                 className="group-data-[collapsible=icon]:justify-center"
                 data-active={pathname === item.href}
-                onClick={handleMobileNavClick} // Add onClick handler
+                onClick={handleMobileNavClick}
+              >
+                <Link href={item.href}>
+                  <item.icon className="h-4 w-4" />
+                  <span className="group-data-[collapsible=icon]:hidden">{item.label}</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
+        </SidebarGroup>
+
+        <Separator className="my-2 bg-sidebar-border group-data-[collapsible=icon]:mx-1" />
+        
+        <SidebarGroup>
+          <SidebarGroupLabel className="flex items-center gap-2 group-data-[collapsible=icon]:justify-center">
+            <DatabaseZap className="h-4 w-4" />
+            <span className="group-data-[collapsible=icon]:hidden">Data</span>
+          </SidebarGroupLabel>
+          {dataManagementItems.map((item) => (
+            <SidebarMenuItem key={item.label}>
+              <SidebarMenuButton
+                asChild
+                tooltip={item.tooltip}
+                className="group-data-[collapsible=icon]:justify-center"
+                // For data management, active state might not apply if they all point to the same page
+                // Or, it could be set if pathname === item.href and a query/hash matches
+                data-active={pathname === item.href && item.href.includes(pathname)} 
+                onClick={handleMobileNavClick}
               >
                 <Link href={item.href}>
                   <item.icon className="h-4 w-4" />
@@ -96,7 +139,7 @@ export function AppSidebar() {
                 <SidebarMenuButton 
                   tooltip={item.tooltip} 
                   className="group-data-[collapsible=icon]:justify-center"
-                  // Potentially add onClick={handleMobileNavClick} if these are links
+                  onClick={handleMobileNavClick} // Assuming these might become links
                 >
                 <item.icon className="h-4 w-4" />
                 <span className="group-data-[collapsible=icon]:hidden">{item.label}</span>
