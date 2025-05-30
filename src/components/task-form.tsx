@@ -20,7 +20,7 @@ import { DialogFooter as ShadDialogFooter } from '@/components/ui/dialog';
 import { IconPicker } from './icon-picker'; // Import the new IconPicker
 
 const taskFormSchema = z.object({
-  name: z.string().min(1, "Task name is required"),
+  name: z.string().min(1, "Task name is required").max(30, "Task name too long (max 30 chars)"),
   icon: z.custom<TaskIconName>((val) => Object.keys(taskIconsLookup).includes(val as TaskIconName), "Invalid icon"),
   budgetTimeValue: z.coerce.number().min(1, "Time value must be at least 1"),
   budgetTimeUnit: z.enum(['minutes', 'hours']),
@@ -383,5 +383,7 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
     </>
   );
 };
+
+    
 
     
