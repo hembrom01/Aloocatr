@@ -27,9 +27,9 @@ import { cn } from '@/lib/utils';
 const taskFormSchema = z.object({
   name: z.string().min(1, "Task name is required").max(30, "Task name too long (max 30 chars)"),
   icon: z.custom<TaskIconName>((val) => Object.keys(taskIconsLookup).includes(val as TaskIconName), "Invalid icon"),
-  budgetTimeValue: z.coerce.number().min(1, "Time value must be at least 1"),
-  budgetTimeUnit: z.enum(['minutes', 'hours']),
-  budgetBasis: z.enum(['daily', 'weekly', 'monthly']),
+  allocatedTimeValue: z.coerce.number().min(1, "Time value must be at least 1"),
+  allocatedTimeUnit: z.enum(['minutes', 'hours']),
+  allocationBasis: z.enum(['daily', 'weekly', 'monthly']),
   categoryId: z.string().nullable().optional(),
   targetDurationDays: z.coerce.number().min(0, "Duration must be 0 or more days").optional().nullable(),
 });
@@ -54,7 +54,7 @@ const durationPresets = [
   { label: "30 days (~1 Month)", value: "30" },
   { label: "60 days (~2 Months)", value: "60" },
   { label: "90 days (~3 Months/Quarterly)", value: "90" },
-  { label: "Monday to Friday (5 days, daily budget)", value: "5_daily" },
+  { label: "Monday to Friday (5 days, daily allocation)", value: "5_daily" },
 ];
 
 export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDelete, onClose, formTitle = "Add New Task", submitButtonText = "Save Task" }) => {
@@ -75,19 +75,19 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
 
   const getInitialFormValues = (taskToEdit?: Task | null): TaskFormInternalData => {
     if (taskToEdit) {
-      const totalMinutes = taskToEdit.budgetedTime;
-      let budgetTimeValue = totalMinutes;
-      let budgetTimeUnit: 'minutes' | 'hours' = 'minutes';
+      const totalMinutes = taskToEdit.allocatedTime;
+      let allocatedTimeValue = totalMinutes;
+      let allocatedTimeUnit: 'minutes' | 'hours' = 'minutes';
       if (totalMinutes >= 60 && totalMinutes % 60 === 0) {
-        budgetTimeValue = totalMinutes / 60;
-        budgetTimeUnit = 'hours';
+        allocatedTimeValue = totalMinutes / 60;
+        allocatedTimeUnit = 'hours';
       }
       return {
         name: taskToEdit.name,
         icon: taskToEdit.icon,
-        budgetTimeValue,
-        budgetTimeUnit,
-        budgetBasis: taskToEdit.budgetBasis,
+        allocatedTimeValue,
+        allocatedTimeUnit,
+        allocationBasis: taskToEdit.allocationBasis,
         categoryId: taskToEdit.categoryId || null,
         targetDurationDays: taskToEdit.targetDurationDays === undefined || taskToEdit.targetDurationDays === null ? 0 : taskToEdit.targetDurationDays,
       };
@@ -95,9 +95,9 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
     return {
       name: '',
       icon: defaultTaskIcon,
-      budgetTimeValue: 30, 
-      budgetTimeUnit: 'minutes',
-      budgetBasis: 'weekly',
+      allocatedTimeValue: 30, 
+      allocatedTimeUnit: 'minutes',
+      allocationBasis: 'weekly',
       categoryId: null,
       targetDurationDays: 0, 
     };
@@ -108,15 +108,15 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
     defaultValues: getInitialFormValues(task),
   });
   
-  const [currentTimeAllocationForAI, setCurrentTimeAllocationForAI] = useState(() => {
+  const [currentAllocatedTimeForAI, setCurrentAllocatedTimeForAI] = useState(() => {
     const initialValues = getInitialFormValues(task);
-    return `${initialValues.budgetTimeValue} ${initialValues.budgetTimeUnit}`;
+    return `${initialValues.allocatedTimeValue} ${initialValues.allocatedTimeUnit}`;
   });
 
   useEffect(() => {
     form.reset(getInitialFormValues(task));
     const currentValues = getInitialFormValues(task);
-    setCurrentTimeAllocationForAI(`${currentValues.budgetTimeValue} ${currentValues.budgetTimeUnit}`);
+    setCurrentAllocatedTimeForAI(`${currentValues.allocatedTimeValue} ${currentValues.allocatedTimeUnit}`);
     
     if (task) {
       const taskDuration = task.targetDurationDays;
@@ -130,7 +130,7 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
           setSelectedDurationPreset(presetMatch.value);
           setCustomDateRange(undefined);
           form.setValue('targetDurationDays', parseInt(presetMatch.value, 10));
-        } else if(task.targetDurationDays === 5 && task.budgetBasis === 'daily'){
+        } else if(task.targetDurationDays === 5 && task.allocationBasis === 'daily'){
             setSelectedDurationPreset("5_daily");
             setCustomDateRange(undefined);
             form.setValue('targetDurationDays', 5);
@@ -155,13 +155,13 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [task, form.reset]); 
   
-  const watchedBudgetTimeValue = form.watch("budgetTimeValue");
-  const watchedBudgetTimeUnit = form.watch("budgetTimeUnit");
+  const watchedAllocatedTimeValue = form.watch("allocatedTimeValue");
+  const watchedAllocatedTimeUnit = form.watch("allocatedTimeUnit");
   const watchedIcon = form.watch("icon");
 
   useEffect(() => {
-    setCurrentTimeAllocationForAI(`${watchedBudgetTimeValue || 0} ${watchedBudgetTimeUnit || 'minutes'}`);
-  }, [watchedBudgetTimeValue, watchedBudgetTimeUnit]);
+    setCurrentAllocatedTimeForAI(`${watchedAllocatedTimeValue || 0} ${watchedAllocatedTimeUnit || 'minutes'}`);
+  }, [watchedAllocatedTimeValue, watchedAllocatedTimeUnit]);
 
   useEffect(() => {
     if (selectedDurationPreset === "custom_range") {
@@ -177,9 +177,9 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
 
 
   const handleFormSubmit: SubmitHandler<TaskFormInternalData> = (data) => {
-    let totalMinutes = data.budgetTimeValue;
-    if (data.budgetTimeUnit === 'hours') {
-      totalMinutes = data.budgetTimeValue * 60;
+    let totalMinutes = data.allocatedTimeValue;
+    if (data.allocatedTimeUnit === 'hours') {
+      totalMinutes = data.allocatedTimeValue * 60;
     }
 
     let finalTargetDurationDays = data.targetDurationDays;
@@ -195,8 +195,8 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
     const taskDataToSubmit: TaskFormDataValues = {
       name: data.name,
       icon: data.icon,
-      budgetedTime: totalMinutes,
-      budgetBasis: data.budgetBasis,
+      allocatedTime: totalMinutes,
+      allocationBasis: data.allocationBasis,
       categoryId: data.categoryId,
       targetDurationDays: finalTargetDurationDays === null || finalTargetDurationDays === undefined ? 0 : Number(finalTargetDurationDays),
     };
@@ -208,7 +208,7 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
     });
     if (!task) { 
       form.reset(getInitialFormValues(null));
-      setCurrentTimeAllocationForAI('30 minutes');
+      setCurrentAllocatedTimeForAI('30 minutes');
       setSelectedDurationPreset("0");
       setCustomDateRange(undefined);
     }
@@ -224,13 +224,13 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
     }
 
     if (parts.includes('hour') || parts.includes('hours')) {
-      form.setValue('budgetTimeValue', timeValue);
-      form.setValue('budgetTimeUnit', 'hours');
-      toast({ title: "AI Suggestion Applied", description: `Budget set to ${timeValue} hours.` });
+      form.setValue('allocatedTimeValue', timeValue);
+      form.setValue('allocatedTimeUnit', 'hours');
+      toast({ title: "AI Suggestion Applied", description: `Allocation set to ${timeValue} hours.` });
     } else if (parts.includes('minute') || parts.includes('minutes')) {
-      form.setValue('budgetTimeValue', timeValue);
-      form.setValue('budgetTimeUnit', 'minutes');
-      toast({ title: "AI Suggestion Applied", description: `Budget set to ${timeValue} minutes.` });
+      form.setValue('allocatedTimeValue', timeValue);
+      form.setValue('allocatedTimeUnit', 'minutes');
+      toast({ title: "AI Suggestion Applied", description: `Allocation set to ${timeValue} minutes.` });
     } else {
       toast({ title: "AI Suggestion Format Error", description: `Could not parse unit from "${suggestedTime}".`, variant: "destructive" });
     }
@@ -245,7 +245,7 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
 
     if (value === "5_daily") {
       form.setValue('targetDurationDays', 5, { shouldValidate: true });
-      form.setValue('budgetBasis', 'daily', { shouldValidate: true });
+      form.setValue('allocationBasis', 'daily', { shouldValidate: true });
     } else if (value !== "custom_range") { 
       const days = parseInt(value, 10);
       if (!isNaN(days)) {
@@ -335,11 +335,11 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
           />
 
           <div className="space-y-2">
-            <FormLabel className="text-sm">Budgeted Time</FormLabel>
+            <FormLabel className="text-sm">Allocated Time</FormLabel>
             <div className="flex items-start gap-2">
               <FormField
                 control={form.control}
-                name="budgetTimeValue"
+                name="allocatedTimeValue"
                 render={({ field }) => (
                   <FormItem className="flex-grow">
                     <FormControl>
@@ -351,7 +351,7 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
               />
               <FormField
                 control={form.control}
-                name="budgetTimeUnit"
+                name="allocatedTimeUnit"
                 render={({ field }) => (
                   <FormItem className="w-[110px]">
                     <Select onValueChange={field.onChange} value={field.value}>
@@ -373,7 +373,7 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
              <div className="flex justify-end mt-1">
                <AiTimeSuggester 
                   taskName={form.getValues('name') || 'this task'}
-                  currentTimeAllocation={currentTimeAllocationForAI}
+                  currentAllocatedTime={currentAllocatedTimeForAI}
                   onSuggestionApplied={handleAiSuggestionApplied}
                 />
             </div>
@@ -382,14 +382,14 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
 
           <FormField
             control={form.control}
-            name="budgetBasis"
+            name="allocationBasis"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm">Budget Basis</FormLabel>
+                <FormLabel className="text-sm">Allocation Basis</FormLabel>
                 <Select onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger className="text-sm">
-                      <SelectValue placeholder="Select budget basis" />
+                      <SelectValue placeholder="Select allocation basis" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -453,7 +453,7 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
                     selected={customDateRange}
                     onSelect={setCustomDateRange}
                     numberOfMonths={1}
-                    disabled={{ before: new Date() }} // Optional: disable past dates
+                    disabled={{ before: new Date() }} 
                   />
                 </PopoverContent>
               </Popover>
@@ -477,12 +477,12 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
           </div>
           <p className="text-xs text-muted-foreground -mt-2">
             Select "Indefinite" for tasks that never expire.
-            "Monday to Friday" preset automatically sets budget basis to daily for 5 days.
+            "Monday to Friday" preset automatically sets allocation basis to daily for 5 days.
             For "Custom Date Range", the task is active for the selected period.
           </p>
           
           <ShadDialogFooter className="mt-6 flex flex-row justify-end gap-2 w-full">
-            <Button variant="destructive" type="button" onClick={onClose} size="sm">
+            <Button variant="ghost" type="button" onClick={onClose} size="sm">
               Close
             </Button>
             <Button type="submit" size="sm">

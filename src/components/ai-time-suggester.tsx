@@ -14,11 +14,11 @@ import { useToast } from '@/hooks/use-toast';
 
 interface AiTimeSuggesterProps {
   taskName: string;
-  currentTimeAllocation: string; // e.g., "2 hours"
+  currentAllocatedTime: string; // e.g., "2 hours"
   onSuggestionApplied: (suggestedTime: string) => void;
 }
 
-export const AiTimeSuggester: FC<AiTimeSuggesterProps> = ({ taskName, currentTimeAllocation, onSuggestionApplied }) => {
+export const AiTimeSuggester: FC<AiTimeSuggesterProps> = ({ taskName, currentAllocatedTime, onSuggestionApplied }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [context, setContext] = useState('');
@@ -31,7 +31,7 @@ export const AiTimeSuggester: FC<AiTimeSuggesterProps> = ({ taskName, currentTim
     try {
       const input: TimeAllocationInput = {
         taskName,
-        timeAllocation: currentTimeAllocation,
+        allocatedTime: currentAllocatedTime, // Changed from timeAllocation
         additionalContext: context,
       };
       const result = await suggestTimeAllocation(input);
@@ -64,9 +64,9 @@ export const AiTimeSuggester: FC<AiTimeSuggesterProps> = ({ taskName, currentTim
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>AI Time Allocation Suggestion</DialogTitle>
-            <DialogDescription>
-              Let AI suggest a time allocation for '{taskName}' (current: {currentTimeAllocation}).
+            <DialogTitle className="text-lg font-semibold">AI Time Allocation Suggestion</DialogTitle>
+            <DialogDescription className="text-xs">
+              Let AI suggest a time allocation for '{taskName}' (current: {currentAllocatedTime}).
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4 text-sm">
@@ -99,7 +99,7 @@ export const AiTimeSuggester: FC<AiTimeSuggesterProps> = ({ taskName, currentTim
             {suggestion && !isLoading && (
               <Button onClick={handleApplySuggestion} size="sm">Apply Suggestion</Button>
             )}
-            <Button onClick={handleGetSuggestion} disabled={isLoading || !taskName || !currentTimeAllocation} size="sm">
+            <Button onClick={handleGetSuggestion} disabled={isLoading || !taskName || !currentAllocatedTime} size="sm">
               {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Wand2 className="mr-2 h-4 w-4" />}
               Get Suggestion
             </Button>

@@ -7,22 +7,22 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsive
 import type { Task } from '@/types';
 import { formatMinutesToFriendlyDuration } from '@/lib/utils';
 
-interface AllocationComparisonBarChartProps { // Renamed
+interface AllocationComparisonBarChartProps {
   tasks: Task[]; 
   getTimeSpent: (taskId: string, basis: 'daily' | 'weekly' | 'monthly') => number;
 }
 
-const AllocationComparisonBarChartComponent: FC<AllocationComparisonBarChartProps> = ({ tasks, getTimeSpent }) => { // Renamed
+const AllocationComparisonBarChartComponent: FC<AllocationComparisonBarChartProps> = ({ tasks, getTimeSpent }) => {
   const chartData = useMemo(() => {
     return tasks 
       .map(task => ({
         name: task.name.length > 15 ? `${task.name.substring(0, 12)}...` : task.name, 
-        Allocated: task.allocatedTime, // Renamed from Budgeted
-        Actual: getTimeSpent(task.id, task.allocationBasis), // Renamed from budgetBasis
+        Allocated: task.allocatedTime,
+        Actual: getTimeSpent(task.id, task.allocationBasis),
         fullTaskName: task.name, 
-        basis: task.allocationBasis.charAt(0).toUpperCase() + task.allocationBasis.slice(1) // Renamed
+        basis: task.allocationBasis.charAt(0).toUpperCase() + task.allocationBasis.slice(1) 
       }))
-      .sort((a,b) => b.Allocated - a.Allocated); // Sort by Allocated
+      .sort((a,b) => b.Allocated - a.Allocated); 
   }, [tasks, getTimeSpent]);
 
   const CustomTooltip = ({ active, payload, label }: any) => {
@@ -78,7 +78,7 @@ const AllocationComparisonBarChartComponent: FC<AllocationComparisonBarChartProp
             wrapperStyle={{paddingTop: '20px'}} 
             formatter={(value) => <span style={{ color: 'hsl(var(--foreground))', fontSize: '10px' }}>{value}</span>}
           />
-          <Bar dataKey="Allocated" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} /> {/* Renamed from Budgeted */}
+          <Bar dataKey="Allocated" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} />
           <Bar dataKey="Actual" fill="hsl(var(--chart-2))" radius={[4, 4, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
@@ -86,5 +86,5 @@ const AllocationComparisonBarChartComponent: FC<AllocationComparisonBarChartProp
   );
 };
 
-export const AllocationComparisonBarChart = memo(AllocationComparisonBarChartComponent); // Renamed
-AllocationComparisonBarChart.displayName = 'AllocationComparisonBarChart'; // Renamed
+export const AllocationComparisonBarChart = memo(AllocationComparisonBarChartComponent);
+AllocationComparisonBarChart.displayName = 'AllocationComparisonBarChart';

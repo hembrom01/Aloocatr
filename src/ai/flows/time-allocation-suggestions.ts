@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -13,7 +14,7 @@ import {z} from 'genkit';
 
 const TimeAllocationInputSchema = z.object({
   taskName: z.string().describe('The name of the task.'),
-  timeAllocation: z.string().describe('The current time allocated to the task (e.g., 2 hours).'),
+  allocatedTime: z.string().describe('The current time allocated to the task (e.g., 2 hours).'),
   additionalContext: z.string().optional().describe('Any additional context about the task.'),
 });
 export type TimeAllocationInput = z.infer<typeof TimeAllocationInputSchema>;
@@ -35,7 +36,7 @@ const prompt = ai.definePrompt({
   prompt: `You are a time management expert. Given the task name, current time allocation, and any additional context, suggest a revised time allocation.
 
 Task Name: {{{taskName}}}
-Current Time Allocation: {{{timeAllocation}}}
+Current Time Allocation: {{{allocatedTime}}}
 Additional Context: {{{additionalContext}}}
 
 Provide a suggested time allocation and the reasoning behind it.

@@ -15,10 +15,10 @@ import {
 } from 'date-fns';
 
 
-const TASKS_STORAGE_KEY = 'chronoFlowTasks';
-const TASK_LOGS_STORAGE_KEY = 'chronoFlowTaskLogs';
-const ACTIVE_TIMERS_STORAGE_KEY = 'chronoFlowActiveTimers';
-const CATEGORIES_STORAGE_KEY = 'chronoFlowCategories';
+const TASKS_STORAGE_KEY = 'allocatrTasks'; // Renamed for consistency, though not strictly necessary for functionality
+const TASK_LOGS_STORAGE_KEY = 'allocatrTaskLogs';
+const ACTIVE_TIMERS_STORAGE_KEY = 'allocatrActiveTimers';
+const CATEGORIES_STORAGE_KEY = 'allocatrCategories';
 
 const createDefaultCategories = (): Category[] => {
   const now = Date.now();
@@ -38,52 +38,52 @@ const createDefaultTasks = (defaultCategories: Category[]): Task[] => {
   return [
     { 
       id: uuidv4(), name: 'Project Phoenix', icon: 'Briefcase' as TaskIconName, 
-      budgetedTime: 120, budgetBasis: 'daily', categoryId: getCatId('Work'), 
+      allocatedTime: 120, allocationBasis: 'daily', categoryId: getCatId('Work'), 
       createdAt: now, targetDurationDays: 30 
     },
     { 
       id: uuidv4(), name: 'Team Sync', icon: 'Users' as TaskIconName, 
-      budgetedTime: 60, budgetBasis: 'weekly', categoryId: getCatId('Work'), 
+      allocatedTime: 60, allocationBasis: 'weekly', categoryId: getCatId('Work'), 
       createdAt: now + 1 
     },
     { 
       id: uuidv4(), name: 'Read Documentation', icon: 'BookOpen' as TaskIconName, 
-      budgetedTime: 30, budgetBasis: 'daily', categoryId: getCatId('Learning'), 
+      allocatedTime: 30, allocationBasis: 'daily', categoryId: getCatId('Learning'), 
       createdAt: now + 2 
     },
     { 
       id: uuidv4(), name: 'Online Course', icon: 'GraduationCap' as TaskIconName, 
-      budgetedTime: 90, budgetBasis: 'weekly', categoryId: getCatId('Learning'), 
+      allocatedTime: 90, allocationBasis: 'weekly', categoryId: getCatId('Learning'), 
       createdAt: now + 3, targetDurationDays: 90
     },
     { 
       id: uuidv4(), name: 'Morning Jog', icon: 'Dumbbell' as TaskIconName, 
-      budgetedTime: 45, budgetBasis: 'daily', categoryId: getCatId('Fitness'), 
+      allocatedTime: 45, allocationBasis: 'daily', categoryId: getCatId('Fitness'), 
       createdAt: now + 4, targetDurationDays: 60
     },
     { 
       id: uuidv4(), name: 'Yoga Session', icon: 'Sprout' as TaskIconName, 
-      budgetedTime: 60, budgetBasis: 'weekly', categoryId: getCatId('Fitness'), 
+      allocatedTime: 60, allocationBasis: 'weekly', categoryId: getCatId('Fitness'), 
       createdAt: now + 5
     },
     { 
       id: uuidv4(), name: 'Practice Guitar', icon: 'Music' as TaskIconName, 
-      budgetedTime: 180, budgetBasis: 'weekly', categoryId: getCatId('Hobbies'), 
+      allocatedTime: 180, allocationBasis: 'weekly', categoryId: getCatId('Hobbies'), 
       createdAt: now + 6 
     },
     { 
-      id: uuidv4(), name: 'Gardening', icon: 'Palette' as TaskIconName, // Using Palette as a stand-in for general creative hobby
-      budgetedTime: 120, budgetBasis: 'monthly', categoryId: getCatId('Hobbies'), 
+      id: uuidv4(), name: 'Gardening', icon: 'Palette' as TaskIconName, 
+      allocatedTime: 120, allocationBasis: 'monthly', categoryId: getCatId('Hobbies'), 
       createdAt: now + 7
     },
     { 
       id: uuidv4(), name: 'Grocery Shopping', icon: 'ShoppingCart' as TaskIconName, 
-      budgetedTime: 60, budgetBasis: 'weekly', categoryId: getCatId('Chores'), 
+      allocatedTime: 60, allocationBasis: 'weekly', categoryId: getCatId('Chores'), 
       createdAt: now + 8
     },
     { 
       id: uuidv4(), name: 'Meal Prep', icon: 'Utensils'as TaskIconName, 
-      budgetedTime: 90, budgetBasis: 'weekly', categoryId: getCatId('Chores'), 
+      allocatedTime: 90, allocationBasis: 'weekly', categoryId: getCatId('Chores'), 
       createdAt: now + 9
     },
   ];
@@ -109,11 +109,9 @@ export function useTaskManager() {
       const storedCategories = storedCategoriesRaw ? JSON.parse(storedCategoriesRaw) : null;
 
       if (!storedTasks || storedTasks.length === 0 || !storedCategories || storedCategories.length === 0) {
-        // If either tasks or categories are missing, set defaults for both
         initialCategories = createDefaultCategories();
         initialTasks = createDefaultTasks(initialCategories);
         
-        // Also save these defaults to localStorage immediately
         localStorage.setItem(CATEGORIES_STORAGE_KEY, JSON.stringify(initialCategories));
         localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(initialTasks));
       } else {
@@ -202,9 +200,8 @@ export function useTaskManager() {
 
   const deleteTask = useCallback((taskId: string) => {
     setTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
-    // Optionally, also remove logs and active timers for this task
     setTaskLogs(prevLogs => prevLogs.filter(log => log.taskId !== taskId));
-    setActiveTimers(prevTimers => prevTimers.filter(timer => timer.taskId !== taskId));
+    setActiveTimers(prevTimers => prevTimers.filter(timer => timer.taskId !== taskIdToStop));
   }, []);
 
   const isTaskActive = useCallback((taskId: string) => {
@@ -212,7 +209,7 @@ export function useTaskManager() {
   }, [activeTimers]);
 
   const startTask = useCallback((taskId: string) => {
-    if (isTaskActive(taskId)) return; // Don't start if already active
+    if (isTaskActive(taskId)) return; 
     setActiveTimers(prevTimers => [...prevTimers, { taskId, startTime: Date.now() }]);
   }, [isTaskActive]);
 
@@ -221,7 +218,6 @@ export function useTaskManager() {
     if (!timerToStop) return null;
 
     const endTime = Date.now();
-    // Duration in minutes, rounded
     const duration = Math.round((endTime - timerToStop.startTime) / (1000 * 60)); 
     
     const newLog: TaskLog = {
@@ -229,9 +225,9 @@ export function useTaskManager() {
       taskId: timerToStop.taskId,
       startTime: timerToStop.startTime,
       endTime,
-      duration, // Store duration in minutes
+      duration, 
     };
-    setTaskLogs(prevLogs => [...prevLogs, newLog].sort((a,b) => b.startTime - a.startTime)); // Keep logs sorted, newest first
+    setTaskLogs(prevLogs => [...prevLogs, newLog].sort((a,b) => b.startTime - a.startTime)); 
     setActiveTimers(prevTimers => prevTimers.filter(timer => timer.taskId !== taskIdToStop));
     return newLog;
   }, [activeTimers]);
@@ -258,7 +254,7 @@ export function useTaskManager() {
     const endOfDay = dateFnsEndOfDay(date);
 
     return taskLogs.filter(log => log.startTime >= startOfDay.getTime() && log.startTime <= endOfDay.getTime())
-                   .sort((a, b) => a.startTime - b.startTime); // Sort by start time for chronological display
+                   .sort((a, b) => a.startTime - b.startTime);
   }, [taskLogs]);
 
   const getTimeSpentOnTask = useCallback((taskId: string, basis: 'daily' | 'weekly' | 'monthly' | 'total' = 'total') => {
@@ -268,20 +264,19 @@ export function useTaskManager() {
     if (basis === 'daily') {
       startDate = dateFnsStartOfDay(now);
     } else if (basis === 'weekly') {
-      startDate = dateFnsStartOfWeek(now, { weekStartsOn: 1 }); // Monday
+      startDate = dateFnsStartOfWeek(now, { weekStartsOn: 1 }); 
     } else if (basis === 'monthly') {
       startDate = dateFnsStartOfMonth(now);
-    } else { // 'total'
-      startDate = new Date(0); // Effectively all time
+    } else { 
+      startDate = new Date(0); 
     }
-    // Ensure the start date's time component is midnight for period calculations,
-    // unless it's 'total' which starts from epoch.
+    
     if (basis !== 'total') {
         startDate.setHours(0,0,0,0);
     }
 
     const relevantLogs = taskLogs.filter(log => log.taskId === taskId && log.endTime >= startDate.getTime());
-    return relevantLogs.reduce((total, log) => total + log.duration, 0); // Summing duration in minutes
+    return relevantLogs.reduce((total, log) => total + log.duration, 0);
   }, [taskLogs]);
 
   const getCategoryById = useCallback((categoryId: string) => {
@@ -291,7 +286,7 @@ export function useTaskManager() {
   const getAggregatedLogsForPeriod = useCallback((startDate: Date, endDate: Date, dateFormat: 'EEE' | 'MMM d' = 'EEE'): { dateLabel: string, totalMinutes: number }[] => {
     const daysInPeriod = eachDayOfInterval({ start: startDate, end: endDate });
     return daysInPeriod.map(day => {
-      const logsForThisDay = getLogsForDay(day); // getLogsForDay already returns logs for the specified day
+      const logsForThisDay = getLogsForDay(day); 
       const totalMinutes = logsForThisDay.reduce((sum, log) => sum + log.duration, 0);
       return {
         dateLabel: dateFnsFormat(day, dateFormat),
@@ -321,10 +316,7 @@ export function useTaskManager() {
     updateCategory,
     deleteCategory,
     getCategoryById,
-    getAggregatedLogsForPeriod, // Export new function
+    getAggregatedLogsForPeriod,
     isLoaded,
   };
 }
-
-
-    

@@ -16,13 +16,13 @@ const TaskCompletionChartComponent: FC<TaskCompletionChartProps> = ({ tasks, get
   const chartData = useMemo(() => {
     return tasks
       .map(task => {
-        const actualTime = getTimeSpent(task.id, task.budgetBasis);
-        const completionPercentage = task.budgetedTime > 0 ? Math.min(100, (actualTime / task.budgetedTime) * 100) : 0;
+        const actualTime = getTimeSpent(task.id, task.allocationBasis);
+        const completionPercentage = task.allocatedTime > 0 ? Math.min(100, (actualTime / task.allocatedTime) * 100) : 0;
         return {
           name: task.name.length > 20 ? `${task.name.substring(0, 17)}...` : task.name, 
           completion: completionPercentage,
           actualTime,
-          budgetedTime: task.budgetedTime,
+          allocatedTime: task.allocatedTime,
           fullTaskName: task.name, 
         };
       })
@@ -39,7 +39,7 @@ const TaskCompletionChartComponent: FC<TaskCompletionChartProps> = ({ tasks, get
             Completion: {dataPoint.completion.toFixed(1)}%
           </p>
           <p className="text-muted-foreground">
-            Spent: {formatMinutesToFriendlyDuration(dataPoint.actualTime)} / Budget: {formatMinutesToFriendlyDuration(dataPoint.budgetedTime)}
+            Spent: {formatMinutesToFriendlyDuration(dataPoint.actualTime)} / Allocated: {formatMinutesToFriendlyDuration(dataPoint.allocatedTime)}
           </p>
         </div>
       );
@@ -51,13 +51,13 @@ const TaskCompletionChartComponent: FC<TaskCompletionChartProps> = ({ tasks, get
     <div className="w-full">
       <div className="mb-4 text-center">
         <h3 className="text-lg font-semibold text-foreground">Task Completion Percentage</h3>
-        <p className="text-xs text-muted-foreground">How much of each task's budget has been utilized (capped at 100%).</p>
+        <p className="text-xs text-muted-foreground">How much of each task's allocation has been utilized (capped at 100%).</p>
       </div>
       <ResponsiveContainer width="100%" height={350}>
         <BarChart
           data={chartData}
           layout="vertical"
-          margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+          margin={{ top: 5, right: 30, left: 10, bottom: 5 }} // Reduced left margin
         >
           <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
           <XAxis 
@@ -72,7 +72,7 @@ const TaskCompletionChartComponent: FC<TaskCompletionChartProps> = ({ tasks, get
             dataKey="name" 
             stroke="hsl(var(--foreground))" 
             fontSize={10}
-            width={100} 
+            width={80} // Adjusted YAxis width
             interval={0}
           />
           <Tooltip content={<CustomTooltip />} cursor={{ fill: 'hsl(var(--muted))' }}/>

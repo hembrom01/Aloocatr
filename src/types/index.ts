@@ -43,19 +43,18 @@ export interface Task {
   id: string;
   name: string;
   icon: TaskIconName;
-  budgetedTime: number; // in minutes (total calculated from form)
-  budgetBasis: 'daily' | 'weekly' | 'monthly'; // Added 'daily'
+  allocatedTime: number; // in minutes (total calculated from form)
+  allocationBasis: 'daily' | 'weekly' | 'monthly';
   createdAt: number; // timestamp
   categoryId?: string | null; // Link to Category
   targetDurationDays?: number | null; // Optional: for how many days the target is active
 }
 
-// Renamed from TaskSubmitData in previous iterations, more generic now
 export interface TaskFormDataValues {
   name: string;
   icon: TaskIconName;
-  budgetedTime: number; // in minutes
-  budgetBasis: 'daily' | 'weekly' | 'monthly';
+  allocatedTime: number; // in minutes
+  allocationBasis: 'daily' | 'weekly' | 'monthly';
   categoryId?: string | null;
   targetDurationDays?: number | null;
 }
@@ -73,4 +72,3 @@ export interface ActiveTimer {
   taskId: string;
   startTime: number;
 }
-

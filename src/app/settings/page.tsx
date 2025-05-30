@@ -108,7 +108,7 @@ export default function TasksPage() {
 
       <Dialog open={showTaskFormDialog} onOpenChange={(isOpen) => {
         setShowTaskFormDialog(isOpen);
-        if (!isOpen) setEditingTask(null); // Reset editing task when dialog closes
+        if (!isOpen) setEditingTask(null); 
       }}>
         <DialogContent className="sm:max-w-lg max-h-[85vh] overflow-y-auto">
             <TaskForm
@@ -152,7 +152,7 @@ export default function TasksPage() {
                             <div>
                               <span className="text-sm font-medium">{task.name}</span>
                               <p className="text-xs text-muted-foreground">
-                                {task.budgetedTime} min / {task.budgetBasis}
+                                {task.allocatedTime} min / {task.allocationBasis}
                                 {task.targetDurationDays ? ` for ${task.targetDurationDays} days` : ''}
                               </p>
                             </div>
@@ -183,7 +183,7 @@ export default function TasksPage() {
                             <div>
                               <span className="text-sm font-medium">{task.name}</span>
                               <p className="text-xs text-muted-foreground">
-                                {task.budgetedTime} min / {task.budgetBasis}
+                                {task.allocatedTime} min / {task.allocationBasis}
                                 {task.targetDurationDays ? ` for ${task.targetDurationDays} days` : ''}
                               </p>
                             </div>
