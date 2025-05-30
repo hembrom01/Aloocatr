@@ -34,7 +34,6 @@ export default function TasksPage() {
   const [showTaskFormDialog, setShowTaskFormDialog] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState('');
   const [isAddCategoryDialogOpen, setIsAddCategoryDialogOpen] = useState(false);
-  const [loadingAnimationFinished, setLoadingAnimationFinished] = useState(false);
 
   const handleTaskSubmit = (data: TaskFormDataValues, id?: string) => {
     if (id) {
@@ -89,11 +88,11 @@ export default function TasksPage() {
     }
   };
 
-  if (!isLoaded || !loadingAnimationFinished) {
+  if (!isLoaded) {
      return (
       <AppLoadingScreen
         isAppActuallyLoaded={isLoaded}
-        onLoadingFinished={() => setLoadingAnimationFinished(true)}
+        onLoadingFinished={() => {}}
       />
     );
   }
@@ -111,7 +110,7 @@ export default function TasksPage() {
         setShowTaskFormDialog(isOpen);
         if (!isOpen) setEditingTask(null); // Reset editing task when dialog closes
       }}>
-        <DialogContent className="sm:max-w-lg max-h-[85vh] overflow-y-auto p-0">
+        <DialogContent className="sm:max-w-lg max-h-[85vh] overflow-y-auto">
             <TaskForm
                 task={editingTask}
                 categories={categories}

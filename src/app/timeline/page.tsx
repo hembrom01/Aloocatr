@@ -25,7 +25,6 @@ export default function TimelinePage() {
   
   const [selectedDate, setSelectedDate] = useState<Date | null>(null); 
   const [selectedChartType, setSelectedChartType] = useState<ChartType>('dailyBreakdown');
-  const [loadingAnimationFinished, setLoadingAnimationFinished] = useState(false);
 
   useEffect(() => {
     setSelectedDate(new Date());
@@ -43,11 +42,11 @@ export default function TimelinePage() {
     return getAggregatedLogsForPeriod(weekStart, weekEnd, 'EEE');
   }, [selectedDate, selectedChartType, getAggregatedLogsForPeriod]);
 
-  if (!isLoaded || !selectedDate || !loadingAnimationFinished) {
+  if (!isLoaded || !selectedDate) {
     return (
       <AppLoadingScreen
         isAppActuallyLoaded={isLoaded && !!selectedDate}
-        onLoadingFinished={() => setLoadingAnimationFinished(true)}
+        onLoadingFinished={() => {}}
       />
     );
   }
@@ -70,7 +69,7 @@ export default function TimelinePage() {
   };
 
   return (
-    <div className="space-y-8 pb-16 animate-page-content-appear">
+    <div className="animate-page-content-appear">
       <header className="mb-6">
         <h1 className="text-xl font-semibold tracking-tight text-foreground">
           Timeline for {format(selectedDate, 'MMMM d, yyyy')}

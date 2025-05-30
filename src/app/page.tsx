@@ -77,14 +77,13 @@ export default function TrackerPage() {
     getTaskById,
     isLoaded
   } = useTaskManager();
-  const [loadingAnimationFinished, setLoadingAnimationFinished] = useState(false);
 
 
-  if (!isLoaded || !loadingAnimationFinished) {
+  if (!isLoaded) {
     return (
       <AppLoadingScreen
         isAppActuallyLoaded={isLoaded}
-        onLoadingFinished={() => setLoadingAnimationFinished(true)}
+        onLoadingFinished={() => {}}
       />
     );
   }

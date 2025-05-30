@@ -22,17 +22,16 @@ export default function ProgressPage() {
   } = useTaskManager();
 
   const [selectedChartType, setSelectedChartType] = useState<ProgressChartType>('budgetComparison');
-  const [loadingAnimationFinished, setLoadingAnimationFinished] = useState(false);
 
   const tasksWithBudgets = useMemo(() => {
     return tasks.filter(task => task.budgetedTime > 0);
   }, [tasks]);
   
-  if (!isLoaded || !loadingAnimationFinished) {
+  if (!isLoaded) {
      return (
       <AppLoadingScreen
         isAppActuallyLoaded={isLoaded}
-        onLoadingFinished={() => setLoadingAnimationFinished(true)}
+        onLoadingFinished={() => {}}
       />
     );
   }
