@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { AppLoadingScreen } from '@/components/app-loading-screen';
+import { Separator } from '@/components/ui/separator'; // Added import
 
 type ChartType = 'dailyBreakdown' | 'weeklyProductivity';
 
@@ -27,6 +28,7 @@ export default function TimelinePage() {
   const [selectedChartType, setSelectedChartType] = useState<ChartType>('dailyBreakdown');
 
   useEffect(() => {
+    // Initialize selectedDate on the client side to avoid hydration mismatch
     setSelectedDate(new Date());
   }, []);
 
@@ -72,14 +74,14 @@ export default function TimelinePage() {
     <div className="animate-page-content-appear">
       <header className="mb-6">
         <h1 className="text-xl font-semibold tracking-tight text-foreground">
-          Timeline for {format(selectedDate, 'MMMM d, yyyy')}
+          Timeline for {selectedDate ? format(selectedDate, 'MMMM d, yyyy') : 'Loading...'}
         </h1>
         <p className="text-xs text-muted-foreground">
-          A chronological view of your tasks and productivity for {format(selectedDate, 'PPP')}.
+          {selectedDate ? `A chronological view of your tasks and productivity for ${format(selectedDate, 'PPP')}.` : 'Loading date...'}
         </p>
       </header>
       
-      <DateNavigator selectedDate={selectedDate} onDateChange={setSelectedDate} />
+      {selectedDate && <DateNavigator selectedDate={selectedDate} onDateChange={setSelectedDate} />}
       
       <Card className="shadow-md mb-6">
         <CardContent className="p-4 space-y-4 text-sm">
@@ -101,13 +103,15 @@ export default function TimelinePage() {
       </Card>
           
       <div className="mt-4 mb-8"> {/* Chart rendering section */}
-        {renderChart()}
+        {selectedDate && renderChart()}
       </div>
+
+      <Separator className="my-6" /> {/* Added Separator */}
 
       {/* Daily Task Timeline rendered directly, not in a card */}
       <section aria-labelledby="daily-task-timeline-title" className="mt-8">
-        <h2 id="daily-task-timeline-title" className="sr-only">Daily Task Log for {format(selectedDate, 'PPP')}</h2>
-        <DailyTaskTimeline tasks={tasks} taskLogs={dailyLogs} currentDate={selectedDate} />
+        <h2 id="daily-task-timeline-title" className="sr-only">Daily Task Log for {selectedDate ? format(selectedDate, 'PPP') : 'selected date'}</h2>
+        {selectedDate && <DailyTaskTimeline tasks={tasks} taskLogs={dailyLogs} currentDate={selectedDate} />}
       </section>
     </div>
   );
