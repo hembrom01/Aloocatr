@@ -27,6 +27,7 @@ export default function TimelinePage() {
   const [selectedChartType, setSelectedChartType] = useState<ChartType>('dailyBreakdown');
 
   useEffect(() => {
+    // Initialize selectedDate on the client-side to avoid hydration mismatch
     setSelectedDate(new Date());
   }, []);
 
@@ -69,10 +70,10 @@ export default function TimelinePage() {
   };
 
   return (
-    <div className="animate-page-content-appear space-y-8 pb-16">
+    <div className="space-y-8 pb-16 animate-page-content-appear">
       <header className="mb-6">
         <h1 className="text-xl font-semibold tracking-tight text-foreground">
-          Timeline for {format(selectedDate, 'MMMM d')}
+          Timeline for {format(selectedDate, 'MMMM d, yyyy')}
         </h1>
         <p className="text-xs text-muted-foreground">
           A chronological view of your tasks and productivity for {format(selectedDate, 'PPP')}.
@@ -97,14 +98,14 @@ export default function TimelinePage() {
               </SelectContent>
             </Select>
           </div>
-          
-          <div className="mt-4">
-            {renderChart()}
-          </div>
         </CardContent>
       </Card>
+          
+      <div className="mt-4"> {/* Removed Card and CardContent wrapper from here */}
+        {renderChart()}
+      </div>
 
-      <section aria-labelledby="daily-task-timeline-title">
+      <section aria-labelledby="daily-task-timeline-title" className="mt-8"> {/* Added margin top for spacing */}
         <h2 id="daily-task-timeline-title" className="sr-only">Daily Task Log for {format(selectedDate, 'PPP')}</h2>
         <DailyTaskTimeline tasks={tasks} taskLogs={dailyLogs} currentDate={selectedDate} />
       </section>
