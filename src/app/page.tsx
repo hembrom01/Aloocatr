@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import { useTaskManager } from '@/hooks/use-task-manager';
 import { Card, CardContent } from '@/components/ui/card';
-import { AlertCircle, PlusCircle, TimerIcon, Loader2 } from 'lucide-react'; // Added Loader2
+import { AlertCircle, PlusCircle, TimerIcon } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -14,6 +14,7 @@ import { cn } from '@/lib/utils';
 import { useEffect, useState, memo } from 'react';
 import { formatSecondsToHHMMSS } from '@/lib/utils';
 import type { ActiveTimer as ActiveTimerType, Task as TaskType } from '@/types';
+import { AppLoadingScreen } from '@/components/app-loading-screen';
 
 
 // Component to display individual active task bar
@@ -76,13 +77,15 @@ export default function TrackerPage() {
     getTaskById,
     isLoaded
   } = useTaskManager();
+  const [loadingAnimationFinished, setLoadingAnimationFinished] = useState(false);
 
-  if (!isLoaded) {
+
+  if (!isLoaded || !loadingAnimationFinished) {
     return (
-      <div className="flex flex-col justify-center items-center min-h-screen bg-background">
-        <h1 className="font-logo-cursive text-5xl text-primary mb-6">Allocatr</h1>
-        <Loader2 className="h-8 w-8 text-primary animate-spin" />
-      </div>
+      <AppLoadingScreen
+        isAppActuallyLoaded={isLoaded}
+        onLoadingFinished={() => setLoadingAnimationFinished(true)}
+      />
     );
   }
 
@@ -151,7 +154,7 @@ export default function TrackerPage() {
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>{task.name}</p>
+                    <p className="text-xs">{task.name}</p>
                   </TooltipContent>
                 </Tooltip>
               );
@@ -165,14 +168,14 @@ export default function TrackerPage() {
                     aria-label="Add new task"
                   >
                     <PlusCircle className="h-10 w-10 text-muted-foreground" />
-                     <span className="mt-1 text-[11px] text-center w-full leading-tight text-muted-foreground">
+                     <span className="mt-1 text-[11px] text-center w-full leading-tight text-foreground">
                         Add Task
                       </span>
                   </Button>
                 </Link>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Add a new task (Go to Tasks)</p>
+                <p className="text-xs">Add a new task (Go to Tasks)</p>
               </TooltipContent>
             </Tooltip>
           </div>

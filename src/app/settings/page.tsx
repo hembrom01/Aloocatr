@@ -11,10 +11,11 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger, DialogClose } from '@/components/ui/dialog';
 import { taskIconsLookup, defaultTaskIcon } from '@/config/icons';
-import { Edit2, PlusCircle, UserCircle, Loader2, Trash2, FolderPlus, Plus, Settings as AppSettingsIcon } from 'lucide-react'; // Added Loader2
+import { Edit2, PlusCircle, UserCircle, Trash2, FolderPlus, Plus, Settings as AppSettingsIcon } from 'lucide-react';
 
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
+import { AppLoadingScreen } from '@/components/app-loading-screen';
 
 export default function TasksPage() { 
   const { 
@@ -33,6 +34,7 @@ export default function TasksPage() {
   const [showTaskFormDialog, setShowTaskFormDialog] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState('');
   const [isAddCategoryDialogOpen, setIsAddCategoryDialogOpen] = useState(false);
+  const [loadingAnimationFinished, setLoadingAnimationFinished] = useState(false);
 
   const handleTaskSubmit = (data: TaskFormDataValues, id?: string) => {
     if (id) {
@@ -87,12 +89,12 @@ export default function TasksPage() {
     }
   };
 
-  if (!isLoaded) {
-    return (
-       <div className="flex flex-col justify-center items-center min-h-screen bg-background">
-        <h1 className="font-logo-cursive text-5xl text-primary mb-6">Allocatr</h1>
-        <Loader2 className="h-8 w-8 text-primary animate-spin" />
-      </div>
+  if (!isLoaded || !loadingAnimationFinished) {
+     return (
+      <AppLoadingScreen
+        isAppActuallyLoaded={isLoaded}
+        onLoadingFinished={() => setLoadingAnimationFinished(true)}
+      />
     );
   }
 
@@ -102,20 +104,26 @@ export default function TasksPage() {
     <div className="space-y-8 pb-24 animate-page-content-appear">
       <header className="mb-10">
         <h1 className="text-xl font-semibold tracking-tight text-foreground">Tasks</h1>
-        <p className="text-xs text-muted-foreground">Manage your tasks, categories, and application preferences via the sidebar.</p>
+        <p className="text-xs text-muted-foreground">Manage your tasks, categories. App-wide preferences are in the sidebar.</p>
       </header>
 
-      <Dialog open={showTaskFormDialog} onOpenChange={setShowTaskFormDialog}>
-        <DialogContent className="sm:max-w-lg max-h-[85vh] overflow-y-auto">
-          <TaskForm
-            task={editingTask}
-            categories={categories}
-            onSubmit={handleTaskSubmit}
-            onDelete={handleDeleteTaskWithConfirmation}
-            onClose={() => setShowTaskFormDialog(false)}
-            formTitle={editingTask ? "Edit Task" : "Add New Task"}
-            submitButtonText={editingTask ? "Update Task" : "Save Task"}
-          />
+      <Dialog open={showTaskFormDialog} onOpenChange={(isOpen) => {
+        setShowTaskFormDialog(isOpen);
+        if (!isOpen) setEditingTask(null); // Reset editing task when dialog closes
+      }}>
+        <DialogContent className="sm:max-w-lg max-h-[85vh] overflow-y-auto p-0">
+            <TaskForm
+                task={editingTask}
+                categories={categories}
+                onSubmit={handleTaskSubmit}
+                onDelete={handleDeleteTaskWithConfirmation}
+                onClose={() => {
+                  setShowTaskFormDialog(false);
+                  setEditingTask(null);
+                }}
+                formTitle={editingTask ? "Edit Task" : "Add New Task"}
+                submitButtonText={editingTask ? "Update Task" : "Save Task"}
+            />
         </DialogContent>
       </Dialog>
 

@@ -4,17 +4,17 @@
 import { useState, useMemo } from 'react';
 import { BudgetedTaskTracker } from '@/components/budgeted-task-tracker';
 import { useTaskManager } from '@/hooks/use-task-manager';
-import { Loader2 } from 'lucide-react'; // Added Loader2
 import { BudgetComparisonBarChart } from '@/components/budget-comparison-bar-chart';
 import { TaskCompletionChart } from '@/components/task-completion-chart'; 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import type { Task } from '@/types';
 import { Label } from '@/components/ui/label';
+import { AppLoadingScreen } from '@/components/app-loading-screen';
 
 type ProgressChartType = 'budgetComparison' | 'taskCompletion';
 
-export default function ProgressPage() { // Renamed page function for clarity
+export default function ProgressPage() { 
   const { 
     tasks, 
     getTimeSpentOnTask,
@@ -22,17 +22,18 @@ export default function ProgressPage() { // Renamed page function for clarity
   } = useTaskManager();
 
   const [selectedChartType, setSelectedChartType] = useState<ProgressChartType>('budgetComparison');
+  const [loadingAnimationFinished, setLoadingAnimationFinished] = useState(false);
 
   const tasksWithBudgets = useMemo(() => {
     return tasks.filter(task => task.budgetedTime > 0);
   }, [tasks]);
   
-  if (!isLoaded) {
-    return (
-      <div className="flex flex-col justify-center items-center min-h-screen bg-background">
-        <h1 className="font-logo-cursive text-5xl text-primary mb-6">Allocatr</h1>
-        <Loader2 className="h-8 w-8 text-primary animate-spin" />
-      </div>
+  if (!isLoaded || !loadingAnimationFinished) {
+     return (
+      <AppLoadingScreen
+        isAppActuallyLoaded={isLoaded}
+        onLoadingFinished={() => setLoadingAnimationFinished(true)}
+      />
     );
   }
 

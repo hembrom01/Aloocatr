@@ -5,13 +5,13 @@ import { useState, useMemo, useEffect } from 'react';
 import { DailyTaskTimeline } from '@/components/daily-task-timeline';
 import { DateNavigator } from '@/components/date-navigator';
 import { useTaskManager } from '@/hooks/use-task-manager';
-import { Loader2 } from 'lucide-react'; // Added Loader2
 import { format, startOfWeek, endOfWeek } from 'date-fns';
 import { DailyUsagePieChart } from '@/components/daily-usage-pie-chart';
 import { ProductivityTrendChart } from '@/components/productivity-trend-chart';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
+import { AppLoadingScreen } from '@/components/app-loading-screen';
 
 type ChartType = 'dailyBreakdown' | 'weeklyProductivity';
 
@@ -25,9 +25,9 @@ export default function TimelinePage() {
   
   const [selectedDate, setSelectedDate] = useState<Date | null>(null); 
   const [selectedChartType, setSelectedChartType] = useState<ChartType>('dailyBreakdown');
+  const [loadingAnimationFinished, setLoadingAnimationFinished] = useState(false);
 
   useEffect(() => {
-    // Initialize selectedDate on the client-side to avoid hydration mismatch
     setSelectedDate(new Date());
   }, []);
 
@@ -43,12 +43,12 @@ export default function TimelinePage() {
     return getAggregatedLogsForPeriod(weekStart, weekEnd, 'EEE');
   }, [selectedDate, selectedChartType, getAggregatedLogsForPeriod]);
 
-  if (!isLoaded || !selectedDate) {
+  if (!isLoaded || !selectedDate || !loadingAnimationFinished) {
     return (
-      <div className="flex flex-col justify-center items-center min-h-screen bg-background">
-        <h1 className="font-logo-cursive text-5xl text-primary mb-6">Allocatr</h1>
-        <Loader2 className="h-8 w-8 text-primary animate-spin" />
-      </div>
+      <AppLoadingScreen
+        isAppActuallyLoaded={isLoaded && !!selectedDate}
+        onLoadingFinished={() => setLoadingAnimationFinished(true)}
+      />
     );
   }
 
