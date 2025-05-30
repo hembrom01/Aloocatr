@@ -3,7 +3,6 @@
 
 import type { FC } from 'react';
 import { memo } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import type { Task, TaskLog } from '@/types';
@@ -27,28 +26,19 @@ const DailyTaskTimelineComponent: FC<DailyTaskTimelineProps> = ({ tasks, taskLog
   const timelineTitle = isToday(currentDate) ? "Today's Timeline" : `Timeline for ${format(currentDate, 'MMMM d')}`;
   const timelineDescription = format(currentDate, 'PPP');
 
-  if (!taskLogs.length) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>{timelineTitle}</CardTitle>
-          <CardDescription>{timelineDescription}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-muted-foreground">No tasks logged for {isToday(currentDate) ? 'today' : format(currentDate, 'MMMM d')} yet. Start a timer to see your progress!</p>
-        </CardContent>
-      </Card>
-    );
-  }
-  
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{timelineTitle}</CardTitle>
-        <CardDescription>{timelineDescription}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <ScrollArea className="h-[300px] pr-4">
+    <div className="w-full">
+      <div className="mb-4">
+        <h3 className="text-lg font-semibold text-foreground">{timelineTitle}</h3>
+        <p className="text-xs text-muted-foreground">{timelineDescription}</p>
+      </div>
+      
+      {taskLogs.length === 0 ? (
+        <div className="py-10 text-center">
+          <p className="text-sm text-muted-foreground">No tasks logged for {isToday(currentDate) ? 'today' : format(currentDate, 'MMMM d')} yet. Start a timer to see your progress!</p>
+        </div>
+      ) : (
+        <ScrollArea className="h-[300px] pr-4 border rounded-md p-4 bg-card text-card-foreground shadow-sm">
           <div className="space-y-4">
             {taskLogs.map((log, index) => {
               const IconComponent = getTaskIcon(log.taskId);
@@ -72,8 +62,8 @@ const DailyTaskTimelineComponent: FC<DailyTaskTimelineProps> = ({ tasks, taskLog
             })}
           </div>
         </ScrollArea>
-      </CardContent>
-    </Card>
+      )}
+    </div>
   );
 };
 

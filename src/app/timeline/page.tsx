@@ -81,7 +81,7 @@ export default function TimelinePage() {
       
       <DateNavigator selectedDate={selectedDate} onDateChange={setSelectedDate} />
       
-      <Card className="shadow-md">
+      <Card className="shadow-md mb-6">
         <CardContent className="p-4 space-y-4 text-sm">
           <div>
             <Label htmlFor="chartTypeSelect" className="text-xs font-medium text-muted-foreground">
@@ -100,10 +100,11 @@ export default function TimelinePage() {
         </CardContent>
       </Card>
           
-      <div className="mt-4">
+      <div className="mt-4 mb-8"> {/* Chart rendering section */}
         {renderChart()}
       </div>
 
+      {/* Daily Task Timeline rendered directly, not in a card */}
       <section aria-labelledby="daily-task-timeline-title" className="mt-8">
         <h2 id="daily-task-timeline-title" className="sr-only">Daily Task Log for {format(selectedDate, 'PPP')}</h2>
         <DailyTaskTimeline tasks={tasks} taskLogs={dailyLogs} currentDate={selectedDate} />
