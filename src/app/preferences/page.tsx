@@ -8,7 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Separator } from '@/components/ui/separator';
-import { Palette, Bell, FileText, Globe, MapPin, Shield } from 'lucide-react'; // Added Shield for consistency if needed
+import { Button } from '@/components/ui/button'; // Added import
+import { Palette, Bell, FileText, Globe, MapPin, Shield } from 'lucide-react'; 
 import Link from 'next/link';
 
 export default function PreferencesPage() {
