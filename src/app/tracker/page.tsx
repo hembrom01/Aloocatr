@@ -7,10 +7,10 @@ import { useTaskManager } from '@/hooks/use-task-manager';
 import { BudgetComparisonBarChart } from '@/components/budget-comparison-bar-chart';
 import { TaskCompletionChart } from '@/components/task-completion-chart'; 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import type { Task } from '@/types';
 import { Label } from '@/components/ui/label';
 import { AppLoadingScreen } from '@/components/app-loading-screen';
+import { Separator } from '@/components/ui/separator';
 
 type ProgressChartType = 'budgetComparison' | 'taskCompletion';
 
@@ -39,14 +39,11 @@ export default function ProgressPage() {
   const renderChart = () => {
     if (tasksWithBudgets.length === 0) {
       return (
-        <Card className="shadow-md">
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold">Task Progress Visuals</CardTitle> 
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground text-center py-10">No tasks with budgets to display. Add budgets to your tasks in the Tasks section.</p>
-          </CardContent>
-        </Card>
+        // The charts themselves are Cards, so this placeholder should also be.
+        <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
+          <h3 className="text-lg font-semibold text-center">Task Progress Visuals</h3>
+          <p className="text-sm text-muted-foreground text-center py-10">No tasks with budgets to display. Add budgets to your tasks in the Tasks section.</p>
+        </div>
       );
     }
 
@@ -64,31 +61,28 @@ export default function ProgressPage() {
     <div className="space-y-8 animate-page-content-appear pb-16">
       <header className="mb-6">
         <h1 className="text-xl font-semibold tracking-tight text-foreground">Task Progress</h1>
-        <p className="text-xs text-muted-foreground">Monitor your time spent against your budgeted tasks.</p>
       </header>
 
-      <Card className="shadow-md">
-        <CardContent className="p-4 space-y-4 text-sm">
-          <div>
-            <Label htmlFor="progressChartTypeSelect" className="text-xs font-medium text-muted-foreground">
-              Select Visual:
-            </Label>
-            <Select value={selectedChartType} onValueChange={(value) => setSelectedChartType(value as ProgressChartType)}>
-              <SelectTrigger id="progressChartTypeSelect" className="w-full sm:w-[280px] mt-1 text-sm">
-                <SelectValue placeholder="Select visual type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="budgetComparison" className="text-sm">Budget vs. Actual Time</SelectItem>
-                <SelectItem value="taskCompletion" className="text-sm">Task Completion Percentage</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          
-          <div className="mt-4">
-            {renderChart()}
-          </div>
-        </CardContent>
-      </Card>
+      <div className="my-6 flex flex-col items-center space-y-2">
+        <Label htmlFor="progressChartTypeSelect" className="text-xs font-medium text-muted-foreground">
+          Select Visual:
+        </Label>
+        <Select value={selectedChartType} onValueChange={(value) => setSelectedChartType(value as ProgressChartType)}>
+          <SelectTrigger id="progressChartTypeSelect" className="w-[280px] text-sm">
+            <SelectValue placeholder="Select visual type" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="budgetComparison" className="text-sm">Budget vs. Actual Time</SelectItem>
+            <SelectItem value="taskCompletion" className="text-sm">Task Completion Percentage</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      
+      <div className="mt-4 mb-8"> {/* Chart rendering section */}
+        {renderChart()}
+      </div>
+
+      <Separator className="my-6" />
       
       <section aria-labelledby="budgeted-task-tracker-title">
         <h2 id="budgeted-task-tracker-title" className="sr-only">Budgeted Task List</h2>
