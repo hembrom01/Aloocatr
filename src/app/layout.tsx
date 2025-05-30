@@ -1,4 +1,6 @@
 
+"use client"; // Required for usePathname
+
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
@@ -6,9 +8,10 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
 import { BottomNavigation } from '@/components/bottom-navigation';
 import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
-import { AppSidebar } from '@/components/app-sidebar'; // New Sidebar
-import { Button } from '@/components/ui/button'; // For sidebar trigger
-import { Settings2 } from 'lucide-react'; // App icon
+import { AppSidebar } from '@/components/app-sidebar';
+import { Button } from '@/components/ui/button';
+import { Settings2 } from 'lucide-react';
+import { usePathname } from 'next/navigation'; // Import usePathname
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -20,7 +23,11 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
-export const metadata: Metadata = {
+// Metadata is usually defined outside the component in Next.js 13+ App Router
+// For client components, if you need dynamic titles, you'd use the `document.title` API in useEffect
+// However, for static metadata, it's best in a server component or route handler.
+// For simplicity here, keeping it but acknowledging its limitations in a "use client" RootLayout.
+export const metadataObject: Metadata = {
   title: 'ChronoFlow',
   description: 'Budget your time effectively and track your progress.',
 };
@@ -30,6 +37,9 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const pathname = usePathname();
+  const showBottomNav = !['/preferences', '/data-management'].includes(pathname);
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
@@ -43,13 +53,12 @@ export default function RootLayout({
                   <Settings2 className="h-6 w-6 text-primary" />
                   <span className="font-semibold text-foreground">ChronoFlow</span>
                 </div>
-                 {/* You can add other mobile header items here if needed */}
               </header>
               <div className="relative flex min-h-screen flex-col">
-                <main className="flex-1 p-4 pb-24 md:p-6 md:pb-24"> {/* Increased bottom padding for nav bar */}
+                <main className="flex-1 p-4 pb-24 md:p-6 md:pb-24">
                   {children}
                 </main>
-                <BottomNavigation /> {/* This will be below the main content */}
+                {showBottomNav && <BottomNavigation />}
               </div>
             </SidebarInset>
           </SidebarProvider>

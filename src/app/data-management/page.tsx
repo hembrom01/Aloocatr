@@ -5,7 +5,7 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, DownloadCloud, UploadCloud, Trash2, DatabaseZap } from 'lucide-react';
+import { ArrowLeft, DownloadCloud, UploadCloud, Trash2 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import {
   AlertDialog,
@@ -19,6 +19,8 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useToast } from '@/hooks/use-toast';
+import { Label } from '@/components/ui/label'; // Added import
+import { Input } from '@/components/ui/input'; // Added import
 
 
 export default function DataManagementPage() {
@@ -46,7 +48,7 @@ export default function DataManagementPage() {
     <div className="space-y-8 pb-16 animate-page-content-appear">
       <header className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={() => router.back()} aria-label="Go back">
+          <Button variant="ghost" size="icon" onClick={() => router.push('/')} aria-label="Go to Tracker page">
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
@@ -138,34 +140,3 @@ export default function DataManagementPage() {
     </div>
   );
 }
-
-// Minimal Input and Label components for this page since they are simple
-// If more complex forms are needed, consider a dedicated form component
-const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(
-  ({ className, type, ...props }, ref) => {
-    return (
-      <input
-        type={type}
-        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-        ref={ref}
-        {...props}
-      />
-    )
-  }
-)
-Input.displayName = "Input"
-
-const Label = React.forwardRef<
-  React.ElementRef<typeof HTMLLabelElement>,
-  React.LabelHTMLAttributes<HTMLLabelElement>
->(({ className, ...props }, ref) => {
-  return (
-    <label
-      ref={ref}
-      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-      {...props}
-    />
-  )
-})
-Label.displayName = "Label"
-

@@ -21,7 +21,7 @@ export default function PreferencesPage() {
     <div className="space-y-8 pb-16 animate-page-content-appear">
       <header className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={() => router.back()} aria-label="Go back">
+          <Button variant="ghost" size="icon" onClick={() => router.push('/')} aria-label="Go to Tracker page">
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
