@@ -9,15 +9,20 @@ import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-// Removed Card imports as form is in Dialog
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import type { Task, TaskIconName, Category, TaskFormDataValues } from '@/types'; // Updated TaskFormDataValues
+import type { Task, TaskIconName, Category, TaskFormDataValues } from '@/types';
 import { taskIconsLookup, defaultTaskIcon } from '@/config/icons';
 import { AiTimeSuggester } from './ai-time-suggester';
 import { useToast } from '@/hooks/use-toast';
-import { Trash2, ChevronDown } from 'lucide-react'; // Added ChevronDown for IconPicker button
+import { Trash2, ChevronDown, Calendar as CalendarIcon } from 'lucide-react';
 import { DialogFooter as ShadDialogFooter } from '@/components/ui/dialog';
-import { IconPicker } from './icon-picker'; // Import the new IconPicker
+import { IconPicker } from './icon-picker';
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { format, differenceInCalendarDays } from 'date-fns';
+import type { DateRange } from "react-day-picker";
+import { cn } from '@/lib/utils';
+
 
 const taskFormSchema = z.object({
   name: z.string().min(1, "Task name is required").max(30, "Task name too long (max 30 chars)"),
@@ -26,7 +31,7 @@ const taskFormSchema = z.object({
   budgetTimeUnit: z.enum(['minutes', 'hours']),
   budgetBasis: z.enum(['daily', 'weekly', 'monthly']),
   categoryId: z.string().nullable().optional(),
-  targetDurationDays: z.coerce.number().min(0, "Duration must be 0 or more days").optional().nullable(), // 0 or null for indefinite
+  targetDurationDays: z.coerce.number().min(0, "Duration must be 0 or more days").optional().nullable(),
 });
 
 type TaskFormInternalData = z.infer<typeof taskFormSchema>;
@@ -42,8 +47,8 @@ interface TaskFormProps {
 }
 
 const durationPresets = [
-  { label: "Custom (enter days below)", value: "custom" },
   { label: "Indefinite (no end date)", value: "0" },
+  { label: "Custom Date Range", value: "custom_range" },
   { label: "7 days (1 Week)", value: "7" },
   { label: "14 days (2 Weeks)", value: "14" },
   { label: "30 days (~1 Month)", value: "30" },
@@ -55,6 +60,18 @@ const durationPresets = [
 export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDelete, onClose, formTitle = "Add New Task", submitButtonText = "Save Task" }) => {
   const { toast } = useToast();
   const [isIconPickerOpen, setIsIconPickerOpen] = useState(false);
+  const [selectedDurationPreset, setSelectedDurationPreset] = useState<string>(
+    task?.targetDurationDays === 0 || task?.targetDurationDays === null || task?.targetDurationDays === undefined ? "0" : 
+    durationPresets.find(p => p.value === String(task?.targetDurationDays))?.value || "custom_range"
+  );
+  const [customDateRange, setCustomDateRange] = useState<DateRange | undefined>(() => {
+    if (task && task.targetDurationDays && task.createdAt && (selectedDurationPreset === "custom_range" || !durationPresets.find(p=>p.value === String(task.targetDurationDays)))) {
+      const startDate = new Date(task.createdAt);
+      const endDate = new Date(task.createdAt + (task.targetDurationDays -1) * 24 * 60 * 60 * 1000); // -1 because duration is inclusive
+      return { from: startDate, to: endDate };
+    }
+    return undefined;
+  });
 
   const getInitialFormValues = (taskToEdit?: Task | null): TaskFormInternalData => {
     if (taskToEdit) {
@@ -72,7 +89,7 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
         budgetTimeUnit,
         budgetBasis: taskToEdit.budgetBasis,
         categoryId: taskToEdit.categoryId || null,
-        targetDurationDays: taskToEdit.targetDurationDays === undefined || taskToEdit.targetDurationDays === null ? null : taskToEdit.targetDurationDays,
+        targetDurationDays: taskToEdit.targetDurationDays === undefined || taskToEdit.targetDurationDays === null ? 0 : taskToEdit.targetDurationDays,
       };
     }
     return {
@@ -82,7 +99,7 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
       budgetTimeUnit: 'minutes',
       budgetBasis: 'weekly',
       categoryId: null,
-      targetDurationDays: null, // Default to null for indefinite unless a preset is chosen
+      targetDurationDays: 0, // Default to 0 for indefinite
     };
   };
   
@@ -100,6 +117,44 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
     form.reset(getInitialFormValues(task));
     const currentValues = getInitialFormValues(task);
     setCurrentTimeAllocationForAI(`${currentValues.budgetTimeValue} ${currentValues.budgetTimeUnit}`);
+    
+    // Initialize selectedDurationPreset and customDateRange based on task prop
+    if (task) {
+      const taskDuration = task.targetDurationDays;
+      if (taskDuration === 0 || taskDuration === null || taskDuration === undefined) {
+        setSelectedDurationPreset("0");
+        setCustomDateRange(undefined);
+        form.setValue('targetDurationDays', 0);
+      } else {
+        const presetMatch = durationPresets.find(p => p.value === String(taskDuration) && p.value !== "custom_range" && p.value !== "5_daily");
+        if (presetMatch) {
+          setSelectedDurationPreset(presetMatch.value);
+          setCustomDateRange(undefined);
+          form.setValue('targetDurationDays', parseInt(presetMatch.value, 10));
+        } else if(task.targetDurationDays === 5 && task.budgetBasis === 'daily'){
+            setSelectedDurationPreset("5_daily");
+            setCustomDateRange(undefined);
+            form.setValue('targetDurationDays', 5);
+        }
+         else if (task.createdAt) { // Assume custom range if no direct preset matches
+          setSelectedDurationPreset("custom_range");
+          const startDate = new Date(task.createdAt);
+          // Ensure targetDurationDays is positive before calculating end date
+          const endDate = new Date(startDate.getTime() + (Math.max(0, taskDuration -1)) * 24 * 60 * 60 * 1000);
+          setCustomDateRange({ from: startDate, to: endDate });
+          form.setValue('targetDurationDays', taskDuration);
+        } else {
+          // Fallback if task.createdAt is not available for custom range calculation
+          setSelectedDurationPreset("0");
+          setCustomDateRange(undefined);
+          form.setValue('targetDurationDays', 0);
+        }
+      }
+    } else {
+        setSelectedDurationPreset("0"); // Default for new task
+        setCustomDateRange(undefined);
+        form.setValue('targetDurationDays', 0);
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [task]);
   
@@ -111,6 +166,18 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
     setCurrentTimeAllocationForAI(`${watchedBudgetTimeValue || 0} ${watchedBudgetTimeUnit || 'minutes'}`);
   }, [watchedBudgetTimeValue, watchedBudgetTimeUnit]);
 
+  useEffect(() => {
+    if (selectedDurationPreset === "custom_range") {
+      if (customDateRange?.from && customDateRange?.to) {
+        const days = differenceInCalendarDays(customDateRange.to, customDateRange.from) + 1;
+        form.setValue('targetDurationDays', days > 0 ? days : 0, { shouldValidate: true });
+      } else {
+        form.setValue('targetDurationDays', 0, { shouldValidate: true }); // Or null if preferred for no selection
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [customDateRange, selectedDurationPreset, form.setValue]);
+
 
   const handleFormSubmit: SubmitHandler<TaskFormInternalData> = (data) => {
     let totalMinutes = data.budgetTimeValue;
@@ -118,15 +185,27 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
       totalMinutes = data.budgetTimeValue * 60;
     }
 
+    // Ensure targetDurationDays is correctly derived if custom_range was used
+    let finalTargetDurationDays = data.targetDurationDays;
+    if (selectedDurationPreset === "custom_range") {
+        if (customDateRange?.from && customDateRange?.to) {
+            const days = differenceInCalendarDays(customDateRange.to, customDateRange.from) + 1;
+            finalTargetDurationDays = days > 0 ? days : 0;
+        } else {
+            finalTargetDurationDays = 0; // Or null if no range picked
+        }
+    }
+
+
     const taskDataToSubmit: TaskFormDataValues = {
       name: data.name,
       icon: data.icon,
       budgetedTime: totalMinutes,
       budgetBasis: data.budgetBasis,
       categoryId: data.categoryId,
-      targetDurationDays: data.targetDurationDays === null || data.targetDurationDays === undefined ? null : Number(data.targetDurationDays),
+      targetDurationDays: finalTargetDurationDays === null || finalTargetDurationDays === undefined ? 0 : Number(finalTargetDurationDays),
     };
-
+    
     onSubmit(taskDataToSubmit, task?.id);
     toast({
       title: task ? "Task Updated" : "Task Added",
@@ -135,8 +214,9 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
     if (!task) { 
       form.reset(getInitialFormValues(null));
       setCurrentTimeAllocationForAI('60 minutes');
+      setSelectedDurationPreset("0");
+      setCustomDateRange(undefined);
     }
-    // onClose(); // Parent component (SettingsPage) closes the dialog on submit now
   };
 
   const handleAiSuggestionApplied = (suggestedTime: string) => {
@@ -162,19 +242,19 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
   };
   
   const handleDurationPresetChange = (value: string) => {
-    if (value === "custom") {
-      // Do nothing, user will input manually
+    setSelectedDurationPreset(value);
+    setCustomDateRange(undefined); // Clear custom range when a preset is picked
+
+    if (value === "custom_range") {
+      // Do nothing to targetDurationDays, user will pick dates
+      form.setValue('targetDurationDays', 0); // Reset to 0 until range is picked
     } else if (value === "5_daily") {
-      form.setValue('targetDurationDays', 5);
+      form.setValue('targetDurationDays', 5, { shouldValidate: true });
       form.setValue('budgetBasis', 'daily', { shouldValidate: true });
     } else {
       const days = parseInt(value, 10);
       if (!isNaN(days)) {
-        form.setValue('targetDurationDays', days);
-         // If setting a specific duration like 7 days, and budget basis is not daily,
-        // it makes sense for it to be weekly or monthly.
-        // Let's not force change budgetBasis here unless it's the 5_daily preset.
-        // User can select budgetBasis independently for other durations.
+        form.setValue('targetDurationDays', days, { shouldValidate: true });
       }
     }
   };
@@ -278,7 +358,7 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
               name="budgetTimeUnit"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="sr-only">Time Unit</FormLabel>
+                  {/* <FormLabel className="sm:sr-only">Unit</FormLabel> Hidden label for small screens to save space */}
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
@@ -327,47 +407,76 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
             )}
           />
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
-            <FormField
-              control={form.control}
-              name="targetDurationDays"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Target Duration (days)</FormLabel>
-                  <FormControl>
-                    <Input 
-                      type="number" 
-                      placeholder="e.g., 30 (0 or empty for indefinite)" 
-                      {...field} 
-                      value={field.value === null || field.value === undefined ? '' : String(field.value)}
-                      onChange={e => {
-                        const val = e.target.value;
-                        field.onChange(val === '' ? null : parseInt(val, 10));
-                      }}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-             <FormItem>
-                <FormLabel>Set Duration Preset</FormLabel>
-                <Select onValueChange={handleDurationPresetChange} defaultValue="custom">
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a preset" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {durationPresets.map(preset => (
-                       <SelectItem key={preset.value} value={preset.value}>{preset.label}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </FormItem>
+          <div className="space-y-2">
+            <FormItem>
+              <FormLabel>Target Duration</FormLabel>
+              <Select onValueChange={handleDurationPresetChange} value={selectedDurationPreset}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a duration preset" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {durationPresets.map(preset => (
+                     <SelectItem key={preset.value} value={preset.value}>{preset.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </FormItem>
+
+            {selectedDurationPreset === 'custom_range' && (
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={"outline"}
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !customDateRange && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {customDateRange?.from ? (
+                      customDateRange.to ? (
+                        <>
+                          {format(customDateRange.from, "LLL dd, y")} -{" "}
+                          {format(customDateRange.to, "LLL dd, y")}
+                        </>
+                      ) : (
+                        format(customDateRange.from, "LLL dd, y")
+                      )
+                    ) : (
+                      <span>Pick a date range</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    initialFocus
+                    mode="range"
+                    defaultMonth={customDateRange?.from}
+                    selected={customDateRange}
+                    onSelect={setCustomDateRange}
+                    numberOfMonths={1}
+                  />
+                </PopoverContent>
+              </Popover>
+            )}
+             <FormField
+                control={form.control}
+                name="targetDurationDays" // This field is hidden but its value is managed
+                render={({ field }) => (
+                  <FormItem className="hidden">
+                    <FormControl>
+                      <Input type="number" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
           </div>
           <p className="text-xs text-muted-foreground -mt-2">
-            Set to 0 or leave "Target Duration (days)" empty for an indefinite task.
+            Select "Indefinite" or "Custom Date Range" with no dates for a task that never expires.
+            "Monday to Friday" preset automatically sets budget basis to daily.
           </p>
           
           <ShadDialogFooter className="mt-8">
@@ -383,7 +492,5 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
     </>
   );
 };
-
-    
 
     
