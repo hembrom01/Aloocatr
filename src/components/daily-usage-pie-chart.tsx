@@ -127,13 +127,19 @@ const DailyUsagePieChartComponent: FC<DailyUsagePieChartProps> = ({ tasks, taskL
             layout="vertical"
             verticalAlign="middle"
             align="right"
+            iconSize={10} // Set icon size to match font size
             wrapperStyle={{ fontSize: '10px', paddingLeft: '10px', maxHeight: '280px', overflowY: 'auto' }} 
-            formatter={(value) => {
-              const itemData = dataForChart.find(d => d.name === value);
-              const colorIndex = dataForChart.filter(d => d.isTask).findIndex(d => d.name === value);
-              const color = itemData?.isTask ? COLORS[colorIndex % COLORS.length] : UNTRACKED_COLOR;
-              return <span style={{ color: color, display: 'inline-block', maxWidth: '100px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{value}</span>;
-            }}
+            formatter={(value, entry) => (
+              <span
+                className="truncate" // Handles overflow, ellipsis, nowrap
+                style={{ 
+                  maxWidth: '100px', // Max width for the text itself
+                  color: 'hsl(var(--muted-foreground))' // Ensure text color is standard muted
+                }}
+              >
+                {value}
+              </span>
+            )}
           />
         </PieChart>
       </ResponsiveContainer>
@@ -143,4 +149,3 @@ const DailyUsagePieChartComponent: FC<DailyUsagePieChartProps> = ({ tasks, taskL
 
 export const DailyUsagePieChart = memo(DailyUsagePieChartComponent);
 DailyUsagePieChart.displayName = 'DailyUsagePieChart';
-
