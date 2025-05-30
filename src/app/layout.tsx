@@ -28,7 +28,7 @@ const geistMono = Geist_Mono({
 // However, for static metadata, it's best in a server component or route handler.
 // For simplicity here, keeping it but acknowledging its limitations in a "use client" RootLayout.
 export const metadataObject: Metadata = {
-  title: 'ChronoFlow',
+  title: 'Allocatr',
   description: 'Budget your time effectively and track your progress.',
 };
 
@@ -50,8 +50,7 @@ export default function RootLayout({
               <header className="sticky top-0 z-10 flex h-14 items-center justify-between gap-2 border-b bg-background px-4 md:hidden print:hidden">
                 <div className="flex items-center gap-2">
                   <SidebarTrigger className="h-8 w-8" />
-                  <Settings2 className="h-6 w-6 text-primary" />
-                  <span className="font-semibold text-foreground">ChronoFlow</span>
+                  <span className="font-logo-cursive text-xl text-primary">Allocatr</span>
                 </div>
               </header>
               <div className="relative flex min-h-screen flex-col">

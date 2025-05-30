@@ -20,7 +20,7 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
 export function AppSidebar() {
-  const appName = "ChronoFlow";
+  const appName = "Allocatr";
   const appVersion = "v1.0.0 - Free";
   const pathname = usePathname();
   const { isMobile, setOpenMobile } = useSidebar();
@@ -69,12 +69,11 @@ export function AppSidebar() {
     <Sidebar collapsible="icon">
       <SidebarHeader className="p-4">
         <div className="flex flex-col items-center group-data-[collapsible=icon]:hidden">
-          <Settings2 className="h-7 w-7 text-primary mb-1" />
-          <h2 className="text-lg font-semibold text-foreground">{appName}</h2>
+          <h2 className="font-logo-cursive text-2xl text-primary mb-1">{appName}</h2>
           <p className="text-xs text-muted-foreground">{appVersion}</p>
         </div>
         <div className="hidden group-data-[collapsible=icon]:flex group-data-[collapsible=icon]:flex-col group-data-[collapsible=icon]:items-center">
-           <Settings2 className="h-7 w-7 text-primary" />
+           {/* Collapsed view: Minimal, no logo or text here, rely on tooltips */}
         </div>
       </SidebarHeader>
 
@@ -83,7 +82,7 @@ export function AppSidebar() {
       <SidebarContent className="p-2">
         <SidebarGroup>
           {mainMenuItems.map((item) => (
-            <SidebarMenuItem key={item.href}>
+            <SidebarMenuItem key={item.href} className="list-none">
               <SidebarMenuButton
                 asChild
                 tooltip={item.label}
@@ -108,7 +107,7 @@ export function AppSidebar() {
             <span className="group-data-[collapsible=icon]:hidden">Data</span>
           </SidebarGroupLabel>
           {dataManagementItems.map((item) => (
-            <SidebarMenuItem key={item.label}>
+            <SidebarMenuItem key={item.label} className="list-none">
               <SidebarMenuButton
                 asChild
                 tooltip={item.tooltip}
@@ -133,7 +132,7 @@ export function AppSidebar() {
             <span className="group-data-[collapsible=icon]:hidden">More</span>
           </SidebarGroupLabel>
           {moreItems.map((item) => (
-            <SidebarMenuItem key={item.label}>
+            <SidebarMenuItem key={item.label} className="list-none">
                 <SidebarMenuButton 
                   tooltip={item.tooltip} 
                   className="group-data-[collapsible=icon]:justify-center text-sm"

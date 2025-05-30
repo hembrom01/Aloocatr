@@ -235,7 +235,7 @@ export default function TasksPage() {
         <Card className="shadow-lg">
           <CardHeader>
             <CardTitle>App Preferences</CardTitle>
-            <CardDescription>Customize your ChronoFlow experience. Main preferences are now in the sidebar.</CardDescription>
+            <CardDescription>Customize your Allocatr experience. Main preferences are now in the sidebar.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-start p-3 bg-muted/30 rounded-md border">

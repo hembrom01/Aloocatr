@@ -122,7 +122,7 @@ export default function DataManagementPage() {
                 <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                 <AlertDialogDescription>
                   This action cannot be undone. This will permanently delete all your
-                  ChronoFlow data, including tasks, categories, and time logs from your browser.
+                  Allocatr data, including tasks, categories, and time logs from your browser.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>

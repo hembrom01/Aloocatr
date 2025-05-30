@@ -81,7 +81,7 @@ export default function TrackerPage() {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <Zap className="h-12 w-12 text-primary animate-pulse" />
-        <p className="ml-4 text-lg font-semibold">Loading ChronoFlow...</p>
+        <p className="ml-4 text-lg font-semibold">Loading Allocatr...</p>
       </div>
     );
   }
@@ -137,7 +137,7 @@ export default function TrackerPage() {
                     <Button
                       variant="outline"
                       className={cn(
-                        "w-full h-22 py-2 px-1 flex flex-col items-center justify-center overflow-hidden",
+                        "w-full h-24 py-2 px-1 flex flex-col items-center justify-center overflow-hidden", // Maintained h-24
                         "shadow-sm hover:shadow-md transition-all transform hover:scale-105",
                         isActive && "ring-2 ring-primary bg-primary/10 border-primary"
                       )}
@@ -145,7 +145,7 @@ export default function TrackerPage() {
                       aria-label={isActive ? `Stop ${task.name}` : `Start ${task.name}`}
                     >
                       <IconComponent className={cn("h-10 w-10", isActive ? "text-primary" : "text-muted-foreground")} />
-                      <span className={cn("mt-1 text-xs text-center w-full leading-tight", isActive ? "text-primary" : "text-muted-foreground")}>
+                      <span className={cn("mt-1 text-[11px] text-center w-full leading-tight", isActive ? "text-primary" : "text-muted-foreground")}>
                         {task.name}
                       </span>
                     </Button>
@@ -161,11 +161,11 @@ export default function TrackerPage() {
                 <Link href="/settings" passHref legacyBehavior>
                   <Button
                     variant="outline"
-                    className="w-full h-22 py-2 px-1 flex flex-col items-center justify-center overflow-hidden shadow-sm hover:shadow-md transition-all transform hover:scale-105"
+                    className="w-full h-24 py-2 px-1 flex flex-col items-center justify-center overflow-hidden shadow-sm hover:shadow-md transition-all transform hover:scale-105"
                     aria-label="Add new task"
                   >
                     <PlusCircle className="h-10 w-10 text-muted-foreground" />
-                     <span className="mt-1 text-xs text-center w-full leading-tight text-muted-foreground">
+                     <span className="mt-1 text-[11px] text-center w-full leading-tight text-muted-foreground">
                         Add Task
                       </span>
                   </Button>
