@@ -1,16 +1,16 @@
 
 "use client";
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { DailyTaskTimeline } from '@/components/daily-task-timeline';
 import { DateNavigator } from '@/components/date-navigator';
 import { useTaskManager } from '@/hooks/use-task-manager';
 import { Zap } from 'lucide-react';
 import { format, startOfWeek, endOfWeek } from 'date-fns';
 import { DailyUsagePieChart } from '@/components/daily-usage-pie-chart';
-import { ProductivityTrendChart } from '@/components/productivity-trend-chart'; // New import
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'; // For dropdown
-import { Card, CardContent } from '@/components/ui/card'; // For chart container
+import { ProductivityTrendChart } from '@/components/productivity-trend-chart';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Card, CardContent } from '@/components/ui/card';
 
 type ChartType = 'dailyBreakdown' | 'weeklyProductivity';
 
@@ -18,23 +18,32 @@ export default function TimelinePage() {
   const { 
     tasks, 
     getLogsForDay, 
-    getAggregatedLogsForPeriod, // New hook function
+    getAggregatedLogsForPeriod,
     isLoaded 
   } = useTaskManager();
   
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null); // Initialize to null
   const [selectedChartType, setSelectedChartType] = useState<ChartType>('dailyBreakdown');
 
-  const dailyLogs = useMemo(() => getLogsForDay(selectedDate), [selectedDate, getLogsForDay]);
+  useEffect(() => {
+    // Set selectedDate on the client after mount
+    setSelectedDate(new Date());
+  }, []);
+
+  const dailyLogs = useMemo(() => {
+    if (!selectedDate) return [];
+    return getLogsForDay(selectedDate);
+  }, [selectedDate, getLogsForDay]);
 
   const weeklyProductivityData = useMemo(() => {
-    if (selectedChartType !== 'weeklyProductivity') return [];
+    if (selectedChartType !== 'weeklyProductivity' || !selectedDate) return [];
     const weekStart = startOfWeek(selectedDate, { weekStartsOn: 1 }); // Monday
     const weekEnd = endOfWeek(selectedDate, { weekStartsOn: 1 });
     return getAggregatedLogsForPeriod(weekStart, weekEnd, 'EEE');
   }, [selectedDate, selectedChartType, getAggregatedLogsForPeriod]);
 
-  if (!isLoaded) {
+  // Show loading if essential data isn't ready
+  if (!isLoaded || !selectedDate) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <Zap className="h-12 w-12 text-primary animate-pulse" />
