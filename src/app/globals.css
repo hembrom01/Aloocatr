@@ -97,13 +97,13 @@ body {
 
 /* Page content fade-in animation */
 @keyframes page-content-fade-in {
-  from { opacity: 0; transform: translateY(8px); } /* Slightly smaller translate */
+  from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 .animate-page-content-appear {
-  animation: page-content-fade-in 0.4s ease-out forwards; /* Slightly faster */
-  animation-delay: 0.1s; /* Optional: slight delay if loading screen fades quickly */
+  animation: page-content-fade-in 0.4s ease-out forwards;
+  animation-delay: 0.1s; 
 }
 
 
@@ -111,32 +111,12 @@ body {
   font-family: 'Brush Script MT', 'Brush Script Std', 'Snell Roundhand', cursive;
 }
 
-
-/* Typewriter effect for AppLoadingScreen */
-.typewriter-text {
-  display: inline-block;
-  overflow: hidden;
-  white-space: nowrap;
-  /* border-right: 3px solid hsl(var(--primary)); */ /* Removed blinking cursor */
-  width: 0; /* Start with no width, JS will animate or a class will set it */
-  animation:
-    typing var(--typewriter-duration, 2s) linear forwards; /* Only typing animation */
-  animation-delay: 0.3s; /* Delay start of typing */
+/* Loading screen content fade-in animation */
+@keyframes content-fade-in-subtle-move {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.typewriter-text-done {
-  /* border-right-color: transparent; */ /* No longer needed */
-  animation: none; /* Stop typing animation */
-  width: auto; /* Ensure full text is visible after animation if needed (though 'forwards' should handle it) */
+.animate-loading-content-appear {
+  animation: content-fade-in-subtle-move 0.8s ease-out forwards;
 }
-
-
-@keyframes typing {
-  from { width: 0; }
-  to { width: 100%; } /* Animate to full width of the text */
-}
-
-/* @keyframes blink-caret {
-  from, to { border-color: transparent; }
-  50% { border-color: hsl(var(--primary)); }
-} */ /* Removed blink-caret animation */
