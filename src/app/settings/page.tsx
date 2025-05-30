@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger, DialogClose } from '@/components/ui/dialog';
 import { taskIconsLookup, defaultTaskIcon } from '@/config/icons';
 import { Edit2, PlusCircle, UserCircle, Zap, Trash2, FolderPlus, Plus, Settings as AppSettingsIcon } from 'lucide-react';
-// Removed Palette icon import as ThemeToggle is moved
+
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 
@@ -91,7 +91,7 @@ export default function TasksPage() {
     return (
        <div className="flex justify-center items-center min-h-screen">
         <Zap className="h-12 w-12 text-primary animate-pulse" />
-        <p className="ml-4 text-xl font-semibold">Loading Tasks...</p> 
+        <p className="ml-4 text-lg font-semibold">Loading Tasks...</p> 
       </div>
     );
   }
@@ -101,8 +101,8 @@ export default function TasksPage() {
   return (
     <div className="space-y-8 pb-24 animate-page-content-appear">
       <header className="mb-10">
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">Tasks</h1>
-        <p className="text-base text-muted-foreground">Manage your tasks, categories, and application preferences via the sidebar.</p>
+        <h1 className="text-xl font-semibold tracking-tight text-foreground">Tasks</h1>
+        <p className="text-xs text-muted-foreground">Manage your tasks, categories, and application preferences via the sidebar.</p>
       </header>
 
       <Dialog open={showTaskFormDialog} onOpenChange={setShowTaskFormDialog}>
@@ -122,15 +122,15 @@ export default function TasksPage() {
       <section id="manage-categories-tasks">
         <Card className="shadow-lg">
           <CardHeader>
-            <CardTitle className="text-2xl">Manage Categories & Tasks</CardTitle>
-            <CardDescription className="text-sm">Organize your tasks by categories, or manage them individually.</CardDescription>
+            <CardTitle>Manage Categories & Tasks</CardTitle>
+            <CardDescription>Organize your tasks by categories, or manage them individually.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <ScrollArea className="h-[400px] pr-3">
               {categories.map(category => (
                 <div key={category.id} className="mb-6">
                   <div className="flex justify-between items-center mb-2 p-2 bg-muted/20 rounded-t-md">
-                    <h3 className="text-lg font-semibold text-primary">{category.name}</h3>
+                    <h3 className="text-base font-semibold text-primary">{category.name}</h3>
                     <Button variant="ghost" size="icon" onClick={() => handleDeleteCategoryWithConfirmation(category.id)} aria-label="Delete category">
                       <Trash2 className="h-4 w-4 text-destructive" />
                     </Button>
@@ -143,7 +143,7 @@ export default function TasksPage() {
                           <div className="flex items-center gap-3">
                             <IconComponent className="h-6 w-6 text-primary" />
                             <div>
-                              <span className="text-base font-medium">{task.name}</span>
+                              <span className="text-sm font-medium">{task.name}</span>
                               <p className="text-xs text-muted-foreground">
                                 {task.budgetedTime} min / {task.budgetBasis}
                                 {task.targetDurationDays ? ` for ${task.targetDurationDays} days` : ''}
@@ -157,7 +157,7 @@ export default function TasksPage() {
                       );
                     })}
                     {tasks.filter(task => task.categoryId === category.id).length === 0 && (
-                      <p className="text-sm text-muted-foreground pl-3">No tasks in this category.</p>
+                      <p className="text-xs text-muted-foreground pl-3">No tasks in this category.</p>
                     )}
                   </ul>
                 </div>
@@ -165,7 +165,7 @@ export default function TasksPage() {
               
               {uncategorizedTasks.length > 0 && (
                 <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-primary mb-2 p-2 bg-muted/20 rounded-t-md">Uncategorized Tasks</h3>
+                  <h3 className="text-base font-semibold text-primary mb-2 p-2 bg-muted/20 rounded-t-md">Uncategorized Tasks</h3>
                   <ul className="space-y-3 pl-2">
                     {uncategorizedTasks.map(task => {
                       const IconComponent = taskIconsLookup[task.icon] || taskIconsLookup[defaultTaskIcon];
@@ -174,7 +174,7 @@ export default function TasksPage() {
                           <div className="flex items-center gap-3">
                             <IconComponent className="h-6 w-6 text-primary" />
                             <div>
-                              <span className="text-base font-medium">{task.name}</span>
+                              <span className="text-sm font-medium">{task.name}</span>
                               <p className="text-xs text-muted-foreground">
                                 {task.budgetedTime} min / {task.budgetBasis}
                                 {task.targetDurationDays ? ` for ${task.targetDurationDays} days` : ''}
@@ -192,7 +192,7 @@ export default function TasksPage() {
               )}
 
              {categories.length === 0 && uncategorizedTasks.length === 0 && (
-                <p className="text-sm text-muted-foreground text-center py-4">
+                <p className="text-xs text-muted-foreground text-center py-4">
                   No categories or tasks found. Add a category or use the <Plus className="inline h-4 w-4"/> button to add a task.
                 </p>
              )}
@@ -208,7 +208,7 @@ export default function TasksPage() {
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle className="text-lg">Add New Category</DialogTitle>
+                  <DialogTitle>Add New Category</DialogTitle>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
                   <Input 
@@ -234,16 +234,15 @@ export default function TasksPage() {
       <section id="app-preferences">
         <Card className="shadow-lg">
           <CardHeader>
-            <CardTitle className="text-2xl">App Preferences</CardTitle>
-            <CardDescription className="text-sm">Customize your ChronoFlow experience. Main preferences are now in the sidebar.</CardDescription>
+            <CardTitle>App Preferences</CardTitle>
+            <CardDescription>Customize your ChronoFlow experience. Main preferences are now in the sidebar.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {/* ThemeToggle removed from here */}
             <div className="flex items-start p-3 bg-muted/30 rounded-md border">
                <UserCircle className="h-5 w-5 mr-3 mt-1 text-muted-foreground flex-shrink-0" />
               <div>
-                <h3 className="text-base font-medium">Account</h3>
-                <p className="text-sm text-muted-foreground">
+                <h3 className="text-sm font-medium">Account</h3>
+                <p className="text-xs text-muted-foreground">
                   Login and account synchronization features are coming soon!
                 </p>
               </div>
@@ -251,8 +250,8 @@ export default function TasksPage() {
              <div className="flex items-start p-3 bg-muted/30 rounded-md border">
                <AppSettingsIcon className="h-5 w-5 mr-3 mt-1 text-muted-foreground flex-shrink-0" />
               <div>
-                <h3 className="text-base font-medium">More Settings</h3>
-                <p className="text-sm text-muted-foreground">
+                <h3 className="text-sm font-medium">More Settings</h3>
+                <p className="text-xs text-muted-foreground">
                   Advanced application settings will be available here. Check the sidebar for common preferences.
                 </p>
               </div>

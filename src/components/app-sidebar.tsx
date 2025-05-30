@@ -70,7 +70,7 @@ export function AppSidebar() {
       <SidebarHeader className="p-4">
         <div className="flex flex-col items-center group-data-[collapsible=icon]:hidden">
           <Settings2 className="h-7 w-7 text-primary mb-1" />
-          <h2 className="text-xl font-semibold text-foreground">{appName}</h2>
+          <h2 className="text-lg font-semibold text-foreground">{appName}</h2>
           <p className="text-xs text-muted-foreground">{appVersion}</p>
         </div>
         <div className="hidden group-data-[collapsible=icon]:flex group-data-[collapsible=icon]:flex-col group-data-[collapsible=icon]:items-center">
@@ -147,14 +147,6 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       
-      {/* Footer can be uncommented if needed
-      <SidebarFooter className="p-2 text-xs text-muted-foreground group-data-[collapsible=icon]:hidden">
-        <div className="flex items-center justify-center gap-2 p-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground cursor-pointer">
-           <LogOut className="h-4 w-4"/>
-           <span>Logout</span>
-        </div>
-      </SidebarFooter>
-      */}
     </Sidebar>
   );
 }

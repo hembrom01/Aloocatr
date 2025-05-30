@@ -24,7 +24,7 @@ interface DateNavigatorProps {
 }
 
 const DateNavigatorComponent: FC<DateNavigatorProps> = ({ selectedDate, onDateChange }) => {
-  const currentWeekStart = startOfWeek(selectedDate, { weekStartsOn: 1 }); // Monday
+  const currentWeekStart = startOfWeek(selectedDate, { weekStartsOn: 1 }); 
   const currentWeekEnd = endOfWeek(selectedDate, { weekStartsOn: 1 });
   const daysInWeek = eachDayOfInterval({ start: currentWeekStart, end: currentWeekEnd });
 
@@ -54,7 +54,7 @@ const DateNavigatorComponent: FC<DateNavigatorProps> = ({ selectedDate, onDateCh
           <Button variant="outline" size="icon" onClick={handlePreviousWeek} aria-label="Previous week">
             <ChevronLeft className="h-5 w-5" />
           </Button>
-          <h3 className="text-md sm:text-lg font-semibold text-foreground text-center tabular-nums">
+          <h3 className="text-sm sm:text-base font-semibold text-foreground text-center tabular-nums">
             {formattedWeekRange}
           </h3>
           <Button variant="outline" size="icon" onClick={handleNextWeek} aria-label="Next week">
@@ -71,14 +71,14 @@ const DateNavigatorComponent: FC<DateNavigatorProps> = ({ selectedDate, onDateCh
                 key={day.toISOString()}
                 variant={isSelected ? 'default' : isCurrentDayToday ? 'secondary' : 'ghost'}
                 className={cn(
-                  "p-1 sm:p-2 h-auto flex flex-col items-center justify-center rounded-md text-xs sm:text-sm",
+                  "p-1 sm:p-2 h-auto flex flex-col items-center justify-center rounded-md",
                   isSelected && "ring-2 ring-primary shadow-lg",
                   isCurrentDayToday && !isSelected && "border border-primary/70"
                 )}
                 onClick={() => onDateChange(day)}
               >
-                <span className="font-medium">{format(day, 'EEE')}</span>
-                <span className="text-lg sm:text-xl font-bold">{format(day, 'd')}</span>
+                <span className="text-xs font-medium">{format(day, 'EEE')}</span>
+                <span className="text-sm sm:text-base font-bold">{format(day, 'd')}</span>
               </Button>
             );
           })}

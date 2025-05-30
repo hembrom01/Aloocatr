@@ -51,13 +51,13 @@ const ActiveTaskBar = memo(({ activeTimer, task, onStop }: { activeTimer: Active
         <div className="flex items-center">
           <IconComponent className="h-6 w-6 mr-3 text-primary" />
           <div>
-            <p className="text-base font-semibold text-foreground">{task.name}</p>
+            <p className="text-sm font-semibold text-foreground">{task.name}</p>
             <p className="text-xs text-muted-foreground">Running...</p>
           </div>
         </div>
         <div className="flex items-center">
           <TimerIcon className="h-5 w-5 mr-2 text-primary" />
-          <p className="text-base font-mono text-primary">{elapsedTime}</p>
+          <p className="text-sm font-mono text-primary">{elapsedTime}</p>
         </div>
       </CardContent>
     </Card>
@@ -81,7 +81,7 @@ export default function TrackerPage() {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <Zap className="h-12 w-12 text-primary animate-pulse" />
-        <p className="ml-4 text-xl font-semibold">Loading ChronoFlow...</p>
+        <p className="ml-4 text-lg font-semibold">Loading ChronoFlow...</p>
       </div>
     );
   }
@@ -107,7 +107,7 @@ export default function TrackerPage() {
 
       <div className="space-y-6">
         <div className="text-center mt-4">
-          <p className="text-base text-foreground">Click on a task below to start or stop tracking.</p>
+          <p className="text-sm text-foreground">Click on a task below to start or stop tracking.</p>
         </div>
 
         <Separator className="my-4" />
@@ -116,9 +116,9 @@ export default function TrackerPage() {
           <Alert variant="default" className="border-primary/50 bg-primary/10">
             <AlertCircle className="h-4 w-4 !text-primary" />
             <AlertTitle className="font-semibold text-primary">No Tasks Yet!</AlertTitle>
-            <AlertDescription className="text-foreground">
+            <AlertDescription className="text-xs text-foreground">
               You haven't added any tasks. Click the
-              <Button variant="link" asChild className="p-0 h-auto ml-1 mr-1 text-primary hover:underline">
+              <Button variant="link" asChild className="p-0 h-auto ml-1 mr-1 text-primary hover:underline text-xs">
                 <Link href="/settings">plus icon</Link>
               </Button>
                or go to Tasks to add your first task.
@@ -145,7 +145,7 @@ export default function TrackerPage() {
                       aria-label={isActive ? `Stop ${task.name}` : `Start ${task.name}`}
                     >
                       <IconComponent className={cn("h-10 w-10", isActive ? "text-primary" : "text-muted-foreground")} />
-                      <span className={cn("mt-1 text-[11px] text-center w-full leading-tight", isActive ? "text-primary" : "text-muted-foreground")}>
+                      <span className={cn("mt-1 text-xs text-center w-full leading-tight", isActive ? "text-primary" : "text-muted-foreground")}>
                         {task.name}
                       </span>
                     </Button>
@@ -165,7 +165,7 @@ export default function TrackerPage() {
                     aria-label="Add new task"
                   >
                     <PlusCircle className="h-10 w-10 text-muted-foreground" />
-                     <span className="mt-1 text-[11px] text-center w-full leading-tight text-muted-foreground">
+                     <span className="mt-1 text-xs text-center w-full leading-tight text-muted-foreground">
                         Add Task
                       </span>
                   </Button>

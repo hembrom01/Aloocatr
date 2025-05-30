@@ -9,32 +9,32 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { formatMinutesToFriendlyDuration } from '@/lib/utils';
 
 interface BudgetComparisonBarChartProps {
-  tasks: Task[]; // Expects tasks already filtered for budgetedTime > 0
+  tasks: Task[]; 
   getTimeSpent: (taskId: string, basis: 'daily' | 'weekly' | 'monthly') => number;
 }
 
 const BudgetComparisonBarChartComponent: FC<BudgetComparisonBarChartProps> = ({ tasks, getTimeSpent }) => {
   const chartData = useMemo(() => {
-    return tasks // tasks are already filtered
+    return tasks 
       .map(task => ({
-        name: task.name.length > 15 ? `${task.name.substring(0, 12)}...` : task.name, // Truncate long names
+        name: task.name.length > 15 ? `${task.name.substring(0, 12)}...` : task.name, 
         Budgeted: task.budgetedTime,
         Actual: getTimeSpent(task.id, task.budgetBasis),
-        fullTaskName: task.name, // For tooltip
-        basis: task.budgetBasis.charAt(0).toUpperCase() + task.budgetBasis.slice(1) // For tooltip
+        fullTaskName: task.name, 
+        basis: task.budgetBasis.charAt(0).toUpperCase() + task.budgetBasis.slice(1) 
       }))
-      .sort((a,b) => b.Budgeted - a.Budgeted); // Sort by budgeted time desc
+      .sort((a,b) => b.Budgeted - a.Budgeted); 
   }, [tasks, getTimeSpent]);
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
-      const dataPoint = payload[0].payload; // The whole data object for this bar group
+      const dataPoint = payload[0].payload; 
       return (
-        <div className="p-3 bg-background border border-border rounded-md shadow-lg">
+        <div className="p-3 bg-background border border-border rounded-md shadow-lg text-xs">
           <p className="font-semibold text-sm">{dataPoint.fullTaskName}</p>
-          <p className="text-xs text-muted-foreground mb-1">Basis: {dataPoint.basis}</p>
+          <p className="text-muted-foreground mb-1">Basis: {dataPoint.basis}</p>
           {payload.map((entry: any, index: number) => (
-            <p key={`item-${index}`} style={{ color: entry.color }} className="text-xs">
+            <p key={`item-${index}`} style={{ color: entry.color }}>
               {entry.name}: {formatMinutesToFriendlyDuration(entry.value)}
             </p>
           ))}
@@ -47,8 +47,8 @@ const BudgetComparisonBarChartComponent: FC<BudgetComparisonBarChartProps> = ({ 
   return (
     <Card className="shadow-md">
       <CardHeader>
-        <CardTitle className="text-2xl">Budget vs. Actual Time</CardTitle>
-        <CardDescription className="text-sm">Comparison of your budgeted tasks based on their individual budget cycles (daily, weekly, monthly).</CardDescription>
+        <CardTitle>Budget vs. Actual Time</CardTitle>
+        <CardDescription>Comparison of your budgeted tasks based on their individual budget cycles (daily, weekly, monthly).</CardDescription>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={350}>
@@ -78,7 +78,7 @@ const BudgetComparisonBarChartComponent: FC<BudgetComparisonBarChartProps> = ({ 
             <Tooltip content={<CustomTooltip />} cursor={{ fill: 'hsl(var(--muted))' }} />
             <Legend 
               wrapperStyle={{paddingTop: '20px'}} 
-              formatter={(value) => <span style={{ color: 'hsl(var(--foreground))', fontSize: '12px' }}>{value}</span>}
+              formatter={(value) => <span style={{ color: 'hsl(var(--foreground))', fontSize: '10px' }}>{value}</span>}
             />
             <Bar dataKey="Budgeted" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} />
             <Bar dataKey="Actual" fill="hsl(var(--chart-2))" radius={[4, 4, 0, 0]} />

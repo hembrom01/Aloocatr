@@ -6,10 +6,11 @@ import { BudgetedTaskTracker } from '@/components/budgeted-task-tracker';
 import { useTaskManager } from '@/hooks/use-task-manager';
 import { Zap } from 'lucide-react';
 import { BudgetComparisonBarChart } from '@/components/budget-comparison-bar-chart';
-import { TaskCompletionChart } from '@/components/task-completion-chart'; // New import
+import { TaskCompletionChart } from '@/components/task-completion-chart'; 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import type { Task } from '@/types';
+import { Label } from '@/components/ui/label';
 
 type ProgressChartType = 'budgetComparison' | 'taskCompletion';
 
@@ -30,7 +31,7 @@ export default function TrackerPage() {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <Zap className="h-12 w-12 text-primary animate-pulse" />
-        <p className="ml-4 text-xl font-semibold">Loading Progress...</p>
+        <p className="ml-4 text-lg font-semibold">Loading Progress...</p>
       </div>
     );
   }
@@ -40,10 +41,10 @@ export default function TrackerPage() {
       return (
         <Card className="shadow-md">
           <CardHeader>
-            <CardTitle>Task Progress Visuals</CardTitle>
+            <CardTitle>Task Progress Visuals</CardTitle> 
           </CardHeader>
           <CardContent>
-            <p className="text-base text-muted-foreground text-center py-10">No tasks with budgets to display. Add budgets to your tasks in the Tasks section.</p>
+            <p className="text-sm text-muted-foreground text-center py-10">No tasks with budgets to display. Add budgets to your tasks in the Tasks section.</p>
           </CardContent>
         </Card>
       );
@@ -62,16 +63,16 @@ export default function TrackerPage() {
   return (
     <div className="space-y-8 animate-page-content-appear pb-16">
       <header className="mb-6">
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">Task Progress</h1>
-        <p className="text-base text-muted-foreground">Monitor your time spent against your budgeted tasks.</p>
+        <h1 className="text-xl font-semibold tracking-tight text-foreground">Task Progress</h1>
+        <p className="text-xs text-muted-foreground">Monitor your time spent against your budgeted tasks.</p>
       </header>
 
       <Card className="shadow-md">
-        <CardContent className="p-4 space-y-4">
+        <CardContent className="p-4 space-y-4 text-sm">
           <div>
-            <label htmlFor="progressChartTypeSelect" className="text-sm font-medium text-muted-foreground">
+            <Label htmlFor="progressChartTypeSelect" className="text-xs font-medium text-muted-foreground">
               Select Visual:
-            </label>
+            </Label>
             <Select value={selectedChartType} onValueChange={(value) => setSelectedChartType(value as ProgressChartType)}>
               <SelectTrigger id="progressChartTypeSelect" className="w-full sm:w-[280px] mt-1 text-sm">
                 <SelectValue placeholder="Select visual type" />

@@ -64,12 +64,12 @@ export const AiTimeSuggester: FC<AiTimeSuggesterProps> = ({ taskName, currentTim
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle className="text-lg">AI Time Allocation Suggestion</DialogTitle>
-            <DialogDescription className="text-sm">
+            <DialogTitle>AI Time Allocation Suggestion</DialogTitle>
+            <DialogDescription>
               Let AI suggest a time allocation for '{taskName}' (current: {currentTimeAllocation}).
             </DialogDescription>
           </DialogHeader>
-          <div className="grid gap-4 py-4">
+          <div className="grid gap-4 py-4 text-sm">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="context" className="text-right col-span-1 text-sm">
                 Context
@@ -85,13 +85,13 @@ export const AiTimeSuggester: FC<AiTimeSuggesterProps> = ({ taskName, currentTim
             {isLoading && (
               <div className="flex justify-center items-center">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                <p className="ml-2 text-base">Getting suggestion...</p>
+                <p className="ml-2 text-sm">Getting suggestion...</p>
               </div>
             )}
             {suggestion && !isLoading && (
               <div className="mt-4 p-3 bg-muted rounded-md">
-                <p className="text-base font-semibold">Suggested Allocation: {suggestion.suggestedTimeAllocation}</p>
-                <p className="text-sm text-muted-foreground mt-1">Reasoning: {suggestion.reasoning}</p>
+                <p className="text-sm font-semibold">Suggested Allocation: {suggestion.suggestedTimeAllocation}</p>
+                <p className="text-xs text-muted-foreground mt-1">Reasoning: {suggestion.reasoning}</p>
               </div>
             )}
           </div>

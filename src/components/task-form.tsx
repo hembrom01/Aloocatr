@@ -15,7 +15,7 @@ import { taskIconsLookup, defaultTaskIcon } from '@/config/icons';
 import { AiTimeSuggester } from './ai-time-suggester';
 import { useToast } from '@/hooks/use-toast';
 import { Trash2, ChevronDown, Calendar as CalendarIcon } from 'lucide-react';
-import { DialogFooter as ShadDialogFooter } from '@/components/ui/dialog'; // Renamed to avoid conflict
+import { DialogFooter as ShadDialogFooter } from '@/components/ui/dialog'; 
 import { IconPicker } from './icon-picker';
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
@@ -67,7 +67,7 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
   const [customDateRange, setCustomDateRange] = useState<DateRange | undefined>(() => {
     if (task && task.targetDurationDays && task.createdAt && (selectedDurationPreset === "custom_range" || !durationPresets.find(p=>p.value === String(task.targetDurationDays)))) {
       const startDate = new Date(task.createdAt);
-      const endDate = new Date(task.createdAt + (task.targetDurationDays -1) * 24 * 60 * 60 * 1000); // -1 because duration is inclusive
+      const endDate = new Date(task.createdAt + (task.targetDurationDays -1) * 24 * 60 * 60 * 1000); 
       return { from: startDate, to: endDate };
     }
     return undefined;
@@ -95,11 +95,11 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
     return {
       name: '',
       icon: defaultTaskIcon,
-      budgetTimeValue: 30, // Default changed to 30
+      budgetTimeValue: 30, 
       budgetTimeUnit: 'minutes',
       budgetBasis: 'weekly',
       categoryId: null,
-      targetDurationDays: 0, // Default to 0 for indefinite
+      targetDurationDays: 0, 
     };
   };
   
@@ -192,7 +192,6 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
         }
     }
 
-
     const taskDataToSubmit: TaskFormDataValues = {
       name: data.name,
       icon: data.icon,
@@ -267,7 +266,7 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
           </Button>
         )}
       </div>
-      {task && <p className="text-sm text-muted-foreground mb-4">Editing task: {task.name}</p>}
+      {task && <p className="text-xs text-muted-foreground mb-4">Editing task: {task.name}</p>}
       
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
@@ -276,9 +275,9 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Task Name</FormLabel>
+                <FormLabel className="text-sm">Task Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g., Morning Workout" {...field} />
+                  <Input placeholder="e.g., Morning Workout" {...field} className="text-sm" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -286,7 +285,7 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
           />
 
           <FormItem>
-            <FormLabel>Icon</FormLabel>
+            <FormLabel className="text-sm">Icon</FormLabel>
             <Button 
               variant="outline" 
               type="button" 
@@ -311,7 +310,7 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
             name="categoryId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Category (Optional)</FormLabel>
+                <FormLabel className="text-sm">Category (Optional)</FormLabel>
                 <Select 
                   onValueChange={(value) => field.onChange(value === "null" ? null : value)} 
                   value={field.value || "null"}
@@ -336,7 +335,7 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
           />
 
           <div className="space-y-2">
-            <FormLabel>Budgeted Time</FormLabel>
+            <FormLabel className="text-sm">Budgeted Time</FormLabel>
             <div className="flex items-start gap-2">
               <FormField
                 control={form.control}
@@ -344,7 +343,7 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
                 render={({ field }) => (
                   <FormItem className="flex-grow">
                     <FormControl>
-                      <Input type="number" placeholder="e.g., 30" {...field} />
+                      <Input type="number" placeholder="e.g., 30" {...field} className="text-sm" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -371,13 +370,13 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
                 )}
               />
             </div>
-          </div>
-          <div className="flex justify-end -mt-2">
-             <AiTimeSuggester 
-                taskName={form.getValues('name') || 'this task'}
-                currentTimeAllocation={currentTimeAllocationForAI}
-                onSuggestionApplied={handleAiSuggestionApplied}
-              />
+             <div className="flex justify-end mt-1">
+               <AiTimeSuggester 
+                  taskName={form.getValues('name') || 'this task'}
+                  currentTimeAllocation={currentTimeAllocationForAI}
+                  onSuggestionApplied={handleAiSuggestionApplied}
+                />
+            </div>
           </div>
 
 
@@ -386,7 +385,7 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
             name="budgetBasis"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Budget Basis</FormLabel>
+                <FormLabel className="text-sm">Budget Basis</FormLabel>
                 <Select onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger className="text-sm">
@@ -406,7 +405,7 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
           
           <div className="space-y-2">
             <FormItem>
-              <FormLabel>Target Duration</FormLabel>
+              <FormLabel className="text-sm">Target Duration</FormLabel>
               <Select onValueChange={handleDurationPresetChange} value={selectedDurationPreset}>
                 <FormControl>
                   <SelectTrigger className="text-sm">
@@ -454,6 +453,7 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
                     selected={customDateRange}
                     onSelect={setCustomDateRange}
                     numberOfMonths={1}
+                    disabled={{ before: new Date() }} // Optional: disable past dates
                   />
                 </PopoverContent>
               </Popover>
@@ -467,6 +467,7 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
                       <Input type="number" {...field} 
                         value={field.value === null || field.value === undefined ? '' : field.value}
                         onChange={e => field.onChange(e.target.value === '' ? null : Number(e.target.value))}
+                        className="text-sm"
                       />
                     </FormControl>
                     <FormMessage />

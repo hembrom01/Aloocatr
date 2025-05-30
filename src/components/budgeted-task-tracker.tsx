@@ -21,10 +21,10 @@ const BudgetedTaskTrackerComponent: FC<BudgetedTaskTrackerProps> = ({ tasks, get
     const now = Date.now();
     return tasks.filter(task => {
       if (task.targetDurationDays === null || task.targetDurationDays === undefined || task.targetDurationDays <= 0) {
-        return true; // Indefinite task, always active
+        return true; 
       }
       const taskEndDate = task.createdAt + (task.targetDurationDays * 24 * 60 * 60 * 1000);
-      return taskEndDate > now; // Active if end date is in the future
+      return taskEndDate > now; 
     });
   }, [tasks]);
 
@@ -33,10 +33,10 @@ const BudgetedTaskTrackerComponent: FC<BudgetedTaskTrackerProps> = ({ tasks, get
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl">Budgeted Task Tracker</CardTitle>
+          <CardTitle>Budgeted Task Tracker</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-base text-muted-foreground">No active budgeted tasks. Add tasks in Settings or check if existing tasks have expired.</p>
+          <p className="text-sm text-muted-foreground">No active budgeted tasks. Add tasks in Settings or check if existing tasks have expired.</p>
         </CardContent>
       </Card>
     );
@@ -45,7 +45,7 @@ const BudgetedTaskTrackerComponent: FC<BudgetedTaskTrackerProps> = ({ tasks, get
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-2xl">Budgeted Task Tracker</CardTitle>
+        <CardTitle>Budgeted Task Tracker</CardTitle>
       </CardHeader>
       <CardContent>
         <ScrollArea className="h-[300px] pr-4">
@@ -60,15 +60,14 @@ const BudgetedTaskTrackerComponent: FC<BudgetedTaskTrackerProps> = ({ tasks, get
                 basisDisplay = ` (${task.budgetBasis.charAt(0).toUpperCase() + task.budgetBasis.slice(1)})`;
               }
 
-
               return (
                 <div key={task.id} className="p-3 rounded-lg border hover:shadow-md transition-shadow">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
                       <IconComponent className="h-5 w-5 text-primary" />
-                      <span className="text-base font-medium">{task.name}</span>
+                      <span className="text-sm font-medium">{task.name}</span>
                     </div>
-                    <span className="text-sm text-muted-foreground">
+                    <span className="text-xs text-muted-foreground">
                       {formatMinutesToFriendlyDuration(timeSpent)} / {formatMinutesToFriendlyDuration(task.budgetedTime)}{basisDisplay}
                     </span>
                   </div>

@@ -35,7 +35,6 @@ export default function DataManagementPage() {
   };
   
   const handleDeleteAndReset = () => {
-    // Placeholder for actual deletion logic
     console.log("Delete & Reset action triggered");
     toast({
       title: "Data Reset (Placeholder)",
@@ -52,8 +51,8 @@ export default function DataManagementPage() {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-foreground">Data Management</h1>
-            <p className="text-base text-muted-foreground">Manage your application data.</p>
+            <h1 className="text-xl font-semibold tracking-tight text-foreground">Data Management</h1>
+            <p className="text-xs text-muted-foreground">Manage your application data.</p>
           </div>
         </div>
       </header>
@@ -62,9 +61,9 @@ export default function DataManagementPage() {
         <CardHeader>
           <div className="flex items-center gap-2">
             <DownloadCloud className="h-6 w-6 text-primary" />
-            <CardTitle className="text-2xl">Export Record</CardTitle>
+            <CardTitle>Export Record</CardTitle>
           </div>
-          <CardDescription className="text-sm">Download your task records and logs as a CSV or JSON file.</CardDescription>
+          <CardDescription>Download your task records and logs as a CSV or JSON file.</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex gap-2">
@@ -84,16 +83,16 @@ export default function DataManagementPage() {
         <CardHeader>
           <div className="flex items-center gap-2">
             <UploadCloud className="h-6 w-6 text-primary" />
-            <CardTitle className="text-2xl">Backup & Restore</CardTitle>
+            <CardTitle>Backup & Restore</CardTitle>
           </div>
-          <CardDescription className="text-sm">Backup your current data or restore from a previous backup file.</CardDescription>
+          <CardDescription>Backup your current data or restore from a previous backup file.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
           <Button onClick={() => handlePlaceholderAction('Backup Data')} className="text-sm">
             Backup Data
           </Button>
           <div>
-            <Label htmlFor="restoreFile" className="text-sm font-medium">Restore from Backup</Label>
+            <Label htmlFor="restoreFile" className="text-xs font-medium">Restore from Backup</Label>
             <Input id="restoreFile" type="file" className="mt-1 text-sm" disabled />
             <Button variant="secondary" className="mt-2 text-sm" onClick={() => handlePlaceholderAction('Restore Data')} disabled>
               Restore Data
@@ -109,9 +108,9 @@ export default function DataManagementPage() {
         <CardHeader>
           <div className="flex items-center gap-2">
             <Trash2 className="h-6 w-6 text-destructive" />
-            <CardTitle className="text-2xl text-destructive">Delete & Reset</CardTitle>
+            <CardTitle className="text-destructive">Delete & Reset</CardTitle>
           </div>
-          <CardDescription className="text-sm">Permanently delete all your tasks, categories, and logs. This action cannot be undone.</CardDescription>
+          <CardDescription>Permanently delete all your tasks, categories, and logs. This action cannot be undone.</CardDescription>
         </CardHeader>
         <CardContent>
           <AlertDialog>
@@ -120,8 +119,8 @@ export default function DataManagementPage() {
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle className="text-lg">Are you absolutely sure?</AlertDialogTitle>
-                <AlertDialogDescription className="text-sm">
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
                   This action cannot be undone. This will permanently delete all your
                   ChronoFlow data, including tasks, categories, and time logs from your browser.
                 </AlertDialogDescription>

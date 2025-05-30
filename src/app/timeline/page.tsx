@@ -11,6 +11,7 @@ import { DailyUsagePieChart } from '@/components/daily-usage-pie-chart';
 import { ProductivityTrendChart } from '@/components/productivity-trend-chart';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
 
 type ChartType = 'dailyBreakdown' | 'weeklyProductivity';
 
@@ -22,11 +23,10 @@ export default function TimelinePage() {
     isLoaded 
   } = useTaskManager();
   
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null); // Initialize to null
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null); 
   const [selectedChartType, setSelectedChartType] = useState<ChartType>('dailyBreakdown');
 
   useEffect(() => {
-    // Set selectedDate on the client after mount
     setSelectedDate(new Date());
   }, []);
 
@@ -37,17 +37,16 @@ export default function TimelinePage() {
 
   const weeklyProductivityData = useMemo(() => {
     if (selectedChartType !== 'weeklyProductivity' || !selectedDate) return [];
-    const weekStart = startOfWeek(selectedDate, { weekStartsOn: 1 }); // Monday
+    const weekStart = startOfWeek(selectedDate, { weekStartsOn: 1 }); 
     const weekEnd = endOfWeek(selectedDate, { weekStartsOn: 1 });
     return getAggregatedLogsForPeriod(weekStart, weekEnd, 'EEE');
   }, [selectedDate, selectedChartType, getAggregatedLogsForPeriod]);
 
-  // Show loading if essential data isn't ready
   if (!isLoaded || !selectedDate) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <Zap className="h-12 w-12 text-primary animate-pulse" />
-        <p className="ml-4 text-xl font-semibold">Loading Timeline...</p>
+        <p className="ml-4 text-lg font-semibold">Loading Timeline...</p>
       </div>
     );
   }
@@ -72,10 +71,10 @@ export default function TimelinePage() {
   return (
     <div className="animate-page-content-appear space-y-8 pb-16">
       <header className="mb-6">
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">
+        <h1 className="text-xl font-semibold tracking-tight text-foreground">
           Timeline for {format(selectedDate, 'MMMM d')}
         </h1>
-        <p className="text-base text-muted-foreground">
+        <p className="text-xs text-muted-foreground">
           A chronological view of your tasks and productivity for {format(selectedDate, 'PPP')}.
         </p>
       </header>
@@ -83,11 +82,11 @@ export default function TimelinePage() {
       <DateNavigator selectedDate={selectedDate} onDateChange={setSelectedDate} />
       
       <Card className="shadow-md">
-        <CardContent className="p-4 space-y-4">
+        <CardContent className="p-4 space-y-4 text-sm">
           <div>
-            <label htmlFor="chartTypeSelect" className="text-sm font-medium text-muted-foreground">
+            <Label htmlFor="chartTypeSelect" className="text-xs font-medium text-muted-foreground">
               Select Chart View:
-            </label>
+            </Label>
             <Select value={selectedChartType} onValueChange={(value) => setSelectedChartType(value as ChartType)}>
               <SelectTrigger id="chartTypeSelect" className="w-full sm:w-[280px] mt-1 text-sm">
                 <SelectValue placeholder="Select chart type" />

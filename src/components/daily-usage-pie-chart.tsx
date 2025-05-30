@@ -15,21 +15,20 @@ interface DailyUsagePieChartProps {
   selectedDate: Date;
 }
 
-// Define a broader palette of colors for chart segments
 const COLORS = [
   'hsl(var(--chart-1))', 
   'hsl(var(--chart-2))', 
   'hsl(var(--chart-3))',
   'hsl(var(--chart-4))',
   'hsl(var(--chart-5))',
-  '#82ca9d', // A distinct green
-  '#ffc658', // A distinct yellow/orange
-  '#8884d8', // A distinct purple
-  '#FA8072', // Salmon
-  '#20B2AA', // LightSeaGreen
-  '#778899', // LightSlateGray
+  '#82ca9d', 
+  '#ffc658', 
+  '#8884d8', 
+  '#FA8072', 
+  '#20B2AA', 
+  '#778899', 
 ];
-const UNTRACKED_COLOR = 'hsl(var(--muted))'; // Color for untracked time
+const UNTRACKED_COLOR = 'hsl(var(--muted))'; 
 
 const DailyUsagePieChartComponent: FC<DailyUsagePieChartProps> = ({ tasks, taskLogs, selectedDate }) => {
   const dataForChart = useMemo(() => {
@@ -38,7 +37,7 @@ const DailyUsagePieChartComponent: FC<DailyUsagePieChartProps> = ({ tasks, taskL
 
     taskLogs.forEach(log => {
       const task = tasks.find(t => t.id === log.taskId);
-      const taskName = task?.name || 'Deleted Task'; // Handle if task was deleted
+      const taskName = task?.name || 'Deleted Task'; 
       aggregatedData[taskName] = {
         value: (aggregatedData[taskName]?.value || 0) + log.duration,
         isTask: true,
@@ -66,16 +65,15 @@ const DailyUsagePieChartComponent: FC<DailyUsagePieChartProps> = ({ tasks, taskL
       return (
         <Card className="mt-6 shadow-md">
           <CardHeader>
-            <CardTitle className="text-2xl">Daily Time Breakdown</CardTitle>
-            <CardDescription className="text-sm">For {format(selectedDate, 'MMMM d, yyyy')}</CardDescription>
+            <CardTitle>Daily Time Breakdown</CardTitle>
+            <CardDescription>For {format(selectedDate, 'MMMM d, yyyy')}</CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-base text-muted-foreground text-center py-10">No tasks logged for this day to display in the chart.</p>
+            <p className="text-sm text-muted-foreground text-center py-10">No tasks logged for this day to display in the chart.</p>
           </CardContent>
         </Card>
       );
   }
-
 
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
@@ -85,9 +83,9 @@ const DailyUsagePieChartComponent: FC<DailyUsagePieChartProps> = ({ tasks, taskL
                          ? (rawPercent * 100).toFixed(1) 
                          : '0.0'; 
       return (
-        <div className="p-2 bg-background border border-border rounded-md shadow-lg">
+        <div className="p-2 bg-background border border-border rounded-md shadow-lg text-xs">
           <p className="font-semibold text-sm">{`${data.name}`}</p>
-          <p className="text-xs text-muted-foreground">{`Time: ${formatMinutesToFriendlyDuration(data.value)} (${percentage}%)`}</p>
+          <p className="text-muted-foreground">{`Time: ${formatMinutesToFriendlyDuration(data.value)} (${percentage}%)`}</p>
         </div>
       );
     }
@@ -98,22 +96,21 @@ const DailyUsagePieChartComponent: FC<DailyUsagePieChartProps> = ({ tasks, taskL
      return (
         <Card className="mt-6 shadow-md">
           <CardHeader>
-            <CardTitle className="text-2xl">Daily Time Breakdown</CardTitle>
-            <CardDescription className="text-sm">For {format(selectedDate, 'MMMM d, yyyy')}</CardDescription>
+            <CardTitle>Daily Time Breakdown</CardTitle>
+            <CardDescription>For {format(selectedDate, 'MMMM d, yyyy')}</CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-base text-muted-foreground text-center py-10">No time logged for any tasks on this day.</p>
+            <p className="text-sm text-muted-foreground text-center py-10">No time logged for any tasks on this day.</p>
           </CardContent>
         </Card>
       );
   }
 
-
   return (
     <Card className="mt-6 shadow-md">
       <CardHeader>
-        <CardTitle className="text-2xl">Daily Time Breakdown</CardTitle>
-        <CardDescription className="text-sm">Visualizing your time distribution for {format(selectedDate, 'MMMM d, yyyy')}.</CardDescription>
+        <CardTitle>Daily Time Breakdown</CardTitle>
+        <CardDescription>Visualizing your time distribution for {format(selectedDate, 'MMMM d, yyyy')}.</CardDescription>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={350}>
@@ -145,7 +142,7 @@ const DailyUsagePieChartComponent: FC<DailyUsagePieChartProps> = ({ tasks, taskL
                 const itemData = dataForChart.find(d => d.name === value);
                 const colorIndex = dataForChart.filter(d => d.isTask).findIndex(d => d.name === value);
                 const color = itemData?.isTask ? COLORS[colorIndex % COLORS.length] : UNTRACKED_COLOR;
-                return <span style={{ color, fontSize: '12px' }}>{value}</span>;
+                return <span style={{ color, fontSize: '10px' }}>{value}</span>;
               }}
             />
           </PieChart>

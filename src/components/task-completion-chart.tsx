@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { formatMinutesToFriendlyDuration } from '@/lib/utils';
 
 interface TaskCompletionChartProps {
-  tasks: Task[]; // Expects tasks already filtered for budgetedTime > 0
+  tasks: Task[]; 
   getTimeSpent: (taskId: string, basis: 'daily' | 'weekly' | 'monthly') => number;
 }
 
@@ -20,26 +20,26 @@ const TaskCompletionChartComponent: FC<TaskCompletionChartProps> = ({ tasks, get
         const actualTime = getTimeSpent(task.id, task.budgetBasis);
         const completionPercentage = task.budgetedTime > 0 ? Math.min(100, (actualTime / task.budgetedTime) * 100) : 0;
         return {
-          name: task.name.length > 20 ? `${task.name.substring(0, 17)}...` : task.name, // Truncate long names for Y-axis
+          name: task.name.length > 20 ? `${task.name.substring(0, 17)}...` : task.name, 
           completion: completionPercentage,
           actualTime,
           budgetedTime: task.budgetedTime,
-          fullTaskName: task.name, // For tooltip
+          fullTaskName: task.name, 
         };
       })
-      .sort((a, b) => b.completion - a.completion); // Sort by completion percentage desc
+      .sort((a, b) => b.completion - a.completion); 
   }, [tasks, getTimeSpent]);
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       const dataPoint = payload[0].payload;
       return (
-        <div className="p-3 bg-background border border-border rounded-md shadow-lg">
+        <div className="p-3 bg-background border border-border rounded-md shadow-lg text-xs">
           <p className="font-semibold text-sm">{dataPoint.fullTaskName}</p>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-muted-foreground">
             Completion: {dataPoint.completion.toFixed(1)}%
           </p>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-muted-foreground">
             Spent: {formatMinutesToFriendlyDuration(dataPoint.actualTime)} / Budget: {formatMinutesToFriendlyDuration(dataPoint.budgetedTime)}
           </p>
         </div>
@@ -51,8 +51,8 @@ const TaskCompletionChartComponent: FC<TaskCompletionChartProps> = ({ tasks, get
   return (
     <Card className="shadow-md">
       <CardHeader>
-        <CardTitle className="text-2xl">Task Completion Percentage</CardTitle>
-        <CardDescription className="text-sm">How much of each task's budget has been utilized (capped at 100%).</CardDescription>
+        <CardTitle>Task Completion Percentage</CardTitle>
+        <CardDescription>How much of each task's budget has been utilized (capped at 100%).</CardDescription>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={350}>
@@ -74,13 +74,13 @@ const TaskCompletionChartComponent: FC<TaskCompletionChartProps> = ({ tasks, get
               dataKey="name" 
               stroke="hsl(var(--foreground))" 
               fontSize={10}
-              width={100} // Adjust as needed for task names
+              width={100} 
               interval={0}
             />
             <Tooltip content={<CustomTooltip />} cursor={{ fill: 'hsl(var(--muted))' }}/>
             <Legend 
               wrapperStyle={{paddingTop: '20px'}} 
-              formatter={(value) => <span style={{ color: 'hsl(var(--foreground))', fontSize: '12px' }}>{value}</span>}
+              formatter={(value) => <span style={{ color: 'hsl(var(--foreground))', fontSize: '10px' }}>{value}</span>}
             />
             <Bar dataKey="completion" name="Completion %" fill="hsl(var(--chart-3))" radius={[0, 4, 4, 0]}>
               <LabelList 
