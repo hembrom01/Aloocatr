@@ -11,7 +11,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger, DialogClose } from '@/components/ui/dialog';
 import { taskIconsLookup, defaultTaskIcon } from '@/config/icons';
-import { Edit2, PlusCircle, UserCircle, Zap, Trash2, FolderPlus, Plus, Settings as AppSettingsIcon } from 'lucide-react';
+import { Edit2, PlusCircle, UserCircle, Loader2, Trash2, FolderPlus, Plus, Settings as AppSettingsIcon } from 'lucide-react'; // Added Loader2
 
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
@@ -89,9 +89,9 @@ export default function TasksPage() {
 
   if (!isLoaded) {
     return (
-       <div className="flex justify-center items-center min-h-screen">
-        <Zap className="h-12 w-12 text-primary animate-pulse" />
-        <p className="ml-4 text-lg font-semibold">Loading Tasks...</p> 
+       <div className="flex flex-col justify-center items-center min-h-screen bg-background">
+        <h1 className="font-logo-cursive text-5xl text-primary mb-6">Allocatr</h1>
+        <Loader2 className="h-8 w-8 text-primary animate-spin" />
       </div>
     );
   }
@@ -122,8 +122,8 @@ export default function TasksPage() {
       <section id="manage-categories-tasks">
         <Card className="shadow-lg">
           <CardHeader>
-            <CardTitle>Manage Categories & Tasks</CardTitle>
-            <CardDescription>Organize your tasks by categories, or manage them individually.</CardDescription>
+            <CardTitle className="text-lg font-semibold">Manage Categories & Tasks</CardTitle>
+            <CardDescription className="text-xs">Organize your tasks by categories, or manage them individually.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <ScrollArea className="h-[400px] pr-3">
@@ -208,7 +208,7 @@ export default function TasksPage() {
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Add New Category</DialogTitle>
+                  <DialogTitle className="text-lg font-semibold">Add New Category</DialogTitle>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
                   <Input 
@@ -234,8 +234,8 @@ export default function TasksPage() {
       <section id="app-preferences">
         <Card className="shadow-lg">
           <CardHeader>
-            <CardTitle>App Preferences</CardTitle>
-            <CardDescription>Customize your Allocatr experience. Main preferences are now in the sidebar.</CardDescription>
+            <CardTitle className="text-lg font-semibold">App Preferences</CardTitle>
+            <CardDescription className="text-xs">Customize your Allocatr experience. Main preferences are now in the sidebar.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-start p-3 bg-muted/30 rounded-md border">

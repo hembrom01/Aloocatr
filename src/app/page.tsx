@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import { useTaskManager } from '@/hooks/use-task-manager';
 import { Card, CardContent } from '@/components/ui/card';
-import { AlertCircle, Zap, PlusCircle, TimerIcon } from 'lucide-react';
+import { AlertCircle, PlusCircle, TimerIcon, Loader2 } from 'lucide-react'; // Added Loader2
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -79,9 +79,9 @@ export default function TrackerPage() {
 
   if (!isLoaded) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <Zap className="h-12 w-12 text-primary animate-pulse" />
-        <p className="ml-4 text-lg font-semibold">Loading Allocatr...</p>
+      <div className="flex flex-col justify-center items-center min-h-screen bg-background">
+        <h1 className="font-logo-cursive text-5xl text-primary mb-6">Allocatr</h1>
+        <Loader2 className="h-8 w-8 text-primary animate-spin" />
       </div>
     );
   }
@@ -137,7 +137,7 @@ export default function TrackerPage() {
                     <Button
                       variant="outline"
                       className={cn(
-                        "w-full h-24 py-2 px-1 flex flex-col items-center justify-center overflow-hidden", // Maintained h-24
+                        "w-full h-24 py-2 px-1 flex flex-col items-center justify-center overflow-hidden",
                         "shadow-sm hover:shadow-md transition-all transform hover:scale-105",
                         isActive && "ring-2 ring-primary bg-primary/10 border-primary"
                       )}

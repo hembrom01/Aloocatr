@@ -4,7 +4,7 @@
 import { useState, useMemo } from 'react';
 import { BudgetedTaskTracker } from '@/components/budgeted-task-tracker';
 import { useTaskManager } from '@/hooks/use-task-manager';
-import { Zap } from 'lucide-react';
+import { Loader2 } from 'lucide-react'; // Added Loader2
 import { BudgetComparisonBarChart } from '@/components/budget-comparison-bar-chart';
 import { TaskCompletionChart } from '@/components/task-completion-chart'; 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -14,7 +14,7 @@ import { Label } from '@/components/ui/label';
 
 type ProgressChartType = 'budgetComparison' | 'taskCompletion';
 
-export default function TrackerPage() {
+export default function ProgressPage() { // Renamed page function for clarity
   const { 
     tasks, 
     getTimeSpentOnTask,
@@ -29,9 +29,9 @@ export default function TrackerPage() {
   
   if (!isLoaded) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <Zap className="h-12 w-12 text-primary animate-pulse" />
-        <p className="ml-4 text-lg font-semibold">Loading Progress...</p>
+      <div className="flex flex-col justify-center items-center min-h-screen bg-background">
+        <h1 className="font-logo-cursive text-5xl text-primary mb-6">Allocatr</h1>
+        <Loader2 className="h-8 w-8 text-primary animate-spin" />
       </div>
     );
   }
@@ -41,7 +41,7 @@ export default function TrackerPage() {
       return (
         <Card className="shadow-md">
           <CardHeader>
-            <CardTitle>Task Progress Visuals</CardTitle> 
+            <CardTitle className="text-lg font-semibold">Task Progress Visuals</CardTitle> 
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground text-center py-10">No tasks with budgets to display. Add budgets to your tasks in the Tasks section.</p>

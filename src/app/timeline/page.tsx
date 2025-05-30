@@ -5,7 +5,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { DailyTaskTimeline } from '@/components/daily-task-timeline';
 import { DateNavigator } from '@/components/date-navigator';
 import { useTaskManager } from '@/hooks/use-task-manager';
-import { Zap } from 'lucide-react';
+import { Loader2 } from 'lucide-react'; // Added Loader2
 import { format, startOfWeek, endOfWeek } from 'date-fns';
 import { DailyUsagePieChart } from '@/components/daily-usage-pie-chart';
 import { ProductivityTrendChart } from '@/components/productivity-trend-chart';
@@ -45,9 +45,9 @@ export default function TimelinePage() {
 
   if (!isLoaded || !selectedDate) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <Zap className="h-12 w-12 text-primary animate-pulse" />
-        <p className="ml-4 text-lg font-semibold">Loading Timeline...</p>
+      <div className="flex flex-col justify-center items-center min-h-screen bg-background">
+        <h1 className="font-logo-cursive text-5xl text-primary mb-6">Allocatr</h1>
+        <Loader2 className="h-8 w-8 text-primary animate-spin" />
       </div>
     );
   }
@@ -101,11 +101,11 @@ export default function TimelinePage() {
         </CardContent>
       </Card>
           
-      <div className="mt-4"> {/* Removed Card and CardContent wrapper from here */}
+      <div className="mt-4">
         {renderChart()}
       </div>
 
-      <section aria-labelledby="daily-task-timeline-title" className="mt-8"> {/* Added margin top for spacing */}
+      <section aria-labelledby="daily-task-timeline-title" className="mt-8">
         <h2 id="daily-task-timeline-title" className="sr-only">Daily Task Log for {format(selectedDate, 'PPP')}</h2>
         <DailyTaskTimeline tasks={tasks} taskLogs={dailyLogs} currentDate={selectedDate} />
       </section>
