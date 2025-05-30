@@ -2,25 +2,33 @@
 "use client";
 
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Separator } from '@/components/ui/separator';
-import { Button } from '@/components/ui/button'; // Added import
-import { Palette, Bell, FileText, Globe, MapPin, Shield } from 'lucide-react'; 
+import { Button } from '@/components/ui/button';
+import { Palette, Bell, FileText, Globe, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
 export default function PreferencesPage() {
-  // Placeholder state for switch, no actual functionality
+  const router = useRouter();
   const [dailyReminder, setDailyReminder] = React.useState(true);
 
   return (
     <div className="space-y-8 pb-16 animate-page-content-appear">
-      <header className="mb-10">
-        <h1 className="text-4xl font-bold tracking-tight text-foreground">Preferences</h1>
-        <p className="text-muted-foreground">Customize your application experience.</p>
+      <header className="mb-6 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Button variant="ghost" size="icon" onClick={() => router.back()} aria-label="Go back">
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight text-foreground">Preferences</h1>
+            <p className="text-sm text-muted-foreground">Customize your application experience.</p>
+          </div>
+        </div>
       </header>
 
       <section id="appearance-settings">
@@ -121,4 +129,3 @@ export default function PreferencesPage() {
     </div>
   );
 }
-

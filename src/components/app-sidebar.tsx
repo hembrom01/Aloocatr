@@ -11,15 +11,42 @@ import {
   SidebarGroupLabel,
   SidebarMenuItem,
   SidebarMenuButton,
-  // SidebarMenu is NOT exported from ui/sidebar, so it was removed from imports and usage.
 } from '@/components/ui/sidebar';
 import { Separator } from '@/components/ui/separator';
-import { Shield, DownloadCloud, UploadCloud, Trash2, Settings2, Info, FileText as PrivacyIcon } from 'lucide-react'; 
+import { Shield, DownloadCloud, UploadCloud, Trash2, Settings2, Info, FileText as PrivacyIcon, DatabaseZap, LogOut } from 'lucide-react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation'; // To handle active state if needed
+import { cn } from '@/lib/utils';
 
 export function AppSidebar() {
   const appName = "ChronoFlow";
   const appVersion = "v1.0.0 - Free"; // Hardcoded for now
+  const pathname = usePathname();
+
+  const menuItems = [
+    {
+      label: "Preferences",
+      href: "/preferences",
+      icon: Shield,
+    },
+    {
+      label: "Data Management",
+      href: "/data-management",
+      icon: DatabaseZap, // New Icon for Data Management
+    },
+  ];
+
+  const dataManagementSubItems = [ // These will be on the /data-management page, kept here for reference
+    { label: "Export Record", icon: PrivacyIcon, tooltip: "Export your task records" },
+    { label: "Backup & Restore", icon: UploadCloud, tooltip: "Backup your data" },
+    { label: "Delete & Reset", icon: Trash2, isDestructive: true, tooltip: "Delete all data and reset app" },
+  ];
+
+  const moreItems = [
+    { label: "Feature X", icon: Settings2, tooltip: "Placeholder Feature X" },
+    { label: "Feature Y", icon: Settings2, tooltip: "Placeholder Feature Y" },
+  ];
+
 
   return (
     <Sidebar collapsible="icon"> {/* Makes sidebar collapsible to icon-only state on desktop */}
@@ -39,43 +66,21 @@ export function AppSidebar() {
 
       <SidebarContent className="p-2 text-sm">
         <SidebarGroup>
-          {/* Preferences Link */}
-          <SidebarMenuItem>
-            <SidebarMenuButton asChild tooltip="App Preferences" className="group-data-[collapsible=icon]:justify-center">
-              <Link href="/preferences">
-                <Shield className="h-4 w-4" />
-                <span className="group-data-[collapsible=icon]:hidden">Preferences</span>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarGroup>
-
-        <Separator className="my-2 bg-sidebar-border group-data-[collapsible=icon]:mx-1" />
-
-        <SidebarGroup>
-          <SidebarGroupLabel className="flex items-center gap-2 group-data-[collapsible=icon]:justify-center">
-             <DownloadCloud className="h-4 w-4" />
-            <span className="group-data-[collapsible=icon]:hidden">Data Management</span>
-          </SidebarGroupLabel>
-          {/* Data Management Items */}
-          <SidebarMenuItem>
-              <SidebarMenuButton tooltip="Export your task records" className="group-data-[collapsible=icon]:justify-center">
-              <PrivacyIcon className="h-4 w-4" /> {/* Using PrivacyIcon (FileText) for Export */}
-              <span className="group-data-[collapsible=icon]:hidden">Export Record</span>
+          {menuItems.map((item) => (
+            <SidebarMenuItem key={item.href}>
+              <SidebarMenuButton 
+                asChild 
+                tooltip={item.label} 
+                className="group-data-[collapsible=icon]:justify-center"
+                data-active={pathname === item.href}
+              >
+                <Link href={item.href}>
+                  <item.icon className="h-4 w-4" />
+                  <span className="group-data-[collapsible=icon]:hidden">{item.label}</span>
+                </Link>
               </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-              <SidebarMenuButton tooltip="Backup your data" className="group-data-[collapsible=icon]:justify-center">
-              <UploadCloud className="h-4 w-4" />
-              <span className="group-data-[collapsible=icon]:hidden">Backup & Restore</span>
-              </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-              <SidebarMenuButton tooltip="Delete all data and reset app" className="text-destructive hover:bg-destructive/10 hover:text-destructive focus-visible:ring-destructive group-data-[collapsible=icon]:justify-center">
-              <Trash2 className="h-4 w-4" />
-              <span className="group-data-[collapsible=icon]:hidden">Delete & Reset</span>
-              </SidebarMenuButton>
-          </SidebarMenuItem>
+            </SidebarMenuItem>
+          ))}
         </SidebarGroup>
         
         <Separator className="my-2 bg-sidebar-border group-data-[collapsible=icon]:mx-1" />
@@ -85,23 +90,19 @@ export function AppSidebar() {
             <Info className="h-4 w-4" />
             <span className="group-data-[collapsible=icon]:hidden">More</span>
           </SidebarGroupLabel>
-          {/* More Items */}
-          <SidebarMenuItem>
-              <SidebarMenuButton tooltip="Placeholder Feature X" className="group-data-[collapsible=icon]:justify-center">
-              <Settings2 className="h-4 w-4" /> {/* Using Settings2 icon */}
-              <span className="group-data-[collapsible=icon]:hidden">Feature X</span>
-              </SidebarMenuButton>
-          </SidebarMenuItem>
-           <SidebarMenuItem>
-              <SidebarMenuButton tooltip="Placeholder Feature Y" className="group-data-[collapsible=icon]:justify-center">
-              <Settings2 className="h-4 w-4" /> {/* Using Settings2 icon */}
-              <span className="group-data-[collapsible=icon]:hidden">Feature Y</span>
-              </SidebarMenuButton>
-          </SidebarMenuItem>
+          {moreItems.map((item) => (
+            <SidebarMenuItem key={item.label}>
+                <SidebarMenuButton tooltip={item.tooltip} className="group-data-[collapsible=icon]:justify-center">
+                <item.icon className="h-4 w-4" />
+                <span className="group-data-[collapsible=icon]:hidden">{item.label}</span>
+                </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
         </SidebarGroup>
       </SidebarContent>
       
       {/* 
+      Optional Footer:
       <SidebarFooter className="p-2 text-xs text-muted-foreground group-data-[collapsible=icon]:hidden">
         © {new Date().getFullYear()} ChronoFlow
       </SidebarFooter>
