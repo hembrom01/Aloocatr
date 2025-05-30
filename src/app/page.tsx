@@ -127,7 +127,7 @@ export default function TrackerPage() {
         )}
 
         <TooltipProvider>
-          <div className="flex flex-wrap justify-center items-center gap-3 px-6">
+          <div className="grid grid-cols-4 gap-2 px-4">
             {tasks.map((task) => {
               const IconComponent = taskIcons[task.icon] || taskIcons[defaultTaskIcon];
               const isActive = isTaskActive(task.id);
@@ -137,7 +137,7 @@ export default function TrackerPage() {
                     <Button
                       variant="outline"
                       className={cn(
-                        "h-24 w-24 p-2 flex flex-col items-center justify-center overflow-hidden",
+                        "w-full h-24 p-2 flex flex-col items-center justify-center overflow-hidden",
                         "shadow-sm hover:shadow-md transition-all transform hover:scale-105",
                         isActive && "ring-2 ring-primary bg-primary/10 border-primary"
                       )}
@@ -145,6 +145,9 @@ export default function TrackerPage() {
                       aria-label={isActive ? `Stop ${task.name}` : `Start ${task.name}`}
                     >
                       <IconComponent className={cn("h-10 w-10", isActive ? "text-primary" : "text-muted-foreground")} />
+                      <span className={cn("mt-1 text-[11px] text-center w-full", isActive ? "text-primary" : "text-muted-foreground")}>
+                        {task.name}
+                      </span>
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
@@ -158,10 +161,13 @@ export default function TrackerPage() {
                 <Link href="/settings" passHref legacyBehavior>
                   <Button
                     variant="outline"
-                    className="h-24 w-24 p-2 flex flex-col items-center justify-center overflow-hidden shadow-sm hover:shadow-md transition-all transform hover:scale-105"
+                    className="w-full h-24 p-2 flex flex-col items-center justify-center overflow-hidden shadow-sm hover:shadow-md transition-all transform hover:scale-105"
                     aria-label="Add new task"
                   >
                     <PlusCircle className="h-10 w-10 text-muted-foreground" />
+                     <span className="mt-1 text-[11px] text-center w-full text-muted-foreground">
+                        Add Task
+                      </span>
                   </Button>
                 </Link>
               </TooltipTrigger>
