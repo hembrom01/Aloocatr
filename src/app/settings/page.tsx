@@ -11,12 +11,12 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger, DialogClose } from '@/components/ui/dialog';
 import { taskIconsLookup, defaultTaskIcon } from '@/config/icons';
-import { Edit2, PlusCircle, Palette, UserCircle, Zap, Trash2, FolderPlus, Plus, Settings as AppSettingsIcon } from 'lucide-react';
-import { ThemeToggle } from '@/components/theme-toggle';
+import { Edit2, PlusCircle, UserCircle, Zap, Trash2, FolderPlus, Plus, Settings as AppSettingsIcon } from 'lucide-react';
+// Removed Palette icon import as ThemeToggle is moved
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 
-export default function TasksPage() { // Renamed from SettingsPage
+export default function TasksPage() { 
   const { 
     tasks, 
     categories,
@@ -79,8 +79,12 @@ export default function TasksPage() { // Renamed from SettingsPage
 
   const handleDeleteCategoryWithConfirmation = (categoryId: string) => {
     const category = categories.find(c => c.id === categoryId);
-    deleteCategory(categoryId);
-    toast({ title: "Category Deleted", description: `Category "${category?.name}" and its associated tasks (now uncategorized) removed.`});
+    if (category) {
+      deleteCategory(categoryId);
+      toast({ title: "Category Deleted", description: `Category "${category.name}" removed. Associated tasks are now uncategorized.`});
+    } else {
+      toast({ title: "Error", description: "Category not found.", variant: "destructive" });
+    }
   };
 
   if (!isLoaded) {
@@ -98,7 +102,7 @@ export default function TasksPage() { // Renamed from SettingsPage
     <div className="space-y-8 pb-24 animate-page-content-appear">
       <header className="mb-10">
         <h1 className="text-4xl font-bold tracking-tight text-foreground">Tasks</h1>
-        <p className="text-muted-foreground">Manage your tasks, categories, and application preferences.</p>
+        <p className="text-muted-foreground">Manage your tasks, categories, and application preferences via the sidebar.</p>
       </header>
 
       <Dialog open={showTaskFormDialog} onOpenChange={setShowTaskFormDialog}>
@@ -230,22 +234,10 @@ export default function TasksPage() { // Renamed from SettingsPage
         <Card className="shadow-lg">
           <CardHeader>
             <CardTitle className="text-2xl">App Preferences</CardTitle>
-            <CardDescription>Customize your ChronoFlow experience.</CardDescription>
+            <CardDescription>Customize your ChronoFlow experience. Main preferences are now in the sidebar.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-             <div className="flex items-center justify-between p-3 bg-muted/30 rounded-md border">
-              <div className="flex items-center">
-                <Palette className="h-5 w-5 mr-3 mt-1 text-muted-foreground flex-shrink-0" />
-                <div>
-                  <h3 className="font-medium">Appearance</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Toggle between light and dark mode.
-                  </p>
-                </div>
-              </div>
-              <ThemeToggle />
-            </div>
-            
+            {/* ThemeToggle removed from here */}
             <div className="flex items-start p-3 bg-muted/30 rounded-md border">
                <UserCircle className="h-5 w-5 mr-3 mt-1 text-muted-foreground flex-shrink-0" />
               <div>
@@ -260,7 +252,7 @@ export default function TasksPage() { // Renamed from SettingsPage
               <div>
                 <h3 className="font-medium">More Settings</h3>
                 <p className="text-sm text-muted-foreground">
-                  Advanced application settings will be available here.
+                  Advanced application settings will be available here. Check the sidebar for common preferences.
                 </p>
               </div>
             </div>
