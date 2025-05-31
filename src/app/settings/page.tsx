@@ -273,17 +273,19 @@ export default function TasksPage() {
         </Dialog>
       </div>
 
-      <Button
-        className="fixed bottom-20 right-6 h-14 w-14 rounded-lg shadow-xl z-50"
-        size="icon"
-        onClick={() => {
-          setEditingTask(null);
-          setShowTaskFormDialog(true);
-        }}
-        aria-label="Add new task"
-      >
-        <PlusCircle className="h-8 w-8" />
-      </Button>
+      <div className="flex justify-center mt-4 mb-8">
+        <Button
+          className="h-14 w-14 rounded-lg shadow-lg"
+          size="icon"
+          onClick={() => {
+            setEditingTask(null);
+            setShowTaskFormDialog(true);
+          }}
+          aria-label="Add new task"
+        >
+          <PlusCircle className="h-8 w-8" />
+        </Button>
+      </div>
     </div>
   );
 }
