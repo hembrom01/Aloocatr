@@ -2,7 +2,7 @@
 "use client"; // Required for usePathname
 
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono, Dancing_Script } from 'next/font/google';
+import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
@@ -21,12 +21,6 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
   subsets: ['latin'],
-});
-
-const dancingScript = Dancing_Script({
-  variable: '--font-dancing-script',
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'], // Specify weights if needed, or default
 });
 
 // Metadata is usually defined outside the component in Next.js 13+ App Router
@@ -48,7 +42,7 @@ export default function RootLayout({
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} ${dancingScript.variable} antialiased`} suppressHydrationWarning={true}>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`} suppressHydrationWarning={true}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <SidebarProvider>
             <AppSidebar />
@@ -56,7 +50,7 @@ export default function RootLayout({
               <header className="sticky top-0 z-10 flex h-14 items-center justify-between gap-2 border-b bg-background px-4 md:hidden print:hidden">
                 <div className="flex items-center gap-2">
                   <SidebarTrigger className="h-8 w-8" />
-                  <div className="font-logoScript text-2xl text-primary">Allocatr</div>
+                  <div className="font-sans text-2xl font-semibold text-primary">Allocatr</div>
                 </div>
               </header>
               <div className="relative flex min-h-screen flex-col">

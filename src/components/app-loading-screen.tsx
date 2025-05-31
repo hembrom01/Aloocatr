@@ -47,7 +47,7 @@ export const AppLoadingScreen: FC<AppLoadingScreenProps> = ({ isAppActuallyLoade
         className="relative text-center animate-loading-content-appear"
         style={{ transform: 'translateY(-50px)' }} // Moved logo and spinner container further up
       >
-        <div className="font-logoScript text-5xl text-primary mb-6">Allocatr</div>
+        <div className="font-sans text-5xl font-semibold text-primary mb-6">Allocatr</div>
         <div className="h-8"> {/* Container to prevent layout shift */}
           {!isFadingOut && ( // Only show spinner if screen is not fading out
             <Loader2 className="h-8 w-8 text-primary animate-spin mx-auto transition-opacity duration-300 opacity-100" />
