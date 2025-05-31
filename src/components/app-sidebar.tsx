@@ -103,8 +103,9 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupLabel className="flex items-center gap-2 group-data-[collapsible=icon]:justify-center text-xs">
             <DatabaseZap className="h-4 w-4" />
-            <span className="group-data-[collapsible=icon]:hidden">Data</span>
+            <span className="group-data-[collapsible=icon]:hidden">Data Management</span>
           </SidebarGroupLabel>
+          <Separator className="my-1 bg-sidebar-border group-data-[collapsible=icon]:mx-1" />
           {dataManagementItems.map((item) => (
             <SidebarMenuItem key={item.label} className="list-none">
               <SidebarMenuButton
