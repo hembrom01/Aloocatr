@@ -5,7 +5,6 @@ import type { FC } from 'react';
 import { Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
-import Image from 'next/image';
 
 interface AppLoadingScreenProps {
   isAppActuallyLoaded: boolean;
@@ -48,14 +47,7 @@ export const AppLoadingScreen: FC<AppLoadingScreenProps> = ({ isAppActuallyLoade
         className="relative text-center animate-loading-content-appear"
         style={{ transform: 'translateY(-50px)' }} // Moved logo and spinner container further up
       >
-        <Image
-          src="/images/allocatr-logo-new-script.png"
-          alt="Allocatr Logo"
-          width={200}
-          height={60}
-          className="object-contain mb-6"
-          priority
-        />
+        <div className="font-logoScript text-5xl text-primary mb-6">Allocatr</div>
         <div className="h-8"> {/* Container to prevent layout shift */}
           {!isFadingOut && ( // Only show spinner if screen is not fading out
             <Loader2 className="h-8 w-8 text-primary animate-spin mx-auto transition-opacity duration-300 opacity-100" />
