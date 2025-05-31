@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger, DialogClose } from '@/components/ui/dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { taskIconsLookup, defaultTaskIcon } from '@/config/icons';
-import { Edit2, PlusCircle, Trash2, FolderPlus, MoreHorizontal } from 'lucide-react'; // Ensured PlusCircle is here
+import { Edit2, PlusCircle, Trash2, FolderPlus, MoreHorizontal } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import { AppLoadingScreen } from '@/components/app-loading-screen';
@@ -271,7 +271,7 @@ export default function TasksPage() {
       </div>
 
       {/* Add Task Button Container */}
-      <div className="flex justify-end mt-4 mb-8 px-4 md:px-6">
+      <div className="flex justify-end mt-4 px-4 md:px-6"> {/* Removed mb-8 */}
         <Button
           className="h-14 w-14 rounded-full shadow-lg"
           size="icon"
@@ -287,5 +287,3 @@ export default function TasksPage() {
     </div>
   );
 }
-
-    
