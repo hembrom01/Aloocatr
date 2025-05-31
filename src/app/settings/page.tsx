@@ -85,6 +85,8 @@ export default function TasksPage() {
     }
   };
 
+  const uncategorizedTasks = tasks.filter(task => !task.categoryId || task.categoryId === "null");
+
   if (!isLoaded) {
      return (
       <AppLoadingScreen
@@ -251,7 +253,7 @@ export default function TasksPage() {
         </div>
       </section>
 
-      <div className="flex justify-center mt-10 mb-6">
+      <div className="flex justify-center mt-10 mb-6 px-6">
         <Dialog open={isAddCategoryDialogOpen} onOpenChange={setIsAddCategoryDialogOpen}>
           <DialogTrigger asChild>
             <Button variant="outline" size="sm" className="px-6 border-2">
