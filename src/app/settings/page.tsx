@@ -10,22 +10,21 @@ import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger, DialogClose } from '@/components/ui/dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { taskIconsLookup, defaultTaskIcon } from '@/config/icons';
-import { Edit2, PlusCircle, Trash2, FolderPlus, Plus, MoreHorizontal } from 'lucide-react';
-
+import { Edit2, PlusCircle, Trash2, FolderPlus, MoreHorizontal } from 'lucide-react'; // Ensured PlusCircle is here
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import { AppLoadingScreen } from '@/components/app-loading-screen';
 
-export default function TasksPage() { 
-  const { 
-    tasks, 
+export default function TasksPage() {
+  const {
+    tasks,
     categories,
-    addTask, 
-    updateTask, 
-    deleteTask, 
+    addTask,
+    updateTask,
+    deleteTask,
     addCategory,
-    deleteCategory, 
-    isLoaded 
+    deleteCategory,
+    isLoaded
   } = useTaskManager();
   const { toast } = useToast();
 
@@ -36,11 +35,11 @@ export default function TasksPage() {
 
   const handleTaskSubmit = (data: TaskFormDataValues, id?: string) => {
     if (id) {
-      updateTask({ 
-        ...data, 
-        id, 
+      updateTask({
+        ...data,
+        id,
         createdAt: tasks.find(t => t.id === id)?.createdAt || Date.now(),
-        categoryId: data.categoryId === "null" ? null : data.categoryId 
+        categoryId: data.categoryId === "null" ? null : data.categoryId
       });
       setEditingTask(null);
     } else {
@@ -54,7 +53,7 @@ export default function TasksPage() {
 
   const handleEditTask = (task: Task) => {
     setEditingTask(task);
-    setShowTaskFormDialog(true); 
+    setShowTaskFormDialog(true);
   };
 
   const handleDeleteTaskWithConfirmation = (taskId: string) => {
@@ -65,7 +64,7 @@ export default function TasksPage() {
       setShowTaskFormDialog(false);
     }
   };
-  
+
   const handleAddCategory = () => {
     if (newCategoryName.trim() === '') {
       toast({ title: "Error", description: "Category name cannot be empty.", variant: "destructive" });
@@ -97,7 +96,7 @@ export default function TasksPage() {
   }
 
   const uncategorizedTasks = tasks.filter(task => !task.categoryId || !categories.find(c => c.id === task.categoryId));
-  
+
   return (
     <div className="space-y-8 pb-24 animate-page-content-appear">
       <header className="mb-10">
@@ -107,7 +106,7 @@ export default function TasksPage() {
 
       <Dialog open={showTaskFormDialog} onOpenChange={(isOpen) => {
         setShowTaskFormDialog(isOpen);
-        if (!isOpen) setEditingTask(null); 
+        if (!isOpen) setEditingTask(null);
       }}>
         <DialogContent className="sm:max-w-lg max-h-[85vh] overflow-y-auto">
             <TaskForm
@@ -130,7 +129,7 @@ export default function TasksPage() {
           <h2 className="text-lg font-semibold text-foreground">Manage Categories & Tasks</h2>
           <p className="text-xs text-muted-foreground mb-4">Organize your tasks by categories, or manage them individually.</p>
         </div>
-        
+
         <div className="space-y-6">
           {categories.map(category => (
             <div key={category.id} className="mb-6">
@@ -186,7 +185,7 @@ export default function TasksPage() {
               </ul>
             </div>
           ))}
-          
+
           {uncategorizedTasks.length > 0 && (
             <div className="mb-6">
               <h3 className="text-base font-semibold text-primary mb-2 p-2 bg-muted/20 rounded-t-md">Uncategorized Tasks</h3>
@@ -236,13 +235,13 @@ export default function TasksPage() {
 
          {categories.length === 0 && uncategorizedTasks.length === 0 && (
             <p className="text-xs text-muted-foreground text-center py-4">
-              No categories or tasks found. Add a category or use the <Plus className="inline h-4 w-4"/> button to add a task.
+              No categories or tasks found. Add a category or use the <PlusCircle className="inline h-4 w-4"/> button to add a task.
             </p>
          )}
         </div>
       </section>
-      
-      <div className="flex justify-center mt-6 mb-4">
+
+      <div className="flex justify-center mt-10 mb-6">
         <Dialog open={isAddCategoryDialogOpen} onOpenChange={setIsAddCategoryDialogOpen}>
           <DialogTrigger asChild>
             <Button variant="outline" size="sm" className="border-2 px-6">
@@ -254,10 +253,10 @@ export default function TasksPage() {
               <DialogTitle className="text-lg font-semibold">Add New Category</DialogTitle>
             </DialogHeader>
             <div className="grid gap-4 py-4">
-              <Input 
-                placeholder="Category Name (e.g., Hobbies, Work)" 
+              <Input
+                placeholder="Category Name (e.g., Hobbies, Work)"
                 value={newCategoryName}
-                onChange={(e) => setNewCategoryName(e.target.value)} 
+                onChange={(e) => setNewCategoryName(e.target.value)}
                 className="text-sm"
               />
             </div>
@@ -271,9 +270,10 @@ export default function TasksPage() {
         </Dialog>
       </div>
 
-      <div className="flex justify-end mt-4 mb-8">
+      {/* Add Task Button Container */}
+      <div className="flex justify-end mt-4 mb-8 px-4 md:px-6">
         <Button
-          className="h-14 w-14 rounded-lg shadow-lg"
+          className="h-14 w-14 rounded-full shadow-lg"
           size="icon"
           onClick={() => {
             setEditingTask(null);
@@ -287,3 +287,5 @@ export default function TasksPage() {
     </div>
   );
 }
+
+    
