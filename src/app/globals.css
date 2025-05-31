@@ -103,12 +103,7 @@ body {
 
 .animate-page-content-appear {
   animation: page-content-fade-in 0.4s ease-out forwards;
-  animation-delay: 0.1s; 
-}
-
-
-.font-logo-cursive {
-  font-family: 'Brush Script MT', 'Brush Script Std', 'Snell Roundhand', cursive;
+  animation-delay: 0.1s;
 }
 
 /* Loading screen content fade-in animation */

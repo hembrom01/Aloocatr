@@ -18,9 +18,9 @@ import { Shield, Settings2, Info, LogOut, DownloadCloud, UploadCloud, Trash2, Da
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import Image from 'next/image';
 
 export function AppSidebar() {
-  const appName = "Allocatr";
   const appVersion = "v1.0.0 - Free";
   const pathname = usePathname();
   const { isMobile, setOpenMobile } = useSidebar();
@@ -69,7 +69,7 @@ export function AppSidebar() {
     <Sidebar collapsible="icon">
       <SidebarHeader className="p-4">
         <div className="flex flex-col items-center group-data-[collapsible=icon]:hidden">
-          <h2 className="font-logo-cursive text-2xl text-primary mb-1">{appName}</h2>
+          <Image src="/images/allocatr-logo-new-script.png" alt="Allocatr Logo" width={120} height={36} className="object-contain mb-1" />
           <p className="text-xs text-muted-foreground">{appVersion}</p>
         </div>
         <div className="hidden group-data-[collapsible=icon]:flex group-data-[collapsible=icon]:flex-col group-data-[collapsible=icon]:items-center">

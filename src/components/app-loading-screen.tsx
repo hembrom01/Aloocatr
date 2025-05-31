@@ -5,6 +5,7 @@ import type { FC } from 'react';
 import { Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
+import Image from 'next/image';
 
 interface AppLoadingScreenProps {
   isAppActuallyLoaded: boolean;
@@ -14,7 +15,6 @@ interface AppLoadingScreenProps {
 export const AppLoadingScreen: FC<AppLoadingScreenProps> = ({ isAppActuallyLoaded, onLoadingFinished }) => {
   const [isFadingOut, setIsFadingOut] = useState(false);
   const [isAnimationComplete, setIsAnimationComplete] = useState(false);
-  const appName = "Allocatr";
   const screenFadeOutDuration = 700; // ms, matches CSS transition
 
   useEffect(() => {
@@ -48,13 +48,14 @@ export const AppLoadingScreen: FC<AppLoadingScreenProps> = ({ isAppActuallyLoade
         className="relative text-center animate-loading-content-appear"
         style={{ transform: 'translateY(-50px)' }} // Moved logo and spinner container further up
       >
-        <h1
-          className={cn(
-            "font-logo-cursive text-6xl sm:text-7xl text-primary mb-6"
-          )}
-        >
-          {appName}
-        </h1>
+        <Image
+          src="/images/allocatr-logo-new-script.png"
+          alt="Allocatr Logo"
+          width={200}
+          height={60}
+          className="object-contain mb-6"
+          priority
+        />
         <div className="h-8"> {/* Container to prevent layout shift */}
           {!isFadingOut && ( // Only show spinner if screen is not fading out
             <Loader2 className="h-8 w-8 text-primary animate-spin mx-auto transition-opacity duration-300 opacity-100" />

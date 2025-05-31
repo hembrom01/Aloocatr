@@ -12,6 +12,7 @@ import { AppSidebar } from '@/components/app-sidebar';
 import { Button } from '@/components/ui/button';
 import { Settings2 } from 'lucide-react';
 import { usePathname } from 'next/navigation'; // Import usePathname
+import Image from 'next/image';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -50,7 +51,7 @@ export default function RootLayout({
               <header className="sticky top-0 z-10 flex h-14 items-center justify-between gap-2 border-b bg-background px-4 md:hidden print:hidden">
                 <div className="flex items-center gap-2">
                   <SidebarTrigger className="h-8 w-8" />
-                  <span className="font-logo-cursive text-xl text-primary">Allocatr</span>
+                  <Image src="/images/allocatr-logo-new-script.png" alt="Allocatr Logo" width={100} height={30} className="object-contain" />
                 </div>
               </header>
               <div className="relative flex min-h-screen flex-col">
