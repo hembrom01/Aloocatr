@@ -1,7 +1,7 @@
 
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -19,13 +19,15 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useToast } from '@/hooks/use-toast';
-import { Label } from '@/components/ui/label'; 
-import { Input } from '@/components/ui/input'; 
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 
 export default function DataManagementPage() {
   const router = useRouter();
   const { toast } = useToast();
+  const [selectedTimeline, setSelectedTimeline] = useState<string>("all_time");
 
   const handlePlaceholderAction = (actionName: string) => {
     toast({
@@ -33,7 +35,7 @@ export default function DataManagementPage() {
       description: `${actionName} functionality is not yet available.`,
     });
   };
-  
+
   const handleDeleteAndReset = () => {
     console.log("Delete & Reset action triggered");
     toast({
@@ -63,17 +65,37 @@ export default function DataManagementPage() {
             <DownloadCloud className="h-6 w-6 text-primary" />
             <CardTitle>Export Record</CardTitle>
           </div>
-          <CardDescription>Download your task records and logs as a CSV or JSON file.</CardDescription>
+          <CardDescription>Download your task records and logs.</CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={() => handlePlaceholderAction('CSV Export')} className="text-sm">
-              Export as CSV
+        <CardContent className="space-y-4">
+          <div>
+            <Label htmlFor="timeline-select" className="text-sm font-medium mb-1 block">Select Timeline:</Label>
+            <Select value={selectedTimeline} onValueChange={setSelectedTimeline}>
+              <SelectTrigger id="timeline-select" className="w-full sm:w-[280px] text-sm">
+                <SelectValue placeholder="Select timeline" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="last_7_days" className="text-sm">Last 7 Days</SelectItem>
+                <SelectItem value="last_30_days" className="text-sm">Last 30 Days</SelectItem>
+                <SelectItem value="current_month" className="text-sm">Current Month</SelectItem>
+                <SelectItem value="last_month" className="text-sm">Last Month</SelectItem>
+                <SelectItem value="all_time" className="text-sm">All Time</SelectItem>
+                <SelectItem value="custom_range" className="text-sm">Custom Range</SelectItem>
+              </SelectContent>
+            </Select>
+            {selectedTimeline === "custom_range" && (
+              <p className="text-xs text-muted-foreground mt-2">(Date range picker would appear here for custom selection)</p>
+            )}
+          </div>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <Button variant="outline" onClick={() => handlePlaceholderAction(`Google Sheet Export (${selectedTimeline})`)} className="text-sm w-full sm:w-auto">
+              Export as Google Sheet
             </Button>
-            <Button variant="outline" onClick={() => handlePlaceholderAction('JSON Export')} className="text-sm">
-              Export as JSON
+            <Button variant="outline" onClick={() => handlePlaceholderAction(`PDF Export (${selectedTimeline})`)} className="text-sm w-full sm:w-auto">
+              Export as PDF
             </Button>
           </div>
+           <p className="text-xs text-muted-foreground">CSV and JSON export options have been replaced by Google Sheet/PDF.</p>
         </CardContent>
       </Card>
 

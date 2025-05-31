@@ -105,9 +105,9 @@ export function AppSidebar() {
             <DatabaseZap className="h-4 w-4" />
             <span className="group-data-[collapsible=icon]:hidden">Data Management</span>
           </SidebarGroupLabel>
-          <Separator className="my-1 bg-sidebar-border group-data-[collapsible=icon]:mx-1" />
+          {/* Removed Separator from here to make items below feel more like sub-options */}
           {dataManagementItems.map((item) => (
-            <SidebarMenuItem key={item.label} className="list-none">
+            <SidebarMenuItem key={item.label} className="list-none pt-1"> {/* Added pt-1 for slight spacing after label */}
               <SidebarMenuButton
                 asChild
                 tooltip={item.tooltip}
@@ -132,7 +132,7 @@ export function AppSidebar() {
             <span className="group-data-[collapsible=icon]:hidden">More</span>
           </SidebarGroupLabel>
           {moreItems.map((item) => (
-            <SidebarMenuItem key={item.label} className="list-none">
+            <SidebarMenuItem key={item.label} className="list-none pt-1">
                 <SidebarMenuButton 
                   tooltip={item.tooltip} 
                   className="group-data-[collapsible=icon]:justify-center text-sm"
