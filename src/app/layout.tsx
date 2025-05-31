@@ -2,7 +2,7 @@
 "use client"; // Required for usePathname
 
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono, Allura } from 'next/font/google'; // Changed Dancing_Script to Allura
+import { Geist, Geist_Mono, Allura } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
@@ -23,9 +23,9 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
-const allura = Allura({ // Changed from dancingScript to allura
-  variable: '--font-allura', // Changed variable name
-  weight: ['400'], // Allura typically only has 400 weight
+const allura = Allura({
+  variable: '--font-allura',
+  weight: ['400'],
   subsets: ['latin'],
 });
 
@@ -48,7 +48,7 @@ export default function RootLayout({
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} ${allura.variable} antialiased`} suppressHydrationWarning={true}> {/* Updated font variable */}
+      <body className={`${geistSans.variable} ${geistMono.variable} ${allura.variable} antialiased`} suppressHydrationWarning={true}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <SidebarProvider>
             <AppSidebar />
