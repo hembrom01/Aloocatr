@@ -47,7 +47,7 @@ export const AppLoadingScreen: FC<AppLoadingScreenProps> = ({ isAppActuallyLoade
         className="relative text-center animate-loading-content-appear"
         style={{ transform: 'translateY(-50px)' }} 
       >
-        <div className="font-sans text-5xl font-semibold text-primary mb-6">Allocatr</div>
+        <div className="font-logoScript text-5xl font-semibold text-primary mb-6">Allocatr</div>
         {/* Removed Loader2 icon and its container div */}
       </div>
     </div>

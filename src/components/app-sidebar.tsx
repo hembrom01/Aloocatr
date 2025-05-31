@@ -68,7 +68,7 @@ export function AppSidebar() {
     <Sidebar collapsible="icon">
       <SidebarHeader className="p-4">
         <div className="flex flex-col items-center group-data-[collapsible=icon]:hidden">
-          <div className="font-sans text-3xl font-semibold text-primary mb-1">Allocatr</div>
+          <div className="font-logoScript text-3xl font-semibold text-primary mb-1">Allocatr</div>
           <p className="text-xs text-muted-foreground">{appVersion}</p>
         </div>
         <div className="hidden group-data-[collapsible=icon]:flex group-data-[collapsible=icon]:flex-col group-data-[collapsible=icon]:items-center">

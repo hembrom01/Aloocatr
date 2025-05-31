@@ -13,6 +13,7 @@ export default {
       fontFamily: {
         sans: ['var(--font-geist-sans)'],
         mono: ['var(--font-geist-mono)'],
+        logoScript: ['var(--font-dancing-script)'],
       },
   		colors: {
   			background: 'hsl(var(--background))',
