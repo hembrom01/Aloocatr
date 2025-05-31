@@ -107,7 +107,7 @@ export default function TasksPage() {
         setShowTaskFormDialog(isOpen);
         if (!isOpen) setEditingTask(null);
       }}>
-        <DialogContent className="mx-4 max-w-sm p-4 max-h-[85vh] overflow-y-auto">
+        <DialogContent className="w-[calc(100%-2rem)] max-w-sm p-4 max-h-[85vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{editingTask ? "Edit Task" : "Add New Task"}</DialogTitle>
             </DialogHeader>
