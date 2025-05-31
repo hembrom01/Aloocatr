@@ -8,8 +8,9 @@ import type { Task, Category, TaskFormDataValues } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger, DialogClose } from '@/components/ui/dialog';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { taskIconsLookup, defaultTaskIcon } from '@/config/icons';
-import { Edit2, PlusCircle, Trash2, FolderPlus, Plus } from 'lucide-react';
+import { Edit2, PlusCircle, Trash2, FolderPlus, Plus, MoreHorizontal } from 'lucide-react';
 
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
@@ -130,7 +131,7 @@ export default function TasksPage() {
           <p className="text-xs text-muted-foreground mb-4">Organize your tasks by categories, or manage them individually.</p>
         </div>
         
-        <div className="space-y-6"> {/* Replaces ScrollArea, no fixed height or specific styling */}
+        <div className="space-y-6">
           {categories.map(category => (
             <div key={category.id} className="mb-6">
               <div className="flex justify-between items-center mb-2 p-2 bg-muted/20 rounded-t-md">
@@ -154,9 +155,28 @@ export default function TasksPage() {
                           </p>
                         </div>
                       </div>
-                      <Button variant="outline" size="sm" onClick={() => handleEditTask(task)}>
-                        <Edit2 className="mr-2 h-4 w-4" /> Edit
-                      </Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <MoreHorizontal className="h-4 w-4" />
+                            <span className="sr-only">Task options</span>
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => handleEditTask(task)}>
+                            <Edit2 className="mr-2 h-4 w-4" />
+                            <span>Edit</span>
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            onClick={() => handleDeleteTaskWithConfirmation(task.id)}
+                            className="text-destructive focus:text-destructive focus:bg-destructive/10"
+                          >
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            <span>Delete</span>
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </li>
                   );
                 })}
@@ -185,9 +205,28 @@ export default function TasksPage() {
                           </p>
                         </div>
                       </div>
-                      <Button variant="outline" size="sm" onClick={() => handleEditTask(task)}>
-                        <Edit2 className="mr-2 h-4 w-4" /> Edit
-                      </Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <MoreHorizontal className="h-4 w-4" />
+                            <span className="sr-only">Task options</span>
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => handleEditTask(task)}>
+                            <Edit2 className="mr-2 h-4 w-4" />
+                            <span>Edit</span>
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            onClick={() => handleDeleteTaskWithConfirmation(task.id)}
+                            className="text-destructive focus:text-destructive focus:bg-destructive/10"
+                          >
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            <span>Delete</span>
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </li>
                   );
                 })}
@@ -247,4 +286,3 @@ export default function TasksPage() {
     </div>
   );
 }
-
