@@ -84,7 +84,7 @@ export default function TasksPage() {
       toast({ title: "Error", description: "Category not found.", variant: "destructive" });
     }
   };
-
+  
   const uncategorizedTasks = tasks.filter(task => !task.categoryId || task.categoryId === "null" || task.categoryId === "");
 
 
@@ -132,6 +132,7 @@ export default function TasksPage() {
           <Button
             variant="outline"
             size="sm"
+            className="shadow-lg border-foreground dark:border-input"
             onClick={() => {
               setEditingTask(null);
               setShowTaskFormDialog(true);
@@ -254,7 +255,7 @@ export default function TasksPage() {
         </div>
       </section>
 
-      <div className="flex justify-center mt-4 mb-8 px-4 md:px-6">
+      <div className="flex justify-center mt-4 px-4 md:px-6">
         <Dialog open={isAddCategoryDialogOpen} onOpenChange={setIsAddCategoryDialogOpen}>
           <DialogTrigger asChild>
             <Button variant="outline" size="sm" className="border-2 px-6">
