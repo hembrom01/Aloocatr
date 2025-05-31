@@ -108,16 +108,19 @@ export default function TasksPage() {
         if (!isOpen) setEditingTask(null);
       }}>
         <DialogContent className="mx-4 max-w-lg max-h-[85vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>{editingTask ? "Edit Task" : "Add New Task"}</DialogTitle>
+              {/* You can add a DialogDescription here if needed */}
+            </DialogHeader>
             <TaskForm
                 task={editingTask}
                 categories={categories}
                 onSubmit={handleTaskSubmit}
-                onDelete={handleDeleteTaskWithConfirmation}
+                onDelete={editingTask ? handleDeleteTaskWithConfirmation : undefined}
                 onClose={() => {
                   setShowTaskFormDialog(false);
                   setEditingTask(null);
                 }}
-                formTitle={editingTask ? "Edit Task" : "Add New Task"}
                 submitButtonText={editingTask ? "Update Task" : "Save Task"}
             />
         </DialogContent>
@@ -286,5 +289,3 @@ export default function TasksPage() {
     </div>
   );
 }
-
-    

@@ -42,7 +42,6 @@ interface TaskFormProps {
   onSubmit: (data: TaskFormDataValues, id?: string) => void;
   onDelete?: (taskId: string) => void;
   onClose: () => void;
-  formTitle?: string;
   submitButtonText?: string;
 }
 
@@ -57,7 +56,7 @@ const durationPresets = [
   { label: "Monday to Friday (5 days, daily allocation)", value: "5_daily" },
 ];
 
-export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDelete, onClose, formTitle = "Add New Task", submitButtonText = "Save Task" }) => {
+export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDelete, onClose, submitButtonText = "Save Task" }) => {
   const { toast } = useToast();
   const [isIconPickerOpen, setIsIconPickerOpen] = useState(false);
   const [selectedDurationPreset, setSelectedDurationPreset] = useState<string>(
@@ -257,17 +256,7 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
   const SelectedIconComponent = taskIconsLookup[watchedIcon] || taskIconsLookup[defaultTaskIcon];
 
   return (
-    <div className="p-1"> {/* Added p-1 to ensure the form content is not flush with DialogContent's own padding */}
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold">{formTitle}</h2>
-        {task && onDelete && (
-          <Button variant="ghost" size="icon" onClick={() => onDelete(task.id)} aria-label="Delete task">
-            <Trash2 className="h-5 w-5 text-destructive" />
-          </Button>
-        )}
-      </div>
-      {task && <p className="text-xs text-muted-foreground mb-4">Editing task: {task.name}</p>}
-      
+    <div className="p-1 pt-0"> {/* Changed p-1 to pt-0 to avoid double padding with DialogHeader */}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
           <FormField
@@ -481,18 +470,31 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
             For "Custom Date Range", the task is active for the selected period.
           </p>
           
-          <ShadDialogFooter className="mt-6 flex flex-row justify-end gap-2 w-full">
-            <Button variant="ghost" type="button" onClick={onClose} size="sm">
-              Close
-            </Button>
-            <Button type="submit" size="sm">
-              {submitButtonText}
-            </Button>
+          <ShadDialogFooter className="mt-6 flex flex-row justify-between items-center gap-2 w-full">
+            <div> {/* Left-aligned content (Delete button) */}
+              {task && onDelete && (
+                <Button
+                  variant="destructive"
+                  type="button"
+                  onClick={() => onDelete(task.id)} 
+                  size="sm"
+                >
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Delete
+                </Button>
+              )}
+            </div>
+            <div className="flex gap-2"> {/* Right-aligned content (Close, Submit buttons) */}
+              <Button variant="ghost" type="button" onClick={onClose} size="sm">
+                Close
+              </Button>
+              <Button type="submit" size="sm">
+                {submitButtonText}
+              </Button>
+            </div>
           </ShadDialogFooter>
         </form>
       </Form>
     </div>
   );
 };
-
-    
