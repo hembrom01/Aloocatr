@@ -11,7 +11,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogT
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { taskIconsLookup, defaultTaskIcon } from '@/config/icons';
 import { Edit2, PlusCircle, Trash2, FolderPlus, MoreHorizontal } from 'lucide-react';
-import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import { AppLoadingScreen } from '@/components/app-loading-screen';
 
@@ -95,13 +94,10 @@ export default function TasksPage() {
     );
   }
 
-  const uncategorizedTasks = tasks.filter(task => !task.categoryId || !categories.find(c => c.id === task.categoryId));
-
   return (
-    <div className="space-y-8 animate-page-content-appear"> {/* Removed pb-24 */}
+    <div className="space-y-8 animate-page-content-appear">
       <header className="mb-10">
         <h1 className="text-xl font-semibold tracking-tight text-foreground">Tasks</h1>
-        <p className="text-xs text-muted-foreground">Manage your tasks, categories. App-wide preferences are in the sidebar.</p>
       </header>
 
       <Dialog open={showTaskFormDialog} onOpenChange={(isOpen) => {
@@ -125,10 +121,24 @@ export default function TasksPage() {
       </Dialog>
 
       <section id="manage-categories-tasks" className="space-y-6">
-        <div>
-          <h2 className="text-lg font-semibold text-foreground">Manage Categories & Tasks</h2>
-          <p className="text-xs text-muted-foreground mb-4">Organize your tasks by categories, or manage them individually.</p>
+        <div className="flex justify-between items-center mb-4">
+          <div>
+            <h2 className="text-lg font-semibold text-foreground">Manage Categories & Tasks</h2>
+            <p className="text-xs text-muted-foreground">Organize your tasks by categories, or manage them individually.</p>
+          </div>
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => {
+              setEditingTask(null);
+              setShowTaskFormDialog(true);
+            }}
+          >
+            <PlusCircle className="mr-2 h-4 w-4" />
+            Add Task
+          </Button>
         </div>
+
 
         <div className="space-y-6">
           {categories.map(category => (
@@ -244,7 +254,7 @@ export default function TasksPage() {
       <div className="flex justify-center mt-10 mb-6">
         <Dialog open={isAddCategoryDialogOpen} onOpenChange={setIsAddCategoryDialogOpen}>
           <DialogTrigger asChild>
-            <Button variant="outline" size="sm" className="border-2 px-6">
+            <Button variant="outline" size="sm" className="px-6 border-2">
               <FolderPlus className="mr-2 h-4 w-4" /> Add New Category
             </Button>
           </DialogTrigger>
@@ -268,21 +278,6 @@ export default function TasksPage() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
-      </div>
-
-      {/* Add Task Button Container */}
-      <div className="flex justify-end mt-4 px-4 md:px-6">
-        <Button
-          className="h-14 w-14 rounded-full shadow-lg"
-          size="icon"
-          onClick={() => {
-            setEditingTask(null);
-            setShowTaskFormDialog(true);
-          }}
-          aria-label="Add new task"
-        >
-          <PlusCircle className="h-8 w-8" />
-        </Button>
       </div>
     </div>
   );
