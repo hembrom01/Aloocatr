@@ -23,6 +23,19 @@ export function AppSidebar() {
   const appVersion = "v1.0.0 - Free";
   const pathname = usePathname();
   const { isMobile, setOpenMobile } = useSidebar();
+  const [currentHash, setCurrentHash] = React.useState('');
+
+  React.useEffect(() => {
+    const updateHash = () => {
+      setCurrentHash(window.location.hash);
+    };
+    updateHash(); // Initial hash
+    window.addEventListener('hashchange', updateHash);
+    return () => {
+      window.removeEventListener('hashchange', updateHash);
+    };
+  }, []);
+
 
   const handleMobileNavClick = () => {
     if (isMobile) {
@@ -41,19 +54,19 @@ export function AppSidebar() {
   const dataManagementItems = [
     {
       label: "Export Record",
-      href: "/data-management",
+      href: "/data-management#export",
       icon: DownloadCloud,
       tooltip: "Export your task records"
     },
     {
       label: "Backup & Restore",
-      href: "/data-management",
+      href: "/data-management#backup",
       icon: UploadCloud,
       tooltip: "Backup or restore data"
     },
     {
       label: "Delete & Reset",
-      href: "/data-management",
+      href: "/data-management#delete",
       icon: Trash2,
       tooltip: "Delete all application data"
     },
@@ -105,23 +118,27 @@ export function AppSidebar() {
             <DatabaseZap className="h-4 w-4" />
             <span className="group-data-[collapsible=icon]:hidden">Data Management</span>
           </SidebarGroupLabel>
-          {/* Removed Separator from here to make items below feel more like sub-options */}
-          {dataManagementItems.map((item) => (
-            <SidebarMenuItem key={item.label} className="list-none pt-1"> {/* Added pt-1 for slight spacing after label */}
-              <SidebarMenuButton
-                asChild
-                tooltip={item.tooltip}
-                className="group-data-[collapsible=icon]:justify-center text-sm"
-                data-active={pathname === item.href && item.href.includes(pathname)} 
-                onClick={handleMobileNavClick}
-              >
-                <Link href={item.href}>
-                  <item.icon className="h-4 w-4" />
-                  <span className="group-data-[collapsible=icon]:hidden">{item.label}</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
+          {dataManagementItems.map((item) => {
+            const itemPath = item.href.split('#')[0];
+            const itemHash = item.href.split('#')[1] ? `#${item.href.split('#')[1]}` : '';
+            const isActive = pathname === itemPath && currentHash === itemHash;
+            return (
+              <SidebarMenuItem key={item.label} className="list-none pt-1">
+                <SidebarMenuButton
+                  asChild
+                  tooltip={item.tooltip}
+                  className="group-data-[collapsible=icon]:justify-center text-sm"
+                  data-active={isActive}
+                  onClick={handleMobileNavClick}
+                >
+                  <Link href={item.href}>
+                    <item.icon className="h-4 w-4" />
+                    <span className="group-data-[collapsible=icon]:hidden">{item.label}</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            );
+          })}
         </SidebarGroup>
 
         <Separator className="my-2 bg-sidebar-border group-data-[collapsible=icon]:mx-1" />
