@@ -238,35 +238,6 @@ export default function TasksPage() {
         </Card>
       </section>
 
-      <section id="app-preferences">
-        <Card className="shadow-lg">
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold">App Preferences</CardTitle>
-            <CardDescription className="text-xs">Customize your Allocatr experience. Main preferences are now in the sidebar.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-start p-3 bg-muted/30 rounded-md border">
-               <UserCircle className="h-5 w-5 mr-3 mt-1 text-muted-foreground flex-shrink-0" />
-              <div>
-                <h3 className="text-sm font-medium">Account</h3>
-                <p className="text-xs text-muted-foreground">
-                  Login and account synchronization features are coming soon!
-                </p>
-              </div>
-            </div>
-             <div className="flex items-start p-3 bg-muted/30 rounded-md border">
-               <AppSettingsIcon className="h-5 w-5 mr-3 mt-1 text-muted-foreground flex-shrink-0" />
-              <div>
-                <h3 className="text-sm font-medium">More Settings</h3>
-                <p className="text-xs text-muted-foreground">
-                  Advanced application settings will be available here. Check the sidebar for common preferences.
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </section>
-
       <Button
         className="fixed bottom-20 right-6 h-14 w-14 rounded-lg shadow-xl z-50"
         size="icon"
