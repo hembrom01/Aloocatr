@@ -240,37 +240,36 @@ export default function TasksPage() {
             </p>
          )}
         </div>
-
-        <Separator />
-        
-        <Dialog open={isAddCategoryDialogOpen} onOpenChange={setIsAddCategoryDialogOpen}>
-          <DialogTrigger asChild>
-            <Button variant="outline" className="w-full text-sm">
-              <FolderPlus className="mr-2 h-5 w-5" /> Add New Category
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle className="text-lg font-semibold">Add New Category</DialogTitle>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <Input 
-                placeholder="Category Name (e.g., Hobbies, Work)" 
-                value={newCategoryName}
-                onChange={(e) => setNewCategoryName(e.target.value)} 
-                className="text-sm"
-              />
-            </div>
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button variant="ghost" size="sm">Cancel</Button>
-              </DialogClose>
-              <Button onClick={handleAddCategory} size="sm">Add Category</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
       </section>
+
+      <Separator />
+      
+      <Dialog open={isAddCategoryDialogOpen} onOpenChange={setIsAddCategoryDialogOpen}>
+        <DialogTrigger asChild>
+          <Button variant="outline" size="sm" className="w-full border-2">
+            <FolderPlus className="mr-2 h-4 w-4" /> Add New Category
+          </Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="text-lg font-semibold">Add New Category</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <Input 
+              placeholder="Category Name (e.g., Hobbies, Work)" 
+              value={newCategoryName}
+              onChange={(e) => setNewCategoryName(e.target.value)} 
+              className="text-sm"
+            />
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="ghost" size="sm">Cancel</Button>
+            </DialogClose>
+            <Button onClick={handleAddCategory} size="sm">Add Category</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Button
         className="fixed bottom-20 right-6 h-14 w-14 rounded-lg shadow-xl z-50"
