@@ -85,7 +85,8 @@ export default function TasksPage() {
     }
   };
 
-  const uncategorizedTasks = tasks.filter(task => !task.categoryId || task.categoryId === "null");
+  const uncategorizedTasks = tasks.filter(task => !task.categoryId || task.categoryId === "null" || task.categoryId === "");
+
 
   if (!isLoaded) {
      return (
@@ -125,11 +126,11 @@ export default function TasksPage() {
       <section id="manage-categories-tasks" className="space-y-6">
         <div className="flex justify-between items-center mb-4">
           <div>
-            <h2 className="text-lg font-semibold text-foreground">Manage Categories & Tasks</h2>
+            <h2 className="text-lg font-semibold text-foreground">Categories & Tasks</h2>
             <p className="text-xs text-muted-foreground">Organize your tasks by categories, or manage them individually.</p>
           </div>
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             size="sm"
             onClick={() => {
               setEditingTask(null);
@@ -253,10 +254,10 @@ export default function TasksPage() {
         </div>
       </section>
 
-      <div className="flex justify-center mt-10 mb-6 px-6">
+      <div className="flex justify-center mt-4 mb-8 px-4 md:px-6">
         <Dialog open={isAddCategoryDialogOpen} onOpenChange={setIsAddCategoryDialogOpen}>
           <DialogTrigger asChild>
-            <Button variant="outline" size="sm" className="px-6 border-2">
+            <Button variant="outline" size="sm" className="border-2 px-6">
               <FolderPlus className="mr-2 h-4 w-4" /> Add New Category
             </Button>
           </DialogTrigger>
