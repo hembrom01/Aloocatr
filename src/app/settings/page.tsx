@@ -241,8 +241,6 @@ export default function TasksPage() {
          )}
         </div>
       </section>
-
-      <Separator className="my-6" />
       
       <div className="flex justify-center mt-6 mb-4">
         <Dialog open={isAddCategoryDialogOpen} onOpenChange={setIsAddCategoryDialogOpen}>
@@ -273,7 +271,7 @@ export default function TasksPage() {
         </Dialog>
       </div>
 
-      <div className="flex justify-center mt-4 mb-8">
+      <div className="flex justify-end mt-4 mb-8">
         <Button
           className="h-14 w-14 rounded-lg shadow-lg"
           size="icon"
