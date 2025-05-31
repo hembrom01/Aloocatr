@@ -12,7 +12,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import type { Task, TaskIconName, Category, TaskFormDataValues } from '@/types';
 import { taskIconsLookup, defaultTaskIcon } from '@/config/icons';
-import { AiTimeSuggester } from './ai-time-suggester';
 import { useToast } from '@/hooks/use-toast';
 import { Trash2, ChevronDown, Calendar as CalendarIcon } from 'lucide-react';
 import { DialogFooter as ShadDialogFooter } from '@/components/ui/dialog'; 
@@ -107,15 +106,9 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
     defaultValues: getInitialFormValues(task),
   });
   
-  const [currentAllocatedTimeForAI, setCurrentAllocatedTimeForAI] = useState(() => {
-    const initialValues = getInitialFormValues(task);
-    return `${initialValues.allocatedTimeValue} ${initialValues.allocatedTimeUnit}`;
-  });
 
   useEffect(() => {
     form.reset(getInitialFormValues(task));
-    const currentValues = getInitialFormValues(task);
-    setCurrentAllocatedTimeForAI(`${currentValues.allocatedTimeValue} ${currentValues.allocatedTimeUnit}`);
     
     if (task) {
       const taskDuration = task.targetDurationDays;
@@ -154,13 +147,7 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [task, form.reset]); 
   
-  const watchedAllocatedTimeValue = form.watch("allocatedTimeValue");
-  const watchedAllocatedTimeUnit = form.watch("allocatedTimeUnit");
   const watchedIcon = form.watch("icon");
-
-  useEffect(() => {
-    setCurrentAllocatedTimeForAI(`${watchedAllocatedTimeValue || 0} ${watchedAllocatedTimeUnit || 'minutes'}`);
-  }, [watchedAllocatedTimeValue, watchedAllocatedTimeUnit]);
 
   useEffect(() => {
     if (selectedDurationPreset === "custom_range") {
@@ -207,31 +194,8 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
     });
     if (!task) { 
       form.reset(getInitialFormValues(null));
-      setCurrentAllocatedTimeForAI('30 minutes');
       setSelectedDurationPreset("0");
       setCustomDateRange(undefined);
-    }
-  };
-
-  const handleAiSuggestionApplied = (suggestedTime: string) => {
-    const parts = suggestedTime.toLowerCase().split(' ');
-    const timeValue = parseInt(parts[0]);
-    
-    if (isNaN(timeValue) || timeValue <= 0) {
-      toast({ title: "AI Suggestion Error", description: "Invalid time value suggested.", variant: "destructive" });
-      return;
-    }
-
-    if (parts.includes('hour') || parts.includes('hours')) {
-      form.setValue('allocatedTimeValue', timeValue);
-      form.setValue('allocatedTimeUnit', 'hours');
-      toast({ title: "AI Suggestion Applied", description: `Allocation set to ${timeValue} hours.` });
-    } else if (parts.includes('minute') || parts.includes('minutes')) {
-      form.setValue('allocatedTimeValue', timeValue);
-      form.setValue('allocatedTimeUnit', 'minutes');
-      toast({ title: "AI Suggestion Applied", description: `Allocation set to ${timeValue} minutes.` });
-    } else {
-      toast({ title: "AI Suggestion Format Error", description: `Could not parse unit from "${suggestedTime}".`, variant: "destructive" });
     }
   };
   
@@ -256,245 +220,236 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
   const SelectedIconComponent = taskIconsLookup[watchedIcon] || taskIconsLookup[defaultTaskIcon];
 
   return (
-    <div className="p-1 pt-0"> {/* Changed p-1 to pt-0 to avoid double padding with DialogHeader */}
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-sm">Task Name</FormLabel>
-                <FormControl>
-                  <Input placeholder="e.g., Morning Workout" {...field} className="text-sm" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormItem>
-            <FormLabel className="text-sm">Icon</FormLabel>
-            <Button 
-              variant="outline" 
-              type="button" 
-              className="w-full justify-start text-left font-normal text-sm"
-              onClick={() => setIsIconPickerOpen(true)}
-            >
-              <SelectedIconComponent className="mr-2 h-5 w-5" />
-              {watchedIcon}
-              <ChevronDown className="ml-auto h-4 w-4 opacity-50" />
-            </Button>
-            <FormMessage>{form.formState.errors.icon?.message}</FormMessage>
-          </FormItem>
-          <IconPicker 
-            isOpen={isIconPickerOpen}
-            onOpenChange={setIsIconPickerOpen}
-            currentIcon={watchedIcon}
-            onIconSelect={(iconName) => form.setValue('icon', iconName, { shouldValidate: true })}
-          />
-          
-          <FormField
-            control={form.control}
-            name="categoryId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-sm">Category (Optional)</FormLabel>
-                <Select 
-                  onValueChange={(value) => field.onChange(value === "null" ? null : value)} 
-                  value={field.value || "null"}
-                >
-                  <FormControl>
-                    <SelectTrigger className="text-sm">
-                      <SelectValue placeholder="Select a category" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="null" className="text-sm">Uncategorized</SelectItem>
-                    {categories.map(category => (
-                      <SelectItem key={category.id} value={category.id} className="text-sm">
-                        {category.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <div className="space-y-2">
-            <FormLabel className="text-sm">Allocated Time</FormLabel>
-            <div className="flex items-start gap-2">
-              <FormField
-                control={form.control}
-                name="allocatedTimeValue"
-                render={({ field }) => (
-                  <FormItem className="flex-grow">
-                    <FormControl>
-                      <Input type="number" placeholder="e.g., 30" {...field} className="text-sm" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="allocatedTimeUnit"
-                render={({ field }) => (
-                  <FormItem className="w-[110px]">
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl>
-                        <SelectTrigger className="text-sm">
-                          <SelectValue placeholder="Unit" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="minutes" className="text-sm">Minutes</SelectItem>
-                        <SelectItem value="hours" className="text-sm">Hours</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-             <div className="flex justify-end mt-1">
-               <AiTimeSuggester 
-                  taskName={form.getValues('name') || 'this task'}
-                  currentAllocatedTime={currentAllocatedTimeForAI}
-                  onSuggestionApplied={handleAiSuggestionApplied}
-                />
-            </div>
-          </div>
-
-
-          <FormField
-            control={form.control}
-            name="allocationBasis"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-sm">Allocation Basis</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger className="text-sm">
-                      <SelectValue placeholder="Select allocation basis" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="daily" className="text-sm">Daily</SelectItem>
-                    <SelectItem value="weekly" className="text-sm">Weekly</SelectItem>
-                    <SelectItem value="monthly" className="text-sm">Monthly</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          
-          <div className="space-y-2">
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-sm">Target Duration</FormLabel>
-              <Select onValueChange={handleDurationPresetChange} value={selectedDurationPreset}>
+              <FormLabel className="text-sm">Task Name</FormLabel>
+              <FormControl>
+                <Input placeholder="e.g., Morning Workout" {...field} className="text-sm" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormItem>
+          <FormLabel className="text-sm">Icon</FormLabel>
+          <Button 
+            variant="outline" 
+            type="button" 
+            className="w-full justify-start text-left font-normal text-sm"
+            onClick={() => setIsIconPickerOpen(true)}
+          >
+            <SelectedIconComponent className="mr-2 h-5 w-5" />
+            {watchedIcon}
+            <ChevronDown className="ml-auto h-4 w-4 opacity-50" />
+          </Button>
+          <FormMessage>{form.formState.errors.icon?.message}</FormMessage>
+        </FormItem>
+        <IconPicker 
+          isOpen={isIconPickerOpen}
+          onOpenChange={setIsIconPickerOpen}
+          currentIcon={watchedIcon}
+          onIconSelect={(iconName) => form.setValue('icon', iconName, { shouldValidate: true })}
+        />
+        
+        <FormField
+          control={form.control}
+          name="categoryId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-sm">Category (Optional)</FormLabel>
+              <Select 
+                onValueChange={(value) => field.onChange(value === "null" ? null : value)} 
+                value={field.value || "null"}
+              >
                 <FormControl>
                   <SelectTrigger className="text-sm">
-                    <SelectValue placeholder="Select a duration preset" />
+                    <SelectValue placeholder="Select a category" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {durationPresets.map(preset => (
-                     <SelectItem key={preset.value} value={preset.value} className="text-sm">{preset.label}</SelectItem>
+                  <SelectItem value="null" className="text-sm">Uncategorized</SelectItem>
+                  {categories.map(category => (
+                    <SelectItem key={category.id} value={category.id} className="text-sm">
+                      {category.name}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
+              <FormMessage />
             </FormItem>
+          )}
+        />
 
-            {selectedDurationPreset === 'custom_range' && (
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant={"outline"}
-                    className={cn(
-                      "w-full justify-start text-left font-normal mt-2 text-sm",
-                      !customDateRange && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {customDateRange?.from ? (
-                      customDateRange.to ? (
-                        <>
-                          {format(customDateRange.from, "LLL dd, y")} -{" "}
-                          {format(customDateRange.to, "LLL dd, y")}
-                        </>
-                      ) : (
-                        format(customDateRange.from, "LLL dd, y")
-                      )
-                    ) : (
-                      <span>Pick a date range</span>
-                    )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    initialFocus
-                    mode="range"
-                    defaultMonth={customDateRange?.from}
-                    selected={customDateRange}
-                    onSelect={setCustomDateRange}
-                    numberOfMonths={1}
-                    disabled={{ before: new Date() }} 
-                  />
-                </PopoverContent>
-              </Popover>
-            )}
-             <FormField
-                control={form.control}
-                name="targetDurationDays" 
-                render={({ field }) => (
-                  <FormItem className="hidden"> 
-                    <FormControl>
-                      <Input type="number" {...field} 
-                        value={field.value === null || field.value === undefined ? '' : field.value}
-                        onChange={e => field.onChange(e.target.value === '' ? null : Number(e.target.value))}
-                        className="text-sm"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-          </div>
-          <p className="text-xs text-muted-foreground -mt-2">
-            Select "Indefinite" for tasks that never expire.
-            "Monday to Friday" preset automatically sets allocation basis to daily for 5 days.
-            For "Custom Date Range", the task is active for the selected period.
-          </p>
-          
-          <ShadDialogFooter className="mt-6 flex flex-row justify-between items-center gap-2 w-full">
-            <div> {/* Left-aligned content (Delete button) */}
-              {task && onDelete && (
-                <Button
-                  variant="destructive"
-                  type="button"
-                  onClick={() => onDelete(task.id)} 
-                  size="sm"
-                >
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  Delete
-                </Button>
+        <div className="space-y-2">
+          <FormLabel className="text-sm">Allocated Time</FormLabel>
+          <div className="flex items-start gap-2">
+            <FormField
+              control={form.control}
+              name="allocatedTimeValue"
+              render={({ field }) => (
+                <FormItem className="flex-grow">
+                  <FormControl>
+                    <Input type="number" placeholder="e.g., 30" {...field} className="text-sm" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
               )}
-            </div>
-            <div className="flex gap-2"> {/* Right-aligned content (Close, Submit buttons) */}
-              <Button variant="ghost" type="button" onClick={onClose} size="sm">
-                Close
+            />
+            <FormField
+              control={form.control}
+              name="allocatedTimeUnit"
+              render={({ field }) => (
+                <FormItem className="w-[110px]">
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="text-sm">
+                        <SelectValue placeholder="Unit" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="minutes" className="text-sm">Minutes</SelectItem>
+                      <SelectItem value="hours" className="text-sm">Hours</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        </div>
+
+
+        <FormField
+          control={form.control}
+          name="allocationBasis"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-sm">Allocation Basis</FormLabel>
+              <Select onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger className="text-sm">
+                    <SelectValue placeholder="Select allocation basis" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="daily" className="text-sm">Daily</SelectItem>
+                  <SelectItem value="weekly" className="text-sm">Weekly</SelectItem>
+                  <SelectItem value="monthly" className="text-sm">Monthly</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        
+        <div className="space-y-2">
+          <FormItem>
+            <FormLabel className="text-sm">Target Duration</FormLabel>
+            <Select onValueChange={handleDurationPresetChange} value={selectedDurationPreset}>
+              <FormControl>
+                <SelectTrigger className="text-sm">
+                  <SelectValue placeholder="Select a duration preset" />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                {durationPresets.map(preset => (
+                   <SelectItem key={preset.value} value={preset.value} className="text-sm">{preset.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </FormItem>
+
+          {selectedDurationPreset === 'custom_range' && (
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant={"outline"}
+                  className={cn(
+                    "w-full justify-start text-left font-normal mt-2 text-sm",
+                    !customDateRange && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {customDateRange?.from ? (
+                    customDateRange.to ? (
+                      <>
+                        {format(customDateRange.from, "LLL dd, y")} -{" "}
+                        {format(customDateRange.to, "LLL dd, y")}
+                      </>
+                    ) : (
+                      format(customDateRange.from, "LLL dd, y")
+                    )
+                  ) : (
+                    <span>Pick a date range</span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  initialFocus
+                  mode="range"
+                  defaultMonth={customDateRange?.from}
+                  selected={customDateRange}
+                  onSelect={setCustomDateRange}
+                  numberOfMonths={1}
+                  disabled={{ before: new Date() }} 
+                />
+              </PopoverContent>
+            </Popover>
+          )}
+           <FormField
+              control={form.control}
+              name="targetDurationDays" 
+              render={({ field }) => (
+                <FormItem className="hidden"> 
+                  <FormControl>
+                    <Input type="number" {...field} 
+                      value={field.value === null || field.value === undefined ? '' : field.value}
+                      onChange={e => field.onChange(e.target.value === '' ? null : Number(e.target.value))}
+                      className="text-sm"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+        </div>
+        <p className="text-xs text-muted-foreground -mt-2">
+          Select "Indefinite" for tasks that never expire.
+          "Monday to Friday" preset automatically sets allocation basis to daily for 5 days.
+          For "Custom Date Range", the task is active for the selected period.
+        </p>
+        
+        <ShadDialogFooter className="mt-6 flex flex-row justify-between items-center gap-2 w-full">
+          <div> {/* Left-aligned content (Delete button) */}
+            {task && onDelete && (
+              <Button
+                variant="destructive"
+                type="button"
+                onClick={() => onDelete(task.id)} 
+                size="sm"
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                Delete
               </Button>
-              <Button type="submit" size="sm">
-                {submitButtonText}
-              </Button>
-            </div>
-          </ShadDialogFooter>
-        </form>
-      </Form>
-    </div>
+            )}
+          </div>
+          <div className="flex gap-2"> {/* Right-aligned content (Close, Submit buttons) */}
+            <Button variant="ghost" type="button" onClick={onClose} size="sm">
+              Close
+            </Button>
+            <Button type="submit" size="sm">
+              {submitButtonText}
+            </Button>
+          </div>
+        </ShadDialogFooter>
+      </form>
+    </Form>
   );
 };
