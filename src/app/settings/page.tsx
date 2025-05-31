@@ -1,13 +1,13 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { TaskForm } from '@/components/task-form';
 import { useTaskManager } from '@/hooks/use-task-manager';
 import type { Task, Category, TaskFormDataValues } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger, DialogClose } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter as ShadDialogFooter, DialogTrigger, DialogClose } from '@/components/ui/dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { taskIconsLookup, defaultTaskIcon } from '@/config/icons';
 import { Edit2, PlusCircle, Trash2, FolderPlus, MoreHorizontal } from 'lucide-react';
@@ -107,10 +107,9 @@ export default function TasksPage() {
         setShowTaskFormDialog(isOpen);
         if (!isOpen) setEditingTask(null);
       }}>
-        <DialogContent className="mx-4 max-w-lg max-h-[85vh] overflow-y-auto">
+        <DialogContent className="mx-4 max-w-md px-4 py-6 max-h-[85vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{editingTask ? "Edit Task" : "Add New Task"}</DialogTitle>
-              {/* You can add a DialogDescription here if needed */}
             </DialogHeader>
             <TaskForm
                 task={editingTask}
@@ -277,15 +276,17 @@ export default function TasksPage() {
                 className="text-sm"
               />
             </div>
-            <DialogFooter>
+            <ShadDialogFooter>
               <DialogClose asChild>
                 <Button variant="ghost" size="sm">Cancel</Button>
               </DialogClose>
               <Button onClick={handleAddCategory} size="sm">Add Category</Button>
-            </DialogFooter>
+            </ShadDialogFooter>
           </DialogContent>
         </Dialog>
       </div>
     </div>
   );
 }
+
+    
