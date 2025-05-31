@@ -4,7 +4,7 @@
 import type { FC } from 'react';
 import { memo, useMemo } from 'react';
 import { Progress } from '@/components/ui/progress';
-import { ScrollArea } from '@/components/ui/scroll-area';
+// Removed ScrollArea import
 import type { Task } from '@/types';
 import { taskIconsLookup, defaultTaskIcon } from '@/config/icons';
 import { formatMinutesToFriendlyDuration } from '@/lib/utils';
@@ -40,7 +40,8 @@ const AllocatedTaskTrackerComponent: FC<AllocatedTaskTrackerProps> = ({ tasks, g
   return (
     <div className="w-full">
       <h3 className="text-lg font-semibold text-foreground mb-4">Allocated Task Tracker</h3>
-      <ScrollArea className="h-[300px] pr-4 border rounded-md p-4 bg-card text-card-foreground shadow-sm">
+      {/* Replaced ScrollArea with a div, removed fixed height and pr-4 */}
+      <div className="border rounded-md p-4 bg-card text-card-foreground shadow-sm">
         <div className="space-y-6">
           {activeTasks.map((task) => {
             const IconComponent = taskIconsLookup[task.icon] || taskIconsLookup[defaultTaskIcon];
@@ -78,10 +79,11 @@ const AllocatedTaskTrackerComponent: FC<AllocatedTaskTrackerProps> = ({ tasks, g
             );
           })}
         </div>
-      </ScrollArea>
+      </div>
     </div>
   );
 };
 
 export const AllocatedTaskTracker = memo(AllocatedTaskTrackerComponent);
 AllocatedTaskTracker.displayName = 'AllocatedTaskTracker';
+

@@ -1,18 +1,17 @@
 
 "use client";
 
-import { useState, useMemo } from 'react';
-import { AllocatedTaskTracker } from '@/components/allocated-task-tracker'; // Renamed
+import { useMemo } from 'react'; // Removed useState
+import { AllocatedTaskTracker } from '@/components/allocated-task-tracker';
 import { useTaskManager } from '@/hooks/use-task-manager';
-import { AllocationComparisonBarChart } from '@/components/allocation-comparison-bar-chart'; // Renamed
 import { TaskCompletionChart } from '@/components/task-completion-chart'; 
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+// Removed Select and Label imports
+// Removed AllocationComparisonBarChart import
 import type { Task } from '@/types';
-import { Label } from '@/components/ui/label';
 import { AppLoadingScreen } from '@/components/app-loading-screen';
 import { Separator } from '@/components/ui/separator';
 
-type ProgressChartType = 'allocationComparison' | 'taskCompletion'; // Renamed
+// Removed ProgressChartType type
 
 export default function ProgressPage() { 
   const { 
@@ -21,9 +20,9 @@ export default function ProgressPage() {
     isLoaded 
   } = useTaskManager();
 
-  const [selectedChartType, setSelectedChartType] = useState<ProgressChartType>('allocationComparison');
+  // Removed selectedChartType state
 
-  const tasksWithAllocations = useMemo(() => { // Renamed
+  const tasksWithAllocations = useMemo(() => {
     return tasks.filter(task => task.allocatedTime > 0);
   }, [tasks]);
   
@@ -37,7 +36,7 @@ export default function ProgressPage() {
   }
 
   const renderChart = () => {
-    if (tasksWithAllocations.length === 0) { // Renamed
+    if (tasksWithAllocations.length === 0) {
       return (
         <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6 text-center">
           <h3 className="text-lg font-semibold text-foreground">Task Progress Visuals</h3>
@@ -45,15 +44,8 @@ export default function ProgressPage() {
         </div>
       );
     }
-
-    switch (selectedChartType) {
-      case 'allocationComparison':
-        return <AllocationComparisonBarChart tasks={tasksWithAllocations} getTimeSpent={getTimeSpentOnTask} />; // Renamed component and prop
-      case 'taskCompletion':
-        return <TaskCompletionChart tasks={tasksWithAllocations} getTimeSpent={getTimeSpentOnTask} />; // Prop name consistent
-      default:
-        return null;
-    }
+    // Directly render TaskCompletionChart as it's the only one
+    return <TaskCompletionChart tasks={tasksWithAllocations} getTimeSpent={getTimeSpentOnTask} />;
   };
 
   return (
@@ -62,20 +54,7 @@ export default function ProgressPage() {
         <h1 className="text-xl font-semibold tracking-tight text-foreground">Task Progress</h1>
       </header>
 
-      <div className="my-6 flex flex-col items-center space-y-2">
-        <Label htmlFor="progressChartTypeSelect" className="text-xs font-medium text-muted-foreground">
-          Select Visual:
-        </Label>
-        <Select value={selectedChartType} onValueChange={(value) => setSelectedChartType(value as ProgressChartType)}>
-          <SelectTrigger id="progressChartTypeSelect" className="w-[280px] text-sm">
-            <SelectValue placeholder="Select visual type" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="allocationComparison" className="text-sm">Allocated vs. Actual Time</SelectItem> 
-            <SelectItem value="taskCompletion" className="text-sm">Task Completion Percentage</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
+      {/* Removed the Select component for chart type selection */}
       
       <div className="mt-4 mb-8">
         {renderChart()}
@@ -90,3 +69,4 @@ export default function ProgressPage() {
     </div>
   );
 }
+
