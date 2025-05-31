@@ -2,7 +2,7 @@
 "use client"; // Required for usePathname
 
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono, Allura } from 'next/font/google';
+import { Geist, Geist_Mono, Pacifico } from 'next/font/google'; // Changed Allura to Pacifico
 import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
@@ -23,8 +23,8 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
-const allura = Allura({
-  variable: '--font-allura',
+const pacifico = Pacifico({ // Changed allura to pacifico
+  variable: '--font-pacifico', // Changed variable name
   weight: ['400'],
   subsets: ['latin'],
 });
@@ -48,7 +48,7 @@ export default function RootLayout({
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} ${allura.variable} antialiased`} suppressHydrationWarning={true}>
+      <body className={`${geistSans.variable} ${geistMono.variable} ${pacifico.variable} antialiased`} suppressHydrationWarning={true}> {/* Changed allura.variable to pacifico.variable */}
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <SidebarProvider>
             <AppSidebar />
