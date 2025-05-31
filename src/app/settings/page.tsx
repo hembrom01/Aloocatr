@@ -6,7 +6,6 @@ import { TaskForm } from '@/components/task-form';
 import { useTaskManager } from '@/hooks/use-task-manager';
 import type { Task, Category, TaskFormDataValues } from '@/types';
 import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger, DialogClose } from '@/components/ui/dialog';
 import { taskIconsLookup, defaultTaskIcon } from '@/config/icons';
@@ -131,7 +130,7 @@ export default function TasksPage() {
           <p className="text-xs text-muted-foreground mb-4">Organize your tasks by categories, or manage them individually.</p>
         </div>
         
-        <ScrollArea className="h-[450px] pr-3 border rounded-md p-4">
+        <div className="space-y-6"> {/* Replaces ScrollArea, no fixed height or specific styling */}
           {categories.map(category => (
             <div key={category.id} className="mb-6">
               <div className="flex justify-between items-center mb-2 p-2 bg-muted/20 rounded-t-md">
@@ -201,7 +200,7 @@ export default function TasksPage() {
               No categories or tasks found. Add a category or use the <Plus className="inline h-4 w-4"/> button to add a task.
             </p>
          )}
-        </ScrollArea>
+        </div>
 
         <Separator />
         
