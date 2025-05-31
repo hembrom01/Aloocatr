@@ -257,7 +257,7 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
   const SelectedIconComponent = taskIconsLookup[watchedIcon] || taskIconsLookup[defaultTaskIcon];
 
   return (
-    <>
+    <div className="p-1"> {/* Added p-1 to ensure the form content is not flush with DialogContent's own padding */}
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold">{formTitle}</h2>
         {task && onDelete && (
@@ -491,6 +491,8 @@ export const TaskForm: FC<TaskFormProps> = ({ task, categories, onSubmit, onDele
           </ShadDialogFooter>
         </form>
       </Form>
-    </>
+    </div>
   );
 };
+
+    
