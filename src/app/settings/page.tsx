@@ -98,7 +98,7 @@ export default function TasksPage() {
   const uncategorizedTasks = tasks.filter(task => !task.categoryId || !categories.find(c => c.id === task.categoryId));
 
   return (
-    <div className="space-y-8 pb-24 animate-page-content-appear">
+    <div className="space-y-8 animate-page-content-appear"> {/* Removed pb-24 */}
       <header className="mb-10">
         <h1 className="text-xl font-semibold tracking-tight text-foreground">Tasks</h1>
         <p className="text-xs text-muted-foreground">Manage your tasks, categories. App-wide preferences are in the sidebar.</p>
@@ -271,7 +271,7 @@ export default function TasksPage() {
       </div>
 
       {/* Add Task Button Container */}
-      <div className="flex justify-end mt-4 px-4 md:px-6"> {/* Removed mb-8 */}
+      <div className="flex justify-end mt-4 px-4 md:px-6">
         <Button
           className="h-14 w-14 rounded-full shadow-lg"
           size="icon"
