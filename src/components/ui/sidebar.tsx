@@ -721,7 +721,7 @@ export {
   SidebarHeader,
   SidebarInput,
   SidebarInset,
-  SidebarMenu, // This component is not exported and was causing errors
+  // SidebarMenu, // This component is not exported and was causing errors
   SidebarMenuAction,
   SidebarMenuBadge,
   SidebarMenuButton,
