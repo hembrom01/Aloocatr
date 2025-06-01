@@ -22,38 +22,6 @@ const TASK_LOGS_STORAGE_KEY = 'allocatrTaskLogs';
 const ACTIVE_TIMERS_STORAGE_KEY = 'allocatrActiveTimers';
 const CATEGORIES_STORAGE_KEY = 'allocatrCategories';
 
-// Default creation functions are kept for reference but won't be called by default for new users
-const createDefaultCategories = (): Category[] => {
-  const now = Date.now();
-  return [
-    { id: 'cat-work', name: 'Work', createdAt: now },
-    { id: 'cat-learning', name: 'Learning', createdAt: now + 1 },
-    { id: 'cat-fitness', name: 'Fitness', createdAt: now + 2 },
-    { id: 'cat-hobbies', name: 'Hobbies', createdAt: now + 3 },
-    { id: 'cat-chores', name: 'Chores', createdAt: now + 4 },
-  ];
-};
-
-const createDefaultTasks = (defaultCategories: Category[]): Task[] => {
-  const now = Date.now();
-  const getCatId = (name: string) => defaultCategories.find(c => c.name === name)?.id || null;
-
-  return [
-    { 
-      id: uuidv4(), name: 'Project Phoenix', icon: 'Briefcase' as TaskIconName, 
-      allocatedTime: 120, allocationBasis: 'daily', categoryId: getCatId('Work'), 
-      createdAt: now, targetDurationDays: 30 
-    },
-    { 
-      id: uuidv4(), name: 'Team Sync', icon: 'Users' as TaskIconName, 
-      allocatedTime: 60, allocationBasis: 'weekly', categoryId: getCatId('Work'), 
-      createdAt: now + 1 
-    },
-    // ... other default tasks (can be removed or kept for internal testing/reference)
-  ];
-};
-
-
 export function useTaskManager() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [taskLogs, setTaskLogs] = useState<TaskLog[]>([]);
@@ -70,8 +38,6 @@ export function useTaskManager() {
       let initialTasks: Task[] = [];
       let initialCategories: Category[] = [];
 
-      // For new users, start with empty arrays.
-      // The default tasks/categories won't be created unless explicitly re-enabled or for testing.
       initialTasks = storedTasksRaw ? JSON.parse(storedTasksRaw) : [];
       initialCategories = storedCategoriesRaw ? JSON.parse(storedCategoriesRaw) : [];
       
