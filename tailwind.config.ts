@@ -13,7 +13,7 @@ export default {
       fontFamily: {
         sans: ['var(--font-geist-sans)'],
         mono: ['var(--font-geist-mono)'],
-        logoScript: ['var(--font-pacifico)'], // Changed from --font-allura to --font-pacifico
+        logoScript: ['var(--font-great-vibes)'], // Changed from --font-pacifico to --font-great-vibes
       },
   		colors: {
   			background: 'hsl(var(--background))',
