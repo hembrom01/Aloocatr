@@ -33,11 +33,6 @@ export function formatMinutesToFriendlyDuration(totalMinutes: number): string {
     result += `${minutes} min`;
   }
   
-  // If hours and minutes are both 0 but totalMinutes was > 0 (e.g. due to rounding if it was < 1 min, though our input is usually whole minutes)
-  // the initial check for totalMinutes <= 0 handles the "0 min" case.
-  // If result is still empty here (e.g. totalMinutes was a fraction of a minute and became 0hr 0min), it would be caught by the initial check.
-  // This logic ensures "0 min" for zero or negative, "X hr" if only hours, "Y min" if only minutes, and "X hr Y min" if both.
-
   return result;
 }
 
@@ -55,3 +50,31 @@ export function formatSecondsToHHMMSS(totalSeconds: number): string {
   return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 }
 
+/**
+ * Shows a browser notification.
+ * Requests permission if not already granted or denied.
+ */
+export function showBrowserNotification(title: string, body: string) {
+  if (!('Notification' in window)) {
+    console.warn("This browser does not support desktop notification.");
+    return;
+  }
+
+  const displayNotification = () => {
+    // You can add options like an icon here if desired
+    // const iconUrl = '/icons/icon-192x192.png'; // Example icon path
+    // new Notification(title, { body, icon: iconUrl });
+    new Notification(title, { body });
+  };
+
+  if (Notification.permission === "granted") {
+    displayNotification();
+  } else if (Notification.permission !== "denied") {
+    Notification.requestPermission().then((permission) => {
+      if (permission === "granted") {
+        displayNotification();
+      }
+    });
+  }
+  // If permission is "denied", we don't do anything further.
+}

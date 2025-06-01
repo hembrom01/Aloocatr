@@ -13,9 +13,11 @@ import {
   format as dateFnsFormat,
   isSameDay
 } from 'date-fns';
+import { useToast } from '@/hooks/use-toast';
+import { showBrowserNotification } from '@/lib/utils';
 
 
-const TASKS_STORAGE_KEY = 'allocatrTasks'; // Renamed for consistency, though not strictly necessary for functionality
+const TASKS_STORAGE_KEY = 'allocatrTasks';
 const TASK_LOGS_STORAGE_KEY = 'allocatrTaskLogs';
 const ACTIVE_TIMERS_STORAGE_KEY = 'allocatrActiveTimers';
 const CATEGORIES_STORAGE_KEY = 'allocatrCategories';
@@ -96,6 +98,7 @@ export function useTaskManager() {
   const [activeTimers, setActiveTimers] = useState<ActiveTimer[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -201,7 +204,7 @@ export function useTaskManager() {
   const deleteTask = useCallback((taskId: string) => {
     setTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
     setTaskLogs(prevLogs => prevLogs.filter(log => log.taskId !== taskId));
-    setActiveTimers(prevTimers => prevTimers.filter(timer => timer.taskId !== taskIdToStop));
+    setActiveTimers(prevTimers => prevTimers.filter(timer => timer.taskId !== taskId));
   }, []);
 
   const isTaskActive = useCallback((taskId: string) => {
@@ -227,10 +230,43 @@ export function useTaskManager() {
       endTime,
       duration, 
     };
+    
+    const task = tasks.find(t => t.id === timerToStop.taskId);
+
+    if (task && task.allocatedTime > 0) {
+      const now = new Date();
+      let periodStartDate: Date;
+      if (task.allocationBasis === 'daily') {
+        periodStartDate = dateFnsStartOfDay(now);
+      } else if (task.allocationBasis === 'weekly') {
+        periodStartDate = dateFnsStartOfWeek(now, { weekStartsOn: 1 });
+      } else { // monthly
+        periodStartDate = dateFnsStartOfMonth(now);
+      }
+      periodStartDate.setHours(0, 0, 0, 0);
+
+      const relevantLogsThisPeriod = taskLogs
+        .filter(log => log.taskId === task.id && log.endTime >= periodStartDate.getTime());
+      
+      const totalDurationThisPeriod = relevantLogsThisPeriod.reduce((total, log) => total + log.duration, 0) + newLog.duration;
+      const durationBeforeThisLog = totalDurationThisPeriod - newLog.duration;
+
+      if (totalDurationThisPeriod >= task.allocatedTime && durationBeforeThisLog < task.allocatedTime) {
+        toast({
+          title: "🎉 Task Completed! 🎉",
+          description: `Great job on finishing "${task.name}"!`,
+        });
+        showBrowserNotification(
+          "🎉 Task Completed! 🎉",
+          `Great job on finishing "${task.name}"!`
+        );
+      }
+    }
+    
     setTaskLogs(prevLogs => [...prevLogs, newLog].sort((a,b) => b.startTime - a.startTime)); 
     setActiveTimers(prevTimers => prevTimers.filter(timer => timer.taskId !== taskIdToStop));
     return newLog;
-  }, [activeTimers]);
+  }, [activeTimers, taskLogs, tasks, toast]);
 
   const toggleTask = useCallback((taskId: string) => {
     if (isTaskActive(taskId)) {
@@ -320,3 +356,4 @@ export function useTaskManager() {
     isLoaded,
   };
 }
+
