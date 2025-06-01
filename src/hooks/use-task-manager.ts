@@ -22,6 +22,7 @@ const TASK_LOGS_STORAGE_KEY = 'allocatrTaskLogs';
 const ACTIVE_TIMERS_STORAGE_KEY = 'allocatrActiveTimers';
 const CATEGORIES_STORAGE_KEY = 'allocatrCategories';
 
+// Default creation functions are kept for reference but won't be called by default for new users
 const createDefaultCategories = (): Category[] => {
   const now = Date.now();
   return [
@@ -48,46 +49,7 @@ const createDefaultTasks = (defaultCategories: Category[]): Task[] => {
       allocatedTime: 60, allocationBasis: 'weekly', categoryId: getCatId('Work'), 
       createdAt: now + 1 
     },
-    { 
-      id: uuidv4(), name: 'Read Documentation', icon: 'BookOpen' as TaskIconName, 
-      allocatedTime: 30, allocationBasis: 'daily', categoryId: getCatId('Learning'), 
-      createdAt: now + 2 
-    },
-    { 
-      id: uuidv4(), name: 'Online Course', icon: 'GraduationCap' as TaskIconName, 
-      allocatedTime: 90, allocationBasis: 'weekly', categoryId: getCatId('Learning'), 
-      createdAt: now + 3, targetDurationDays: 90
-    },
-    { 
-      id: uuidv4(), name: 'Morning Jog', icon: 'Dumbbell' as TaskIconName, 
-      allocatedTime: 45, allocationBasis: 'daily', categoryId: getCatId('Fitness'), 
-      createdAt: now + 4, targetDurationDays: 60
-    },
-    { 
-      id: uuidv4(), name: 'Yoga Session', icon: 'Sprout' as TaskIconName, 
-      allocatedTime: 60, allocationBasis: 'weekly', categoryId: getCatId('Fitness'), 
-      createdAt: now + 5
-    },
-    { 
-      id: uuidv4(), name: 'Practice Guitar', icon: 'Music' as TaskIconName, 
-      allocatedTime: 180, allocationBasis: 'weekly', categoryId: getCatId('Hobbies'), 
-      createdAt: now + 6 
-    },
-    { 
-      id: uuidv4(), name: 'Gardening', icon: 'Palette' as TaskIconName, 
-      allocatedTime: 120, allocationBasis: 'monthly', categoryId: getCatId('Hobbies'), 
-      createdAt: now + 7
-    },
-    { 
-      id: uuidv4(), name: 'Grocery Shopping', icon: 'ShoppingCart' as TaskIconName, 
-      allocatedTime: 60, allocationBasis: 'weekly', categoryId: getCatId('Chores'), 
-      createdAt: now + 8
-    },
-    { 
-      id: uuidv4(), name: 'Meal Prep', icon: 'Utensils'as TaskIconName, 
-      allocatedTime: 90, allocationBasis: 'weekly', categoryId: getCatId('Chores'), 
-      createdAt: now + 9
-    },
+    // ... other default tasks (can be removed or kept for internal testing/reference)
   ];
 };
 
@@ -108,19 +70,10 @@ export function useTaskManager() {
       let initialTasks: Task[] = [];
       let initialCategories: Category[] = [];
 
-      const storedTasks = storedTasksRaw ? JSON.parse(storedTasksRaw) : null;
-      const storedCategories = storedCategoriesRaw ? JSON.parse(storedCategoriesRaw) : null;
-
-      if (!storedTasks || storedTasks.length === 0 || !storedCategories || storedCategories.length === 0) {
-        initialCategories = createDefaultCategories();
-        initialTasks = createDefaultTasks(initialCategories);
-        
-        localStorage.setItem(CATEGORIES_STORAGE_KEY, JSON.stringify(initialCategories));
-        localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(initialTasks));
-      } else {
-        initialTasks = storedTasks;
-        initialCategories = storedCategories;
-      }
+      // For new users, start with empty arrays.
+      // The default tasks/categories won't be created unless explicitly re-enabled or for testing.
+      initialTasks = storedTasksRaw ? JSON.parse(storedTasksRaw) : [];
+      initialCategories = storedCategoriesRaw ? JSON.parse(storedCategoriesRaw) : [];
       
       setTasks(initialTasks);
       setCategories(initialCategories);
@@ -356,4 +309,3 @@ export function useTaskManager() {
     isLoaded,
   };
 }
-

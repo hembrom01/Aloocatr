@@ -4,18 +4,21 @@
 import Link from 'next/link';
 import { useTaskManager } from '@/hooks/use-task-manager';
 import { Card, CardContent } from '@/components/ui/card';
-import { AlertCircle, PlusCircle, TimerIcon } from 'lucide-react';
+import { AlertCircle, PlusCircle, TimerIcon, Rocket } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from '@/components/ui/dialog';
 import { taskIcons, defaultTaskIcon } from '@/config/icons';
 import { cn } from '@/lib/utils';
 import { useEffect, useState, memo } from 'react';
 import { formatSecondsToHHMMSS } from '@/lib/utils';
 import type { ActiveTimer as ActiveTimerType, Task as TaskType } from '@/types';
 import { AppLoadingScreen } from '@/components/app-loading-screen';
+import { useRouter } from 'next/navigation';
 
+const FIRST_TASK_GUIDE_SHOWN_KEY = 'allocatrFirstTaskGuideShown';
 
 // Component to display individual active task bar
 const ActiveTaskBar = memo(({ activeTimer, task, onStop }: { activeTimer: ActiveTimerType; task: TaskType | undefined; onStop: () => void }) => {
@@ -77,7 +80,31 @@ export default function TrackerPage() {
     getTaskById,
     isLoaded
   } = useTaskManager();
+  const router = useRouter();
+  const [showFirstTaskGuide, setShowFirstTaskGuide] = useState(false);
 
+  useEffect(() => {
+    if (isLoaded && tasks.length === 0) {
+      if (typeof window !== 'undefined') {
+        const guideShown = localStorage.getItem(FIRST_TASK_GUIDE_SHOWN_KEY);
+        if (guideShown !== 'true') {
+          setShowFirstTaskGuide(true);
+        }
+      }
+    }
+  }, [isLoaded, tasks]);
+
+  const handleFirstTaskGuideClose = () => {
+    setShowFirstTaskGuide(false);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(FIRST_TASK_GUIDE_SHOWN_KEY, 'true');
+    }
+  };
+
+  const handleGoToTasksPage = () => {
+    handleFirstTaskGuideClose();
+    router.push('/settings');
+  };
 
   if (!isLoaded) {
     return (
@@ -90,6 +117,30 @@ export default function TrackerPage() {
 
   return (
     <div className="animate-page-content-appear">
+      {/* First Task Guide Dialog */}
+      <Dialog open={showFirstTaskGuide} onOpenChange={(isOpen) => {
+        if (!isOpen) handleFirstTaskGuideClose();
+        else setShowFirstTaskGuide(isOpen);
+      }}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <div className="flex justify-center mb-3">
+              <Rocket className="h-12 w-12 text-primary" />
+            </div>
+            <DialogTitle className="text-center text-lg">Welcome to Allocatr!</DialogTitle>
+            <DialogDescription className="text-center text-sm">
+              Ready to manage your time like a pro?
+              Let's start by adding your first task.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="sm:justify-center pt-4">
+            <Button onClick={handleGoToTasksPage} className="w-full sm:w-auto">
+              Add Your First Task
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Active Timer Display Bars */}
       {activeTimers.length > 0 && (
         <div className="w-full max-w-lg mx-auto mb-6 space-y-2">
@@ -114,7 +165,7 @@ export default function TrackerPage() {
 
         <Separator className="my-4" />
 
-        {tasks.length === 0 && (
+        {tasks.length === 0 && !showFirstTaskGuide && (
           <Alert variant="default" className="border-primary/50 bg-primary/10">
             <AlertCircle className="h-4 w-4 !text-primary" />
             <AlertTitle className="font-semibold text-primary">No Tasks Yet!</AlertTitle>
