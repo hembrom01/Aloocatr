@@ -65,9 +65,9 @@ export default function DataManagementPage() {
     toast({
       title: "Application Reset",
       description: "All application data has been deleted and the app is reset.",
-      variant: "destructive" // Or default, depending on desired style
+      variant: "destructive" 
     });
-    router.push('/'); // Navigate to home page after reset
+    router.push('/'); 
   };
 
   return (
@@ -114,10 +114,10 @@ export default function DataManagementPage() {
               )}
             </div>
             <div className="flex flex-col sm:flex-row gap-2">
-              <Button variant="outline" onClick={() => handlePlaceholderAction(`Google Sheet Export (${selectedTimeline})`)} className="text-sm w-full sm:w-auto">
+              <Button variant="outline" onClick={() => { /* Actual export logic would go here */ }} className="text-sm w-full sm:w-auto">
                 Export as Google Sheet
               </Button>
-              <Button variant="outline" onClick={() => handlePlaceholderAction(`PDF Export (${selectedTimeline})`)} className="text-sm w-full sm:w-auto">
+              <Button variant="outline" onClick={() => { /* Actual export logic would go here */ }} className="text-sm w-full sm:w-auto">
                 Export as PDF
               </Button>
             </div>
