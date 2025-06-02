@@ -51,12 +51,7 @@ const nextConfig: NextConfig = {
         headers: [
           {
             key: 'Cache-Control',
-            // public: allows caching by intermediaries (like CDNs) and browsers.
-            // max-age=0: for browsers, tells them the response is stale immediately.
-            // s-maxage=0: for CDNs, tells them the response is stale immediately.
-            // must-revalidate: forces revalidation with the origin server.
-            // stale-while-revalidate=60: allows serving stale content for 60s while revalidating in the background.
-            value: 'public, max-age=0, s-maxage=0, must-revalidate, stale-while-revalidate=60',
+            value: 'no-cache, no-store, max-age=0, must-revalidate',
           },
         ],
       },
@@ -66,7 +61,7 @@ const nextConfig: NextConfig = {
         headers: [
            {
             key: 'Cache-Control',
-            value: 'public, max-age=0, s-maxage=0, must-revalidate, stale-while-revalidate=60',
+            value: 'no-cache, no-store, max-age=0, must-revalidate',
           },
         ],
       }
