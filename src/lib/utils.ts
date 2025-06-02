@@ -78,3 +78,20 @@ export function showBrowserNotification(title: string, body: string) {
   }
   // If permission is "denied", we don't do anything further.
 }
+
+/**
+ * Triggers a file download in the browser.
+ * @param filename The desired name of the downloaded file.
+ * @param content The content of the file.
+ * @param mimeType The MIME type of the file (e.g., 'data:text/csv;charset=utf-8;').
+ */
+export function downloadFile(filename: string, content: string, mimeType: string) {
+  const element = document.createElement('a');
+  // For CSV, content is already a string. For JSON, it should be JSON.stringify(data).
+  element.setAttribute('href', `${mimeType},${encodeURIComponent(content)}`);
+  element.setAttribute('download', filename);
+  element.style.display = 'none';
+  document.body.appendChild(element);
+  element.click();
+  document.body.removeChild(element);
+}
