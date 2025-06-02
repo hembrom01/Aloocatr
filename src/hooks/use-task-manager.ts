@@ -21,6 +21,7 @@ const TASKS_STORAGE_KEY = 'allocatrTasks';
 const TASK_LOGS_STORAGE_KEY = 'allocatrTaskLogs';
 const ACTIVE_TIMERS_STORAGE_KEY = 'allocatrActiveTimers';
 const CATEGORIES_STORAGE_KEY = 'allocatrCategories';
+const FIRST_TASK_GUIDE_SHOWN_KEY = 'allocatrFirstTaskGuideShown'; // Added for reset
 
 export function useTaskManager() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -250,6 +251,21 @@ export function useTaskManager() {
     });
   }, [getLogsForDay]);
 
+  const resetAllApplicationData = useCallback(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem(TASKS_STORAGE_KEY);
+      localStorage.removeItem(TASK_LOGS_STORAGE_KEY);
+      localStorage.removeItem(ACTIVE_TIMERS_STORAGE_KEY);
+      localStorage.removeItem(CATEGORIES_STORAGE_KEY);
+      localStorage.removeItem(FIRST_TASK_GUIDE_SHOWN_KEY);
+    }
+    setTasks([]);
+    setTaskLogs([]);
+    setActiveTimers([]);
+    setCategories([]);
+    // isLoaded should remain true, as the app structure is loaded, just data is cleared.
+  }, []);
+
 
   return {
     tasks,
@@ -273,5 +289,6 @@ export function useTaskManager() {
     getCategoryById,
     getAggregatedLogsForPeriod,
     isLoaded,
+    resetAllApplicationData, // Expose the new function
   };
 }

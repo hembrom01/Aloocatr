@@ -2,11 +2,10 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { useRouter, usePathname } from 'next/navigation'; // Added usePathname
+import { useRouter, usePathname } from 'next/navigation'; 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, DownloadCloud, UploadCloud, Trash2 } from 'lucide-react';
-// import { Separator } from '@/components/ui/separator'; // Separators no longer needed
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,6 +21,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useTaskManager } from '@/hooks/use-task-manager';
 
 
 type ActiveDataSection = 'export' | 'backup' | 'delete';
@@ -30,6 +30,7 @@ export default function DataManagementPage() {
   const router = useRouter();
   const pathname = usePathname();
   const { toast } = useToast();
+  const { resetAllApplicationData } = useTaskManager(); // Get the reset function
   const [selectedTimeline, setSelectedTimeline] = useState<string>("all_time");
   const [activeSection, setActiveSection] = useState<ActiveDataSection>('export');
 
@@ -39,13 +40,12 @@ export default function DataManagementPage() {
       if (['export', 'backup', 'delete'].includes(hash)) {
         setActiveSection(hash);
       } else {
-        setActiveSection('export'); // Default section
-        // Update URL to reflect default section, without adding to history
+        setActiveSection('export'); 
         router.replace(`${pathname}#export`, { scroll: false }); 
       }
     };
 
-    handleHashChange(); // Call on initial load
+    handleHashChange(); 
 
     window.addEventListener('hashchange', handleHashChange);
     return () => {
@@ -61,12 +61,13 @@ export default function DataManagementPage() {
   };
 
   const handleDeleteAndReset = () => {
-    console.log("Delete & Reset action triggered");
+    resetAllApplicationData();
     toast({
-      title: "Data Reset (Placeholder)",
-      description: "All application data would be deleted here.",
-      variant: "destructive"
+      title: "Application Reset",
+      description: "All application data has been deleted and the app is reset.",
+      variant: "destructive" // Or default, depending on desired style
     });
+    router.push('/'); // Navigate to home page after reset
   };
 
   return (
@@ -169,12 +170,12 @@ export default function DataManagementPage() {
                   <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                   <AlertDialogDescription>
                     This action cannot be undone. This will permanently delete all your
-                    Allocatr data, including tasks, categories, and time logs from your browser.
+                    Allocatr data, including tasks, categories, and time logs from your browser and reset the application.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel className="text-sm">Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleDeleteAndReset} className="text-sm">
+                  <AlertDialogAction onClick={handleDeleteAndReset} className="text-sm bg-destructive hover:bg-destructive/90 text-destructive-foreground">
                     Yes, delete everything
                   </AlertDialogAction>
                 </AlertDialogFooter>
